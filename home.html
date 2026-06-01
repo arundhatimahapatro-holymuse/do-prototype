@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars24 — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────
+       DESIGN TOKENS — CSS custom properties
+       mirrors the --lego-* system from @cspl/theme
+    ───────────────────────────────────────────── */
+
+    /* Shared semantic tokens (theme-invariant) */
+    :root {
+      /* Typography */
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+
+      /* Shared text */
+      --lego-color-text-primary-rest:   #0F172B;
+      --lego-color-text-secondary-rest: #62748E;
+      --lego-color-text-tertiary-rest:  #90A1B9;
+      --lego-color-text-inverse-rest:   #FFFFFF;
+
+      /* Shared surfaces */
+      --lego-color-surface-subtle-rest:    #F8FAFC;
+      --lego-color-surface-secondary-rest: #E2E8F0;
+      --lego-color-surface-tertiary-rest:  #F1F5F9;
+      --lego-color-surface-dark-rest:      #0F172B;
+      --lego-color-surface-light-rest:     #FFFFFF;
+
+      /* Shared borders */
+      --lego-color-border-primary-rest:   #90A1B9;
+      --lego-color-border-secondary-rest: #CAD5E2;
+      --lego-color-border-tertiary-rest:  #E2E8F0;
+
+      /* Feedback */
+      --lego-color-feedback-surface-success-rest: #EFFFF7;
+      --lego-color-feedback-surface-error-rest:   #FEF2F2;
+      --lego-color-feedback-surface-warning-rest: #FFFBEB;
+      --lego-color-text-feedback-success-rest:    #2A6B4A;
+      --lego-color-text-feedback-warning-rest:    #BB4D00;
+    }
+
+    /* ── cars24 brand (brand-blue #4736FE, Geist) ── */
+    [data-theme="cars24"] {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest:    #4736FE;
+      --lego-color-surface-brand-primary-hover:   #4031E5;
+      --lego-color-surface-brand-secondary-rest:  #E3E1FF;
+      --lego-color-surface-brand-subtle-rest:     #F6F5FF;
+      --lego-color-text-brand-primary-rest:       #4736FE;
+      --lego-color-text-brand-secondary-rest:     #C6C1FF;
+      --lego-color-border-brand-primary-rest:     #4736FE;
+      --lego-color-border-brand-secondary-rest:   #C6C1FF;
+      --lego-color-border-brand-tertiary-rest:    #E3E1FF;
+      --brand-nav-active:                         #4736FE;
+    }
+
+    /* ── carsinfo brand (teal #13C2C2, Manrope) ── */
+    [data-theme="carsinfo"] {
+      --lego-font: 'Manrope', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest:    #13C2C2;
+      --lego-color-surface-brand-primary-hover:   #17A4A8;
+      --lego-color-surface-brand-secondary-rest:  #6AFBFB;
+      --lego-color-surface-brand-subtle-rest:     #D3FCFB;
+      --lego-color-text-brand-primary-rest:       #13C2C2;
+      --lego-color-text-brand-secondary-rest:     #45EEEE;
+      --lego-color-border-brand-primary-rest:     #13C2C2;
+      --lego-color-border-brand-secondary-rest:   #45EEEE;
+      --lego-color-border-brand-tertiary-rest:    #D3FCFB;
+      --brand-nav-active:                         #13C2C2;
+    }
+
+    /* ── vehicleinfo brand (blue #456DFF, Geist) ── */
+    [data-theme="vehicleinfo"] {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest:    #456DFF;
+      --lego-color-surface-brand-primary-hover:   #3D60E0;
+      --lego-color-surface-brand-secondary-rest:  #ADBFFF;
+      --lego-color-surface-brand-subtle-rest:     #F2F5FF;
+      --lego-color-text-brand-primary-rest:       #456DFF;
+      --lego-color-text-brand-secondary-rest:     #8AA3FF;
+      --lego-color-border-brand-primary-rest:     #456DFF;
+      --lego-color-border-brand-secondary-rest:   #8AA3FF;
+      --lego-color-border-brand-tertiary-rest:    #CFDAFF;
+      --brand-nav-active:                         #456DFF;
+    }
+
+    /* ─────────────────────────────────────────────
+       BASE
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      gap: 32px;
+    }
+
+    /* ─────────────────────────────────────────────
+       PHONE FRAME
+    ───────────────────────────────────────────── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: var(--lego-color-surface-subtle-rest);
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 40px 80px rgba(0,0,0,0.6),
+        inset 0 0 0 1.5px rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--lego-font);
+      position: relative;
+      transition: font-family 0.2s;
+    }
+
+    /* ─────────────────────────────────────────────
+       STATUS BAR
+    ───────────────────────────────────────────── */
+    .status-bar {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .status-time {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--lego-color-text-primary-rest);
+      letter-spacing: -0.3px;
+    }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ─────────────────────────────────────────────
+       HEADER
+    ───────────────────────────────────────────── */
+    .header {
+      background: #fff;
+      padding: 10px 16px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 1px solid var(--lego-color-border-tertiary-rest);
+      flex-shrink: 0;
+    }
+    .header-main { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+    .location-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .location-pin { color: var(--lego-color-surface-brand-primary-rest); flex-shrink: 0; }
+    .location-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--lego-color-text-primary-rest);
+    }
+    .location-caret { color: var(--lego-color-text-secondary-rest); }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--lego-color-surface-tertiary-rest);
+      border: 1px solid var(--lego-color-border-tertiary-rest);
+      border-radius: 12px;
+      padding: 9px 12px;
+      cursor: text;
+    }
+    .search-placeholder {
+      font-size: 14px;
+      color: var(--lego-color-text-tertiary-rest);
+      font-family: var(--lego-font);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--lego-color-surface-brand-primary-rest);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+      transition: background 0.25s;
+    }
+
+    /* ─────────────────────────────────────────────
+       CATEGORY TABS
+    ───────────────────────────────────────────── */
+    .category-row {
+      background: #fff;
+      display: flex;
+      overflow-x: auto;
+      padding: 10px 16px 12px;
+      gap: 2px;
+      border-bottom: 1px solid var(--lego-color-border-tertiary-rest);
+      flex-shrink: 0;
+    }
+    .category-row::-webkit-scrollbar { display: none; }
+
+    .cat-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .cat-icon-wrap {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--lego-color-surface-tertiary-rest);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .cat-tab.active .cat-icon-wrap {
+      background: var(--lego-color-surface-brand-subtle-rest);
+      border: 2px solid var(--lego-color-border-brand-secondary-rest);
+    }
+    .cat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--lego-color-text-secondary-rest);
+      text-align: center;
+      max-width: 64px;
+      line-height: 1.3;
+    }
+    .cat-tab.active .cat-label {
+      color: var(--lego-color-text-brand-primary-rest);
+      font-weight: 700;
+    }
+
+    /* ─────────────────────────────────────────────
+       SCROLLABLE CONTENT
+    ───────────────────────────────────────────── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    .page-body { padding: 16px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ─────────────────────────────────────────────
+       SELL CAR BANNER
+    ───────────────────────────────────────────── */
+    .sell-banner-wrap {}
+
+    .sell-banner {
+      background: linear-gradient(140deg, #F0F4FF 0%, #E8EDFF 100%);
+      border: 1px solid var(--lego-color-border-brand-tertiary-rest);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      min-height: 172px;
+      transition: border-color 0.25s, background 0.25s;
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+    }
+    .sell-banner-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      z-index: 1;
+    }
+
+    [data-theme="carsinfo"] .sell-banner {
+      background: linear-gradient(140deg, #F0FFFE 0%, #D3FCFB 100%);
+    }
+    [data-theme="vehicleinfo"] .sell-banner {
+      background: linear-gradient(140deg, #F2F5FF 0%, #E0E8FF 100%);
+    }
+
+    .sell-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--lego-color-text-secondary-rest);
+      margin-bottom: 6px;
+    }
+    .sell-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--lego-color-text-primary-rest);
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+    .sell-price {
+      font-size: 12px;
+      color: var(--lego-color-text-secondary-rest);
+      margin-bottom: 10px;
+    }
+
+    .reg-plate {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid var(--lego-color-border-secondary-rest);
+      border-radius: 6px;
+      padding: 4px 8px;
+      margin-bottom: 12px;
+    }
+    .reg-flag {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      background: var(--lego-color-surface-brand-primary-rest);
+      flex-shrink: 0;
+      transition: background 0.25s;
+    }
+    .reg-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--lego-color-text-primary-rest);
+      letter-spacing: 1.2px;
+    }
+
+    .banner-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--lego-color-border-brand-primary-rest);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--lego-color-text-brand-primary-rest);
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--lego-font);
+      transition: background 0.15s, color 0.15s;
+    }
+    .banner-cta:hover {
+      background: var(--lego-color-surface-brand-primary-rest);
+      color: #fff;
+    }
+
+    .banner-car {
+      flex-shrink: 0;
+      width: 148px;
+      height: auto;
+      align-self: flex-end;
+      margin-right: -16px;
+      margin-bottom: -4px;
+      filter: drop-shadow(0 4px 12px rgba(71,54,254,0.18));
+      pointer-events: none;
+    }
+
+    /* pagination dots */
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .dot {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--lego-color-border-secondary-rest);
+      transition: width 0.2s, background 0.2s;
+      width: 6px;
+    }
+    .dot.active {
+      width: 20px;
+      background: var(--lego-color-surface-brand-primary-rest);
+    }
+
+    /* ─────────────────────────────────────────────
+       SECTION HEADERS
+    ───────────────────────────────────────────── */
+    .section-hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--lego-color-text-primary-rest);
+    }
+    .offer-badge {
+      background: #FFF3E0;
+      border: 1px solid #FFCC80;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #BF360C;
+    }
+
+    /* ─────────────────────────────────────────────
+       BUY CAR CARDS  (horizontal scroll)
+    ───────────────────────────────────────────── */
+    .h-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin: 0 -16px;
+      padding: 0 16px 4px;
+    }
+    .h-scroll::-webkit-scrollbar { display: none; }
+
+    .buy-card {
+      flex-shrink: 0;
+      width: 132px;
+      height: 152px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .buy-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .buy-card-dim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%);
+    }
+    .buy-card img {
+      position: absolute;
+      bottom: 28px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 68px;
+      object-fit: contain;
+    }
+    .buy-label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    /* ─────────────────────────────────────────────
+       SELL YOUR CAR  (2×2 grid)
+    ───────────────────────────────────────────── */
+    .sell-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .sell-card {
+      height: 118px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .sell-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .sell-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.05) 60%);
+    }
+    .sell-label {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      right: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    /* ─────────────────────────────────────────────
+       GET LOANS
+    ───────────────────────────────────────────── */
+    .loan-card {
+      flex-shrink: 0;
+      width: 162px;
+      border-radius: 14px;
+      border: 1px solid var(--lego-color-border-tertiary-rest);
+      background: #fff;
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+    .loan-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 20px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .loan-pill.green { background: #D1FAE5; color: #065F46; }
+    .loan-pill.amber { background: #FEF3C7; color: #92400E; }
+    .loan-pill.purple { background: #EDE9FE; color: #5B21B6; }
+    .loan-amount {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--lego-color-text-primary-rest);
+      margin-bottom: 2px;
+    }
+    .loan-name {
+      font-size: 11px;
+      color: var(--lego-color-text-secondary-rest);
+      font-weight: 500;
+    }
+
+    /* ─────────────────────────────────────────────
+       BOTTOM NAV
+    ───────────────────────────────────────────── */
+    .bottom-nav {
+      flex-shrink: 0;
+      height: 72px;
+      background: #fff;
+      border-top: 1px solid var(--lego-color-border-tertiary-rest);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      height: 100%;
+    }
+    .nav-icon { color: var(--lego-color-text-tertiary-rest); transition: color 0.2s; }
+    .nav-lbl {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--lego-color-text-tertiary-rest);
+      transition: color 0.2s;
+    }
+    .nav-item.active .nav-icon { color: var(--lego-color-surface-brand-primary-rest); }
+    .nav-item.active .nav-lbl  { color: var(--lego-color-surface-brand-primary-rest); font-weight: 700; }
+
+    .nav-garage-bubble {
+      width: 48px;
+      height: 32px;
+      border-radius: 12px;
+      background: var(--lego-color-surface-brand-primary-rest);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s;
+    }
+
+    /* ─────────────────────────────────────────────
+       THEME SWITCHER  (floating panel)
+    ───────────────────────────────────────────── */
+    .theme-switcher {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      z-index: 9999;
+    }
+    .theme-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+      margin-bottom: 2px;
+    }
+    .theme-btn {
+      padding: 8px 18px;
+      border-radius: 24px;
+      border: 2px solid transparent;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+    .theme-btn:hover { transform: scale(1.05); }
+    .theme-btn.c24   { background: #4736FE; color: #fff; }
+    .theme-btn.ci    { background: #13C2C2; color: #fff; }
+    .theme-btn.vi    { background: #456DFF; color: #fff; }
+    .theme-btn.active { border-color: rgba(255,255,255,0.7); box-shadow: 0 0 0 3px rgba(255,255,255,0.15); }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════
+     PHONE
+═══════════════════════════════════════════ -->
+<div class="phone" id="app" data-theme="cars24">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">12:32</span>
+    <div class="status-icons">
+      <!-- Signal bars -->
+      <svg width="18" height="13" viewBox="0 0 18 13" fill="none">
+        <rect x="0"  y="8"  width="3.2" height="5" rx="1" fill="#0F172B"/>
+        <rect x="4.8" y="5.5" width="3.2" height="7.5" rx="1" fill="#0F172B"/>
+        <rect x="9.6" y="3"  width="3.2" height="10" rx="1" fill="#0F172B"/>
+        <rect x="14.4" y="0" width="3.2" height="13" rx="1" fill="#0F172B" opacity="0.3"/>
+      </svg>
+      <!-- WiFi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#0F172B"/>
+        <path d="M5 7.1A4.25 4.25 0 0111 7.1" stroke="#0F172B" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M2.5 4.6A7.25 7.25 0 0113.5 4.6" stroke="#0F172B" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M0 2A10.4 10.4 0 0116 2" stroke="#0F172B" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <!-- Battery -->
+      <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#0F172B" stroke-opacity="0.35"/>
+        <rect x="23.5" y="3.5" width="3" height="6" rx="1.5" fill="#0F172B" fill-opacity="0.4"/>
+        <rect x="2" y="2" width="18" height="9" rx="2" fill="#0F172B"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-main">
+      <div class="location-pill">
+        <svg class="location-pin" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 1.333A4.674 4.674 0 003.333 6C3.333 9.5 8 14.667 8 14.667S12.667 9.5 12.667 6A4.674 4.674 0 008 1.333zm0 6.334A1.667 1.667 0 116 6a1.667 1.667 0 012 1.667z"/>
+        </svg>
+        <span class="location-name">Jaipur</span>
+        <svg class="location-caret" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="5" stroke="#90A1B9" stroke-width="1.5"/>
+          <path d="M11 11L14 14" stroke="#90A1B9" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="search-placeholder">Search Swift</span>
+      </div>
+    </div>
+    <div class="avatar" id="avatar-el">AG</div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="category-row">
+    <div class="cat-tab active">
+      <div class="cat-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="2"  y="2"  width="8" height="8" rx="1.8" fill="var(--lego-color-surface-brand-primary-rest)"/>
+          <rect x="12" y="2"  width="8" height="8" rx="1.8" fill="var(--lego-color-surface-brand-primary-rest)"/>
+          <rect x="2"  y="12" width="8" height="8" rx="1.8" fill="var(--lego-color-surface-brand-primary-rest)"/>
+          <rect x="12" y="12" width="8" height="8" rx="1.8" fill="var(--lego-color-surface-brand-primary-rest)"/>
+        </svg>
+      </div>
+      <span class="cat-label">All</span>
+    </div>
+    <div class="cat-tab">
+      <div class="cat-icon-wrap">
+        <svg width="26" height="20" viewBox="0 0 26 20" fill="none">
+          <path d="M2 12h22M4 12l2.5-7h13L22 12" stroke="#62748E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7.5"  cy="15.5" r="2.5" stroke="#62748E" stroke-width="1.5"/>
+          <circle cx="18.5" cy="15.5" r="2.5" stroke="#62748E" stroke-width="1.5"/>
+          <path d="M10 15.5h6" stroke="#62748E" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <span class="cat-label">Buy used car</span>
+    </div>
+    <div class="cat-tab">
+      <div class="cat-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M11 3L13.5 8.5H19.5L15 12L17 18L11 14.5L5 18L7 12L2.5 8.5H8.5L11 3Z" stroke="#62748E" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="cat-label">Sell car</span>
+    </div>
+    <div class="cat-tab">
+      <div class="cat-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="2" y="6" width="18" height="13" rx="2" stroke="#62748E" stroke-width="1.5"/>
+          <path d="M6 6V4.5A2.5 2.5 0 018.5 2h5A2.5 2.5 0 0116 4.5V6" stroke="#62748E" stroke-width="1.5"/>
+          <path d="M2 11h18" stroke="#62748E" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <span class="cat-label">Loans</span>
+    </div>
+    <div class="cat-tab">
+      <div class="cat-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M19 2H3a2 2 0 00-2 2v11a2 2 0 002 2h7l2 3 2-3h5a2 2 0 002-2V4a2 2 0 00-2-2z" stroke="#62748E" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M6 8h10M6 12h7" stroke="#62748E" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="cat-label">Chat</span>
+    </div>
+    <div style="width:6px;flex-shrink:0;"></div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area">
+    <div class="page-body">
+
+      <!-- ── SELL CAR BANNER ── -->
+      <div class="sell-banner-wrap">
+        <div class="sell-banner">
+          <div class="sell-banner-content">
+            <p class="sell-tag">Sell your car</p>
+            <h2 class="sell-title">Looking for a better price? Book inspection now!</h2>
+            <p class="sell-price">Estimated price: ₹4.62L – ₹5.05L</p>
+            <div class="reg-plate">
+              <div class="reg-flag"></div>
+              <span class="reg-text">RJ 46 CP6052</span>
+            </div>
+            <br/>
+            <button class="banner-cta">Book FREE inspection</button>
+          </div>
+          <!-- car illustration — sedan side view -->
+          <svg class="banner-car" viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+            <rect width="160" height="80" fill="transparent"/>
+            <!-- ground shadow -->
+            <ellipse cx="80" cy="74" rx="68" ry="5" fill="#3730A3" opacity="0.12"/>
+            <!-- car body (lower) -->
+            <rect x="8" y="40" width="144" height="22" rx="4" fill="#6366F1"/>
+            <!-- car body (upper / cabin) -->
+            <path d="M38 40 C42 24 54 16 80 14 C106 12 122 20 128 32 L140 40Z" fill="#4F46E5"/>
+            <!-- windshield front -->
+            <path d="M104 40 L96 20 C108 22 122 30 128 40Z" fill="#BAE6FD" opacity="0.8"/>
+            <!-- windshield rear -->
+            <path d="M56 40 L60 18 C52 20 44 28 42 40Z" fill="#BAE6FD" opacity="0.8"/>
+            <!-- side window -->
+            <path d="M62 40 L66 20 L94 18 L98 40Z" fill="#E0F2FE" opacity="0.75"/>
+            <!-- b-pillar -->
+            <line x1="98" y1="18" x2="100" y2="40" stroke="#3730A3" stroke-width="1.5" opacity="0.35"/>
+            <!-- headlight -->
+            <rect x="146" y="44" width="8" height="6" rx="2" fill="#FDE68A"/>
+            <rect x="147" y="45" width="5" height="4" rx="1" fill="#FEF9C3"/>
+            <!-- tail light -->
+            <rect x="6" y="44" width="7" height="6" rx="2" fill="#FCA5A5"/>
+            <rect x="7" y="45" width="4" height="4" rx="1" fill="#F87171"/>
+            <!-- door line -->
+            <line x1="100" y1="40" x2="102" y2="62" stroke="#4338CA" stroke-width="1" opacity="0.5"/>
+            <!-- sill -->
+            <rect x="8" y="60" width="144" height="4" rx="2" fill="#3730A3"/>
+            <!-- left wheel -->
+            <circle cx="36" cy="64" r="13" fill="#1E1B4B"/>
+            <circle cx="36" cy="64" r="9"  fill="#312E81"/>
+            <circle cx="36" cy="64" r="4.5" fill="#A5B4FC"/>
+            <circle cx="36" cy="64" r="2"  fill="#C7D2FE"/>
+            <!-- right wheel -->
+            <circle cx="124" cy="64" r="13" fill="#1E1B4B"/>
+            <circle cx="124" cy="64" r="9"  fill="#312E81"/>
+            <circle cx="124" cy="64" r="4.5" fill="#A5B4FC"/>
+            <circle cx="124" cy="64" r="2"  fill="#C7D2FE"/>
+          </svg>
+        </div>
+        <div class="dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- ── BUY CAR ── -->
+      <div>
+        <div class="section-hdr">
+          <h3 class="section-title">Buy car</h3>
+          <span class="offer-badge">Up to ₹50,000 off</span>
+        </div>
+        <div class="h-scroll">
+
+          <!-- All used cars -->
+          <div class="buy-card">
+            <div class="buy-card-bg" style="background:linear-gradient(150deg,#1D293D 0%,#2D4A6B 100%);"></div>
+            <div class="buy-card-dim"></div>
+            <img
+              src="https://media.cars24.com/hello-ar/dev/transformed/uploads/no_bg/4ceeb9c1-5b56-4c80-a4b8-4af75dc9c823/slot/1.png?w=200&format=auto&dpr=2&trim-color=auto"
+              alt="" onerror="this.style.display='none'"
+            />
+            <div class="buy-label">All used<br/>cars</div>
+          </div>
+
+          <!-- Budget used cars -->
+          <div class="buy-card">
+            <div class="buy-card-bg" style="background:linear-gradient(150deg,#7C4A03 0%,#C17D1A 100%);"></div>
+            <div class="buy-card-dim"></div>
+            <img
+              src="https://media.cars24.com/hello-ar/dev/transformed/uploads/no_bg/8e3bbd42-af04-4bcd-bfe1-3c8d9c39b111/slot/1.png?w=200&format=auto&dpr=2&trim-color=auto"
+              alt="" onerror="this.style.display='none'"
+            />
+            <div class="buy-label">Budget used<br/>cars</div>
+          </div>
+
+          <!-- Premium used cars -->
+          <div class="buy-card">
+            <div class="buy-card-bg" style="background:linear-gradient(150deg,#1A2B5F 0%,#2D4B9E 100%);"></div>
+            <div class="buy-card-dim"></div>
+            <img
+              src="https://media.cars24.com/hello-ar/dev/transformed/uploads/no_bg/f9a11234-1234-4abc-b567-890def123456/slot/1.png?w=200&format=auto&dpr=2&trim-color=auto"
+              alt="" onerror="this.style.display='none'"
+            />
+            <div class="buy-label">Premium used<br/>cars</div>
+          </div>
+
+          <!-- New cars -->
+          <div class="buy-card">
+            <div class="buy-card-bg" style="background:linear-gradient(150deg,#0D4A1E 0%,#1A7A34 100%);"></div>
+            <div class="buy-card-dim"></div>
+            <div class="buy-label">New cars</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── SELL YOUR CAR ── -->
+      <div>
+        <h3 class="section-title" style="margin-bottom:12px;">Sell your car</h3>
+        <div class="sell-grid">
+
+          <div class="sell-card">
+            <div class="sell-card-bg" style="background:linear-gradient(135deg,#0D3347 0%,#1A6B80 100%);"></div>
+            <div class="sell-card-scrim"></div>
+            <span class="sell-label">Sell your car</span>
+          </div>
+
+          <div class="sell-card">
+            <div class="sell-card-bg" style="background:linear-gradient(135deg,#064E2C 0%,#0D8A4E 100%);"></div>
+            <div class="sell-card-scrim"></div>
+            <span class="sell-label">Check car valuation</span>
+          </div>
+
+          <div class="sell-card">
+            <div class="sell-card-bg" style="background:linear-gradient(135deg,#181828 0%,#2E2E48 100%);"></div>
+            <div class="sell-card-scrim"></div>
+            <span class="sell-label">Scrap your car</span>
+          </div>
+
+          <div class="sell-card">
+            <div class="sell-card-bg" style="background:linear-gradient(135deg,#7C2D12 0%,#C04A1A 100%);"></div>
+            <div class="sell-card-scrim"></div>
+            <span class="sell-label">Exchange car</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── GET LOANS ── -->
+      <div>
+        <h3 class="section-title" style="margin-bottom:12px;">Get loans</h3>
+        <div class="h-scroll">
+
+          <div class="loan-card">
+            <div class="loan-pill green">⚡ Instant cash</div>
+            <div class="loan-amount">₹2L – ₹10L</div>
+            <div class="loan-name">Personal loan</div>
+          </div>
+
+          <div class="loan-card">
+            <div class="loan-pill amber">🚗 Best rate</div>
+            <div class="loan-amount">Up to ₹50L</div>
+            <div class="loan-name">Car loan</div>
+          </div>
+
+          <div class="loan-card">
+            <div class="loan-pill purple">🏠 Property</div>
+            <div class="loan-amount">Up to ₹2Cr</div>
+            <div class="loan-name">Loan against property</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- bottom spacer so last card clears nav -->
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
+        <path d="M9 20v-7h4v7h5v-9h3L11 2 1 11h3v9z"/>
+      </svg>
+      <span class="nav-lbl">Home</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7">
+        <circle cx="11" cy="11" r="9"/>
+        <polyline points="11 7 11 11 14 14"/>
+      </svg>
+      <span class="nav-lbl">Activity</span>
+    </div>
+    <!-- My Garage — pill shape with brand colour -->
+    <div class="nav-item" style="flex:1.3;">
+      <div class="nav-garage-bubble">
+        <svg width="20" height="16" viewBox="0 0 20 16" fill="none" stroke="white" stroke-width="1.6">
+          <path d="M2 10H18M4 10L6 4H14L16 10" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6"  cy="13" r="2"/>
+          <circle cx="14" cy="13" r="2"/>
+        </svg>
+      </div>
+      <span class="nav-lbl" style="color:var(--lego-color-surface-brand-primary-rest);font-weight:700;">My Garage</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7">
+        <rect x="2" y="2" width="18" height="18" rx="2"/>
+        <path d="M2 8h18M2 14h18M8 2v18M14 2v18"/>
+      </svg>
+      <span class="nav-lbl">Showrooms</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7">
+        <circle cx="10" cy="10" r="7.5"/>
+        <line x1="16" y1="16" x2="20" y2="20"/>
+      </svg>
+      <span class="nav-lbl">Explore</span>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+
+<!-- ═══════════════════════════════════════════
+     FLOATING THEME SWITCHER
+═══════════════════════════════════════════ -->
+<div class="theme-switcher">
+  <div class="theme-label">Theme</div>
+  <button class="theme-btn c24 active" onclick="setTheme('cars24',this)">Cars24</button>
+  <button class="theme-btn ci"  onclick="setTheme('carsinfo',this)">CarsInfo</button>
+  <button class="theme-btn vi"  onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+</div>
+
+
+<script>
+  function setTheme(theme, btn) {
+    const app = document.getElementById('app');
+    app.setAttribute('data-theme', theme);
+
+    // Sync font on the phone frame directly so inherited elements pick it up
+    const fonts = {
+      cars24:      "'Geist', system-ui, -apple-system, sans-serif",
+      carsinfo:    "'Manrope', system-ui, -apple-system, sans-serif",
+      vehicleinfo: "'Geist', system-ui, -apple-system, sans-serif",
+    };
+    app.style.fontFamily = fonts[theme];
+
+    // Toggle active state on buttons
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

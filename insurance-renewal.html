@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars24 — Insurance Renewal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lego-font:'Geist',system-ui,-apple-system,sans-serif;
+      --lego-color-text-primary-rest:#0A0A0A; --lego-color-text-secondary-rest:#6B6980;
+      --lego-color-surface-subtle-rest:#F7F7FA; --lego-color-border-tertiary-rest:#ECECF1;
+    }
+    [data-theme="cars24"] { --lego-font:'Geist',sans-serif; --lego-color-surface-brand-primary-rest:#4736FE; --lego-color-surface-brand-subtle-rest:#F4F3FF; --lego-color-text-brand-primary-rest:#4736FE; }
+    [data-theme="carsinfo"] { --lego-font:'Manrope',sans-serif; --lego-color-surface-brand-primary-rest:#13C2C2; --lego-color-surface-brand-subtle-rest:#D3FCFB; --lego-color-text-brand-primary-rest:#13C2C2; }
+    [data-theme="vehicleinfo"] { --lego-font:'Geist',sans-serif; --lego-color-surface-brand-primary-rest:#456DFF; --lego-color-surface-brand-subtle-rest:#EEF1FF; --lego-color-text-brand-primary-rest:#456DFF; }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:#E9E9EE; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px 16px 80px; }
+
+    .proto-nav { position:fixed; top:12px; left:50%; transform:translateX(-50%); background:#0A0A0A; border-radius:100px; padding:6px 10px; display:flex; gap:4px; z-index:1000; white-space:nowrap; }
+    .proto-nav a { color:#9E9CB0; font-size:11px; font-weight:500; text-decoration:none; padding:4px 10px; border-radius:100px; font-family:'Geist',sans-serif; }
+    .proto-nav a.active, .proto-nav a:hover { background:#4736FE; color:#fff; }
+
+    .phone-wrap { margin-top:52px; }
+    .phone { width:390px; height:844px; background:var(--lego-color-surface-subtle-rest); border-radius:44px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 80px rgba(10,10,10,0.22),0 0 0 1px rgba(10,10,10,0.06); font-family:var(--lego-font); position:relative; }
+
+    .status-bar { background:#FFFFFF; height:48px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 24px; }
+    .status-bar-time { font-size:15px; font-weight:700; color:#0A0A0A; }
+
+    .step-screen { display:none; flex-direction:column; flex:1; overflow:hidden; }
+    .step-screen.active { display:flex; }
+
+    .warning-header { background:linear-gradient(135deg,#FF7A33 0%,#E8530A 100%); padding:20px 16px 24px; flex-shrink:0; }
+    .warning-header-top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .warning-title { font-size:20px; font-weight:800; color:#FFFFFF; }
+    .warning-sub { font-size:13px; color:rgba(255,255,255,0.85); line-height:1.4; }
+    .insure24-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35); border-radius:100px; padding:4px 10px; margin-top:10px; }
+    .insure24-badge-text { font-size:12px; font-weight:700; color:#FFFFFF; }
+
+    .warning-body { flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; }
+    .warning-body::-webkit-scrollbar { display:none; }
+
+    .car-info-card { background:#FFFFFF; border-radius:14px; border:1px solid #ECECF1; padding:14px; margin-bottom:12px; display:flex; align-items:center; gap:12px; }
+    .car-info-icon { width:48px; height:48px; background:#FFEFE7; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .car-info-name { font-size:15px; font-weight:700; color:#0A0A0A; }
+    .car-info-sub { font-size:12px; color:#6B6980; margin-top:2px; }
+    .expired-tag { font-size:11px; font-weight:700; color:#C2410C; background:#FFEFE7; padding:3px 8px; border-radius:100px; }
+
+    .why-needed { background:#FFF4E6; border:1px solid #FBD9A8; border-radius:12px; padding:12px 14px; margin-bottom:12px; }
+    .why-needed-title { font-size:13px; font-weight:700; color:#7A4100; margin-bottom:6px; }
+    .why-item { display:flex; align-items:flex-start; gap:6px; font-size:12px; color:#8A5000; margin-bottom:4px; line-height:1.4; }
+
+    .cta-renew { width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; font-size:16px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; }
+    .cta-later { width:100%; background:transparent; color:#9A9AA8; font-size:13px; font-weight:600; padding:12px; border-radius:14px; border:1px solid #E2E2EA; cursor:pointer; margin-top:10px; }
+
+    /* later warning modal */
+    .later-modal { position:absolute; inset:0; background:rgba(10,10,10,0.55); z-index:80; display:none; align-items:center; justify-content:center; padding:26px; }
+    .later-modal.show { display:flex; }
+    .later-card { background:#fff; border-radius:20px; padding:24px 20px 18px; text-align:center; width:100%; }
+    .later-emoji { font-size:42px; margin-bottom:6px; }
+    .later-title { font-size:18px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
+    .later-text { font-size:13px; color:#6B6980; line-height:1.5; margin-bottom:18px; }
+    .later-risk { background:#FFEFE7; border:1px solid #FBC4A8; border-radius:10px; padding:10px 12px; text-align:left; margin-bottom:18px; }
+    .later-risk-item { display:flex; gap:6px; font-size:12px; color:#9A3412; margin-bottom:4px; }
+    .later-risk-item:last-child { margin-bottom:0; }
+    .later-btn-primary { width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; border:none; font-size:15px; font-weight:700; padding:13px; border-radius:14px; cursor:pointer; }
+    .later-btn-ghost { width:100%; background:transparent; color:#9A3412; border:none; font-size:13px; font-weight:600; padding:11px; cursor:pointer; margin-top:6px; }
+
+    .quote-header { background:linear-gradient(135deg,#4736FE 0%,#2A2566 100%); padding:20px 16px 24px; flex-shrink:0; }
+    .quote-header-row { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .quote-title { font-size:18px; font-weight:800; color:#FFFFFF; }
+    .quote-sub { font-size:13px; color:rgba(255,255,255,0.8); }
+    .quote-body { flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; }
+    .quote-body::-webkit-scrollbar { display:none; }
+
+    .plan-card { background:#FFFFFF; border-radius:16px; border:2px solid var(--lego-color-surface-brand-primary-rest); padding:16px; margin-bottom:12px; position:relative; }
+    .plan-card.secondary { border-color:#ECECF1; }
+    .plan-recommended { position:absolute; top:-10px; left:16px; background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px; }
+    .plan-name { font-size:16px; font-weight:800; color:#0A0A0A; margin-bottom:2px; }
+    .plan-desc { font-size:12px; color:#6B6980; margin-bottom:10px; }
+    .plan-feature { display:flex; align-items:center; gap:6px; font-size:12px; color:#0A0A0A; margin-bottom:4px; }
+    .plan-price-row { display:flex; align-items:center; justify-content:space-between; border-top:1px solid #F3F3F7; padding-top:12px; margin-top:8px; }
+    .plan-price { font-size:22px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); }
+    .plan-price-per { font-size:12px; color:#6B6980; }
+    .select-plan-btn { background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; font-size:13px; font-weight:700; padding:9px 16px; border-radius:100px; border:none; cursor:pointer; }
+    .select-plan-btn.secondary { background:#F7F7FA; color:#0A0A0A; border:1px solid #ECECF1; }
+
+    .payment-header { background:#FFFFFF; padding:14px 16px; border-bottom:1px solid #ECECF1; flex-shrink:0; display:flex; align-items:center; gap:10px; }
+    .payment-body { flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; }
+    .payment-body::-webkit-scrollbar { display:none; }
+    .order-summary { background:#FFFFFF; border-radius:14px; border:1px solid #ECECF1; padding:14px; margin-bottom:12px; }
+    .order-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; padding:6px 0; border-bottom:1px solid #F3F3F7; }
+    .order-row:last-child { border-bottom:none; }
+    .order-label { color:#6B6980; }
+    .order-value { font-weight:600; color:#0A0A0A; }
+    .order-total-label { font-size:14px; font-weight:700; color:#0A0A0A; }
+    .order-total-value { font-size:18px; font-weight:800; color:#0A0A0A; }
+    .pm-title { font-size:13px; font-weight:700; color:#0A0A0A; margin-bottom:8px; }
+    .pm-option { background:#FFFFFF; border:2px solid #ECECF1; border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:pointer; }
+    .pm-option.selected { border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+    .pm-icon { width:36px; height:36px; border-radius:8px; background:#F4F3FF; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .pm-name { font-size:14px; font-weight:600; color:#0A0A0A; }
+    .pm-sub { font-size:11px; color:#6B6980; }
+    .pm-radio { width:18px; height:18px; border-radius:50%; border:2px solid #D6D5E0; margin-left:auto; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .pm-option.selected .pm-radio { border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-primary-rest); }
+    .pay-btn { width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; font-size:16px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; }
+
+    .success-screen { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center; background:#FFFFFF; }
+    .success-anim { width:100px; height:100px; background:#63FFB1; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:24px; animation:popIn .5s cubic-bezier(.2,.8,.3,1.3); }
+    @keyframes popIn { from{transform:scale(.3);opacity:0;} to{transform:scale(1);opacity:1;} }
+    .success-title { font-size:22px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
+    .success-sub { font-size:14px; color:#6B6980; line-height:1.5; margin-bottom:24px; }
+    .policy-card { background:#F7F7FA; border:1px solid #ECECF1; border-radius:14px; padding:14px; width:100%; text-align:left; margin-bottom:24px; }
+    .policy-row { display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px solid #ECECF1; }
+    .policy-row:last-child { border-bottom:none; }
+    .policy-label { color:#6B6980; }
+    .policy-value { font-weight:600; color:#0A0A0A; }
+    .done-btn { background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; font-size:15px; font-weight:700; padding:14px 32px; border-radius:14px; border:none; cursor:pointer; text-decoration:none; display:inline-block; }
+
+    .theme-switcher { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0A0A0A; border-radius:100px; padding:6px 8px; display:flex; gap:4px; z-index:999; }
+    .theme-btn { padding:6px 14px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:transparent; color:#9E9CB0; font-family:'Geist',sans-serif; }
+    .theme-btn.active { background:var(--lego-color-surface-brand-primary-rest); color:#FFFFFF; }
+  </style>
+</head>
+<body>
+
+<nav class="proto-nav">
+  <a href="notifications.html">🔔 Notify</a>
+  <a href="price-discovery.html">💰 Price</a>
+  <a href="challan-flow.html">🏷️ Challans</a>
+  <a href="insurance-renewal.html" class="active">🛡️ Insurance</a>
+  <a href="deal-closure.html">🤝 Deal</a>
+  <a href="car-handover.html">🚗 Handover</a>
+  <a href="ownership-ready.html">✅ Ready</a>
+</nav>
+
+<div class="phone-wrap">
+<div class="phone" id="app" data-theme="cars24">
+
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div style="display:flex;gap:6px;"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div>
+  </div>
+
+  <!-- STEP 1: EXPIRED WARNING -->
+  <div class="step-screen active" id="step1">
+    <div class="warning-header">
+      <div class="warning-header-top">
+        <button id="step1Back" style="width:32px;height:32px;background:rgba(255,255,255,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;cursor:pointer;">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 13L7 9L11 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div><div class="warning-title">Insurance Expired!</div><div class="warning-sub">Your car insurance has lapsed. Renew now for a smooth deemed ownership transfer.</div></div>
+      </div>
+      <div class="insure24-badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.8 5.6L14 6L10.8 9L11.8 13.2L8 11L4.2 13.2L5.2 9L2 6L6.2 5.6L8 1.5Z" fill="white"/></svg><span class="insure24-badge-text">Powered by Insure24</span></div>
+    </div>
+    <div class="warning-body">
+      <div class="car-info-card">
+        <div class="car-info-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 16L7 10L9 8H19L21 10L23 16V20H5V16Z" fill="#FBC4A8"/><path d="M5 16L7 10L9 8H19L21 10L23 16" stroke="#C2410C" stroke-width="1.5" stroke-linejoin="round"/><rect x="7" y="17" width="4" height="3" rx="1.5" fill="#C2410C"/><rect x="17" y="17" width="4" height="3" rx="1.5" fill="#C2410C"/></svg></div>
+        <div style="flex:1;">
+          <div class="car-info-name">2023 Hyundai Creta</div>
+          <div class="car-info-sub">1.5L Petrol · 1497 cc · RJ 45 CP 6052</div>
+          <div style="margin-top:4px;"><span class="expired-tag">Expired: 12 Mar 2025</span></div>
+        </div>
+      </div>
+      <div class="why-needed">
+        <div class="why-needed-title">⚠️ Why insurance is required</div>
+        <div class="why-item">• Mandatory for deemed ownership RC transfer</div>
+        <div class="why-item">• Motor Vehicles Act requires valid insurance at all times</div>
+        <div class="why-item">• Insured cars fetch 5–8% better resale price</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #ECECF1;border-radius:12px;padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#0A0A0A;margin-bottom:8px;">Quick summary</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F3F3F7;"><span style="color:#6B6980;">Vehicle</span><span style="font-weight:600;color:#0A0A0A;">2023 Hyundai Creta 1.5L</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F3F3F7;"><span style="color:#6B6980;">Engine CC</span><span style="font-weight:600;color:#0A0A0A;">1497 cc</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;"><span style="color:#6B6980;">Last policy expired</span><span style="font-weight:600;color:#C2410C;">12 Mar 2025</span></div>
+      </div>
+      <button class="cta-renew" onclick="goToStep(2)">Renew via Insure24 →</button>
+      <button class="cta-later" onclick="openLater()">⚠️ No, I’ll risk it &amp; insure myself later</button>
+    </div>
+
+    <!-- LATER WARNING MODAL -->
+    <div class="later-modal" id="laterModal">
+      <div class="later-card">
+        <div class="later-emoji">😬</div>
+        <div class="later-title">Are you sure you want to skip?</div>
+        <div class="later-text">Skipping insurance now can hold up your entire sale.</div>
+        <div class="later-risk">
+          <div class="later-risk-item">⛔ RC transfer can get blocked at the RTO</div>
+          <div class="later-risk-item">📉 Dealers bid 5–8% lower on uninsured cars</div>
+          <div class="later-risk-item">⏳ Your payout could be delayed by days</div>
+        </div>
+        <button class="later-btn-primary" onclick="closeLater(); goToStep(2)">Okay, renew now</button>
+        <button class="later-btn-ghost" id="laterProceed">Skip anyway &amp; go back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: QUOTE -->
+  <div class="step-screen" id="step2">
+    <div class="quote-header">
+      <div class="quote-header-row">
+        <button onclick="goToStep(1)" style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 13L7 9L11 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div><div class="quote-title">Choose Your Plan</div><div class="quote-sub">Quotes tailored for your 1497cc Creta</div></div>
+      </div>
+      <div class="insure24-badge" style="margin-top:0;"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L8.9 4L12.5 4.5L10 7L10.6 10.5L7 8.8L3.4 10.5L4 7L1.5 4.5L5.1 4L7 1Z" fill="white"/></svg><span class="insure24-badge-text">Insure24 — Best price guaranteed</span></div>
+    </div>
+    <div class="quote-body">
+      <div class="plan-card" style="margin-top:16px;">
+        <div class="plan-recommended">Recommended</div>
+        <div class="plan-name">Comprehensive</div>
+        <div class="plan-desc">Own damage + third party + personal accident</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Own damage cover (accident, theft, fire)</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Third party liability ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Personal accident cover ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Zero depreciation add-on available</div>
+        <div class="plan-price-row"><div><div class="plan-price">₹8,490</div><div class="plan-price-per">per year</div></div><button class="select-plan-btn" onclick="selectPlan('Comprehensive','₹8,490','₹7,200','₹1,290')">Select Plan</button></div>
+      </div>
+      <div class="plan-card secondary">
+        <div class="plan-name">Third Party Only</div>
+        <div class="plan-desc">Basic legal coverage as per Motor Vehicles Act</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Third party liability ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Personal accident ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#F0F0F4"/><path d="M4.5 9.5L9.5 4.5M4.5 4.5L9.5 9.5" stroke="#9E9CB0" stroke-width="1.2" stroke-linecap="round"/></svg><span style="color:#9E9CB0;">No own damage cover</span></div>
+        <div class="plan-price-row"><div><div class="plan-price" style="color:#0A0A0A;">₹3,290</div><div class="plan-price-per">per year</div></div><button class="select-plan-btn secondary" onclick="selectPlan('Third Party','₹3,290','₹2,790','₹500')">Select</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: PAYMENT -->
+  <div class="step-screen" id="step3">
+    <div class="payment-header">
+      <button onclick="goToStep(2)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div><div style="font-size:16px;font-weight:700;color:#0A0A0A;">Complete Payment</div><div style="font-size:12px;color:#6B6980;" id="selectedPlanLabel">Comprehensive · ₹8,490/year</div></div>
+    </div>
+    <div class="payment-body">
+      <div class="order-summary">
+        <div style="font-size:14px;font-weight:700;color:#0A0A0A;margin-bottom:8px;">Order Summary</div>
+        <div class="order-row"><span class="order-label">Plan</span><span class="order-value" id="orderPlanName">Comprehensive</span></div>
+        <div class="order-row"><span class="order-label">Vehicle</span><span class="order-value">2023 Hyundai Creta</span></div>
+        <div class="order-row"><span class="order-label">Policy period</span><span class="order-value">1 year</span></div>
+        <div class="order-row"><span class="order-label">Base premium</span><span class="order-value" id="basePremium">₹7,200</span></div>
+        <div class="order-row"><span class="order-label">GST (18%)</span><span class="order-value" id="gstAmount">₹1,290</span></div>
+        <div class="order-row" style="padding-top:8px;"><span class="order-total-label">Total payable</span><span class="order-total-value" id="totalAmount">₹8,490</span></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="pm-title">Payment Method</div>
+        <div class="pm-option selected" onclick="selectPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
+        <div class="pm-option" onclick="selectPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit/Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div>
+        <div class="pm-option" onclick="selectPM(this)"><div class="pm-icon">🏦</div><div><div class="pm-name">Net Banking</div><div class="pm-sub">All major banks</div></div><div class="pm-radio"></div></div>
+      </div>
+      <button class="pay-btn" onclick="goToStep(4)">Pay <span id="payBtnAmount">₹8,490</span> Securely →</button>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5V4a3 3 0 016 0v1" stroke="#9E9CB0" stroke-width="1.2"/><rect x="2.2" y="5" width="7.6" height="5.5" rx="1.3" stroke="#9E9CB0" stroke-width="1.2"/></svg><span style="font-size:11px;color:#9E9CB0;">256-bit SSL · Insure24 is IRDAI registered</span></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: SUCCESS -->
+  <div class="step-screen" id="step4">
+    <div class="success-screen">
+      <div class="success-anim"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Insurance Renewed! 🎉</div>
+      <div class="success-sub">Your vehicle is now insured. The Deemed Ownership checklist updated automatically.</div>
+      <div class="policy-card">
+        <div class="policy-row"><span class="policy-label">Policy number</span><span class="policy-value">INS24-2025-CR-78421</span></div>
+        <div class="policy-row"><span class="policy-label">Plan</span><span class="policy-value" id="successPlanName">Comprehensive</span></div>
+        <div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">28 May 2026</span></div>
+        <div class="policy-row"><span class="policy-label">Insurer</span><span class="policy-value">HDFC ERGO via Insure24</span></div>
+        <div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value" id="successAmount">₹8,490</span></div>
+      </div>
+      <a href="#" id="successBack" class="done-btn">Back to checklist</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="theme-switcher">
+  <button class="theme-btn active" onclick="setTheme('cars24',this)">Cars24</button>
+  <button class="theme-btn" onclick="setTheme('carsinfo',this)">CarsInfo</button>
+  <button class="theme-btn" onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+</div>
+
+<script src="do-state.js"></script>
+<script>
+  const RETURN = DOState.returnPage('price-discovery.html');
+  document.getElementById('step1Back').onclick = () => location.assign(RETURN);
+  document.getElementById('laterProceed').onclick = () => location.assign(RETURN);
+  document.getElementById('successBack').setAttribute('href', RETURN);
+
+  function goToStep(n) {
+    if (n === 4) DOState.setInsuranceDone();
+    document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+  }
+  function selectPlan(plan, amount, base, gst) {
+    document.getElementById('selectedPlanLabel').textContent = plan + ' · ' + amount + '/year';
+    document.getElementById('orderPlanName').textContent = plan;
+    document.getElementById('successPlanName').textContent = plan;
+    document.getElementById('successAmount').textContent = amount;
+    document.getElementById('payBtnAmount').textContent = amount;
+    document.getElementById('totalAmount').textContent = amount;
+    document.getElementById('basePremium').textContent = base;
+    document.getElementById('gstAmount').textContent = gst;
+    goToStep(3);
+  }
+  function selectPM(el) {
+    document.querySelectorAll('.pm-option').forEach(o => { o.classList.remove('selected'); o.querySelector('.pm-radio').innerHTML=''; });
+    el.classList.add('selected');
+    el.querySelector('.pm-radio').innerHTML = '<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg>';
+  }
+  function openLater() { document.getElementById('laterModal').classList.add('show'); }
+  function closeLater() { document.getElementById('laterModal').classList.remove('show'); }
+  function setTheme(theme, btn) {
+    document.getElementById('app').setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

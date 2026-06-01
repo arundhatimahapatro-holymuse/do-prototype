@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars24 — Deal Closure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-text-primary-rest:   #0A0A0A;
+      --lego-color-text-secondary-rest: #6B6980;
+      --lego-color-surface-subtle-rest: #F7F7FA;
+      --lego-color-surface-light-rest:  #FFFFFF;
+      --lego-color-border-tertiary-rest: #ECECF1;
+    }
+    [data-theme="cars24"]      { --lego-font:'Geist',sans-serif;   --lego-color-surface-brand-primary-rest:#4736FE; --lego-color-surface-brand-subtle-rest:#F4F3FF; --lego-color-text-brand-primary-rest:#4736FE; }
+    [data-theme="carsinfo"]    { --lego-font:'Manrope',sans-serif; --lego-color-surface-brand-primary-rest:#13C2C2; --lego-color-surface-brand-subtle-rest:#D3FCFB; --lego-color-text-brand-primary-rest:#13C2C2; }
+    [data-theme="vehicleinfo"] { --lego-font:'Geist',sans-serif;   --lego-color-surface-brand-primary-rest:#456DFF; --lego-color-surface-brand-subtle-rest:#EEF1FF; --lego-color-text-brand-primary-rest:#456DFF; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #E9E9EE; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px 80px; font-family: var(--lego-font); }
+
+    .proto-nav { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #0A0A0A; border-radius: 100px; padding: 6px 8px; display: flex; gap: 2px; z-index: 1000; white-space: nowrap; }
+    .proto-nav a { color: #9E9CB0; font-size: 10.5px; font-weight: 500; text-decoration: none; padding: 4px 9px; border-radius: 100px; transition: all 0.15s; font-family: 'Geist', sans-serif; }
+    .proto-nav a.active, .proto-nav a:hover { background: #4736FE; color: #fff; }
+
+    .phone-wrap { margin-top: 52px; }
+    .phone { width: 390px; height: 844px; background: var(--lego-color-surface-subtle-rest); border-radius: 44px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(10,10,10,0.22), 0 0 0 1px rgba(10,10,10,0.06); font-family: var(--lego-font); }
+
+    .status-bar { background: #DDE9F6; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+    .status-bar-time { font-size: 15px; font-weight: 700; color: #0A0A0A; }
+
+    .sell-header { background: #DDE9F6; padding: 12px 16px 16px; flex-shrink: 0; }
+    .sell-header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .back-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; text-decoration: none; }
+    .car-title-block { flex: 1; }
+    .car-year-make { font-size: 13px; font-weight: 500; color: #6B6980; }
+    .car-name { font-size: 17px; font-weight: 700; color: #0A0A0A; letter-spacing: -0.3px; }
+    .appointment-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .appt-id { font-size: 12px; color: #6B6980; }
+    .headset-btn { width: 36px; height: 36px; background: #FFFFFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    .stepper { background: #FFFFFF; padding: 14px 16px; display: flex; align-items: center; flex-shrink: 0; border-bottom: 1px solid #ECECF1; }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+    .step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; z-index: 1; }
+    .step.done .step-dot { background: #63FFB1; }
+    .step.active .step-dot { background: #4736FE; }
+    .step.todo .step-dot { background: #ECECF1; color: #9E9CB0; }
+    .step-label { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
+    .step.done .step-label { color: #04553A; }
+    .step.active .step-label { color: #4736FE; }
+    .step.todo .step-label { color: #9E9CB0; }
+    .step-connector { height: 2px; flex: 0.8; margin-top: -16px; z-index: 0; }
+    .step-connector.done { background: #63FFB1; }
+    .step-connector.active { background: linear-gradient(to right, #63FFB1, #4736FE); }
+    .step-connector.todo { background: #ECECF1; }
+
+    .scroll-area { flex: 1; overflow-y: auto; padding: 0 0 16px; scrollbar-width: none; scroll-behavior: smooth; }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    .card { background: #FFFFFF; margin: 10px 12px 0; border-radius: 18px; border: 1px solid #ECECF1; overflow: hidden; }
+    .card-header { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #F3F3F7; }
+    .card-title { font-size: 14px; font-weight: 700; color: #0A0A0A; }
+    .card-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+    .badge-accepted { background: #DEFFEE; color: #04553A; }
+
+    /* WINNING OFFER */
+    .offer-body { padding: 16px; }
+    .offer-amount-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .offer-amount { font-size: 30px; font-weight: 800; color: #0A0A0A; letter-spacing: -0.5px; }
+    .offer-up { font-size: 12px; font-weight: 700; color: #04553A; background: #DEFFEE; padding: 2px 7px; border-radius: 100px; }
+    .offer-sub { font-size: 12px; color: #6B6980; margin-bottom: 14px; }
+    .offer-dealer { display: flex; align-items: center; gap: 10px; background: var(--lego-color-surface-brand-subtle-rest); border-radius: 12px; padding: 10px 12px; }
+    .dealer-logo { width: 38px; height: 38px; border-radius: 10px; background: #4736FE; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+    .dealer-name { font-size: 13px; font-weight: 700; color: #0A0A0A; }
+    .dealer-meta { font-size: 11px; color: #6B6980; }
+
+    /* PAYMENT BREAKDOWN */
+    .pay-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed #ECECF1; font-size: 13px; }
+    .pay-row:last-child { border-bottom: none; }
+    .pay-label { color: #6B6980; }
+    .pay-val { font-weight: 700; color: #0A0A0A; }
+    .pay-total { background: var(--lego-color-surface-brand-subtle-rest); margin: 8px -16px -14px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .pay-total-label { font-size: 13px; font-weight: 700; color: #0A0A0A; }
+    .pay-total-val { font-size: 18px; font-weight: 800; color: var(--lego-color-text-brand-primary-rest); }
+
+    /* INFO BANNER reminding DO before payout */
+    .do-reminder { background: #FFF6EE; border: 1px solid #FFD9B8; border-radius: 14px; margin: 10px 12px 0; padding: 12px 14px; display: flex; gap: 10px; }
+    .do-reminder .dr-ic { font-size: 18px; flex-shrink: 0; }
+    .do-reminder .dr-txt { font-size: 12px; color: #8A4B12; line-height: 1.45; }
+    .do-reminder .dr-txt b { color: #C2410C; }
+
+    .cta-bar { padding: 12px 16px; background: #FFFFFF; border-top: 1px solid #ECECF1; flex-shrink: 0; }
+    .cta-btn { width: 100%; background: var(--lego-color-surface-brand-primary-rest); color: #fff; border: none; font-size: 16px; font-weight: 800; padding: 15px 0; border-radius: 14px; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+    .theme-switcher { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #0A0A0A; border-radius: 100px; padding: 6px 8px; display: flex; gap: 4px; z-index: 999; }
+    .theme-btn { padding: 6px 14px; border-radius: 100px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: #9E9CB0; font-family: 'Geist', sans-serif; transition: all 0.2s; }
+    .theme-btn.active { background: var(--lego-color-surface-brand-primary-rest); color: #FFFFFF; }
+  </style>
+</head>
+<body>
+
+<nav class="proto-nav">
+  <a href="notifications.html">🔔 Notify</a>
+  <a href="price-discovery.html">💰 Price</a>
+  <a href="challan-flow.html">🏷️ Challans</a>
+  <a href="insurance-renewal.html">🛡️ Insurance</a>
+  <a href="deal-closure.html" class="active">🤝 Deal</a>
+  <a href="car-handover.html">🚗 Handover</a>
+  <a href="ownership-ready.html">✅ Ready</a>
+</nav>
+
+<div class="phone-wrap">
+<div class="phone" id="app" data-theme="cars24">
+
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg>
+    </div>
+  </div>
+
+  <div class="sell-header">
+    <div class="sell-header-top">
+      <a href="price-discovery.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="car-title-block">
+        <div class="car-year-make">Deal closure</div>
+        <div class="car-name">2023 HYUNDAI CRETA</div>
+      </div>
+      <div class="headset-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/></svg>
+      </div>
+    </div>
+    <div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div>
+  </div>
+
+  <div class="stepper">
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector done"></div>
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector active"></div>
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">4</div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- WINNING OFFER -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎉 Winning offer accepted</span>
+        <span class="card-badge badge-accepted">● Accepted</span>
+      </div>
+      <div class="offer-body">
+        <div class="offer-amount-row">
+          <span class="offer-amount">₹8,32,000</span>
+          <span class="offer-up">▲ ₹32K above estimate</span>
+        </div>
+        <div class="offer-sub">Highest bid from 18 dealers · locked for 24 hours</div>
+        <div class="offer-dealer">
+          <div class="dealer-logo">SM</div>
+          <div style="flex:1;">
+            <div class="dealer-name">Sai Motors, Jaipur</div>
+            <div class="dealer-meta">★ 4.7 · 2,300+ cars purchased</div>
+          </div>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" fill="#63FFB1"/><path d="M7 11L10 14L15 8" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT BREAKDOWN -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">Payout breakdown</span></div>
+      <div style="padding:4px 16px 14px;">
+        <div class="pay-row"><span class="pay-label">Accepted bid</span><span class="pay-val">₹8,32,000</span></div>
+        <div class="pay-row"><span class="pay-label">Cars24 service fee</span><span class="pay-val">– ₹0</span></div>
+        <div class="pay-row"><span class="pay-label">RC transfer charges</span><span class="pay-val">Included</span></div>
+        <div class="pay-total"><span class="pay-total-label">You receive</span><span class="pay-total-val">₹8,32,000</span></div>
+      </div>
+    </div>
+
+    <!-- DO REMINDER -->
+    <div class="do-reminder">
+      <span class="dr-ic">⚠️</span>
+      <div class="dr-txt">Your payout releases only after <b>all deemed ownership checks pass</b>. Clear any pending items below to avoid holdbacks.</div>
+    </div>
+
+    <!-- DEEMED OWNERSHIP CHECKLIST (collapsible, back CTA returns here) -->
+    <div id="doChecklist"></div>
+
+    <div style="height:8px;"></div>
+  </div>
+
+  <div class="cta-bar">
+    <a href="car-handover.html" class="cta-btn">
+      Schedule car handover →
+    </a>
+  </div>
+
+</div>
+</div>
+
+<div class="theme-switcher">
+  <button class="theme-btn active" onclick="setTheme('cars24',this)">Cars24</button>
+  <button class="theme-btn" onclick="setTheme('carsinfo',this)">CarsInfo</button>
+  <button class="theme-btn" onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+</div>
+
+<script src="do-state.js"></script>
+<script>
+  function setTheme(theme, btn) {
+    const app = document.getElementById('app');
+    app.setAttribute('data-theme', theme);
+    app.style.fontFamily = getComputedStyle(app).getPropertyValue('--lego-font').trim();
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  DOState.renderChecklistCard('doChecklist', 'deal-closure.html', true);
+</script>
+</body>
+</html>

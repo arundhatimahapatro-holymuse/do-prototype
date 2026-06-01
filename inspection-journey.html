@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cars24 — Selling Journey Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --lego-font:'Geist',system-ui,-apple-system,sans-serif;
+  --do-primary:#4736FE; --do-comp:#63FFB1; --do-comp-ink:#04553A; --do-black:#0A0A0A; --do-white:#FFFFFF;
+  --lego-color-surface-brand-primary-rest:#4736FE; --lego-color-surface-brand-subtle-rest:#F4F3FF; --lego-color-text-brand-primary-rest:#4736FE;
+}
+[data-theme="cars24"]{ --lego-font:'Geist',sans-serif; --primary:#4736FE; --do-primary:#4736FE; --lego-color-surface-brand-primary-rest:#4736FE; --lego-color-surface-brand-subtle-rest:#F4F3FF; --lego-color-text-brand-primary-rest:#4736FE; }
+[data-theme="carsinfo"]{ --lego-font:'Manrope',sans-serif; --primary:#13C2C2; --do-primary:#13C2C2; --lego-color-surface-brand-primary-rest:#13C2C2; --lego-color-surface-brand-subtle-rest:#D3FCFB; --lego-color-text-brand-primary-rest:#13C2C2; }
+[data-theme="vehicleinfo"]{ --lego-font:'Geist',sans-serif; --primary:#456DFF; --do-primary:#456DFF; --lego-color-surface-brand-primary-rest:#456DFF; --lego-color-surface-brand-subtle-rest:#EEF1FF; --lego-color-text-brand-primary-rest:#456DFF; }
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px 16px 80px; font-family:var(--lego-font); }
+
+.phone-wrap{ margin-top:8px; }
+.phone{ width:390px; height:844px; background:#F7F7FB; border-radius:44px; overflow:hidden; position:relative; display:flex; flex-direction:column; box-shadow:0 24px 80px rgba(10,10,10,0.22),0 0 0 1px rgba(10,10,10,0.06); font-family:var(--lego-font); }
+
+/* SCREEN ROUTER */
+.screen{ display:none; flex-direction:column; flex:1; min-height:0; overflow:hidden; position:absolute; inset:0; }
+.screen.active{ display:flex; }
+
+.status-bar{ height:48px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 24px; }
+.status-bar.blue{ background:#DDE9F6; } .status-bar.white{ background:#FFFFFF; border-bottom:1px solid #F3F3F7; }
+.status-bar-time{ font-size:15px; font-weight:700; color:#0A0A0A; }
+.sb-ic{ display:flex; align-items:center; gap:6px; }
+
+/* ── FLOW SELECT ── */
+.fs-wrap{ flex:1; display:flex; flex-direction:column; background:linear-gradient(180deg,#1A1F2E 0%,#0A0A0A 60%,#161427 100%); padding:0 22px; color:#fff; overflow-y:auto; scrollbar-width:none; }
+.fs-wrap::-webkit-scrollbar{ display:none; }
+.fs-logo{ display:flex; align-items:center; gap:8px; margin-top:40px; }
+.fs-logo-badge{ width:34px; height:34px; border-radius:9px; background:#4736FE; display:flex; align-items:center; justify-content:center; font-size:17px; }
+.fs-logo-text{ font-size:15px; font-weight:800; letter-spacing:.5px; }
+.fs-h1{ font-size:27px; font-weight:800; line-height:1.2; margin-top:34px; letter-spacing:-.5px; }
+.fs-sub{ font-size:14px; color:rgba(255,255,255,.62); line-height:1.5; margin-top:10px; }
+.fs-pick-label{ font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.45); margin:30px 0 12px; }
+.fs-btn{ display:flex; align-items:center; gap:14px; width:100%; text-align:left; padding:16px; border-radius:16px; border:none; cursor:pointer; font-family:var(--lego-font); margin-bottom:12px; transition:transform .12s; }
+.fs-btn:active{ transform:scale(.98); }
+.fs-btn .fb-ic{ width:46px; height:46px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; }
+.fs-btn .fb-name{ font-size:16px; font-weight:800; }
+.fs-btn .fb-desc{ font-size:12px; margin-top:3px; opacity:.78; line-height:1.35; }
+.fs-btn .fb-arrow{ margin-left:auto; flex-shrink:0; }
+.fs-btn.happy{ background:#63FFB1; color:#04553A; } .fs-btn.happy .fb-ic{ background:rgba(4,85,58,.13); }
+.fs-btn.pending{ background:#FF7A33; color:#fff; } .fs-btn.pending .fb-ic{ background:rgba(255,255,255,.2); }
+.fs-note{ font-size:11.5px; color:rgba(255,255,255,.4); text-align:center; margin-top:14px; line-height:1.5; }
+
+/* ── LOCK SCREEN ── */
+.lock{ flex:1; background:linear-gradient(180deg,#1A1F2E 0%,#0A0A0A 55%,#161427 100%); display:flex; flex-direction:column; align-items:center; position:relative; }
+.lock-status{ width:100%; display:flex; align-items:center; justify-content:space-between; padding:16px 24px 0; }
+.lock-time-block{ text-align:center; width:100%; margin:26px 0 18px; }
+.lock-time{ font-size:64px; font-weight:800; color:#fff; letter-spacing:-2px; line-height:1; }
+.lock-date{ font-size:16px; color:rgba(255,255,255,.7); margin-top:6px; font-weight:500; }
+.push-notif{ width:calc(100% - 32px); margin:0 16px; background:rgba(255,255,255,.15); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.2); border-radius:16px; padding:12px 14px; cursor:pointer; animation:slideDown .5s ease .2s both; transition:transform .25s,opacity .25s; }
+.push-notif.dismissing{ transform:translateX(110%); opacity:0; }
+.push-notif:active{ transform:scale(.98); opacity:.9; }
+@keyframes slideDown{ from{ transform:translateY(-20px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+.pn-head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.pn-icon{ width:22px; height:22px; border-radius:5px; background:#4736FE; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
+.pn-app{ font-size:12px; font-weight:600; color:rgba(255,255,255,.8); }
+.pn-time{ font-size:11px; color:rgba(255,255,255,.5); margin-left:auto; }
+.pn-title{ font-size:14px; font-weight:700; color:#fff; margin-bottom:2px; }
+.pn-body{ font-size:12px; color:rgba(255,255,255,.78); line-height:1.4; }
+.pn-actions{ display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.15); }
+.pn-action{ flex:1; padding:7px 0; text-align:center; font-size:13px; font-weight:600; color:rgba(255,255,255,.9); border-radius:8px; background:rgba(255,255,255,.1); cursor:pointer; border:none; font-family:var(--lego-font); }
+.pn-action.primary{ background:#4736FE; color:#fff; }
+.lock-empty{ width:calc(100% - 32px); margin:0 16px; text-align:center; color:rgba(255,255,255,.45); font-size:13px; padding:18px 0; display:none; }
+.unlock-hint{ margin-top:18px; font-size:13px; color:rgba(255,255,255,.4); text-align:center; }
+.swipe-bar{ position:absolute; bottom:30px; width:130px; height:5px; background:rgba(255,255,255,.4); border-radius:100px; }
+
+/* ── SHARED: sell header / stepper ── */
+.sell-header{ background:#DDE9F6; padding:12px 16px 16px; flex-shrink:0; }
+.sell-header-top{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+.back-btn{ width:32px; height:32px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:transparent; border:none; cursor:pointer; }
+.car-title-block{ flex:1; }
+.car-year-make{ font-size:13px; font-weight:500; color:#6B6980; }
+.car-name{ font-size:17px; font-weight:700; color:#0A0A0A; letter-spacing:-.3px; }
+.appointment-row{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+.appt-id{ font-size:12px; color:#6B6980; }
+.headset-btn{ width:36px; height:36px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.stepper{ background:#fff; padding:14px 16px; display:flex; align-items:center; flex-shrink:0; border-bottom:1px solid #ECECF1; }
+.step{ display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
+.step-dot{ width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; z-index:1; }
+.step.done .step-dot{ background:#63FFB1; } .step.active .step-dot{ background:#4736FE; } .step.todo .step-dot{ background:#ECECF1; color:#9E9CB0; }
+.step-label{ font-size:9px; font-weight:600; text-align:center; line-height:1.2; }
+.step.done .step-label{ color:#04553A; } .step.active .step-label{ color:#4736FE; } .step.todo .step-label{ color:#9E9CB0; }
+.step-connector{ height:2px; flex:.8; margin-top:-16px; z-index:0; }
+.step-connector.done{ background:#63FFB1; } .step-connector.active{ background:linear-gradient(to right,#63FFB1,#4736FE); } .step-connector.todo{ background:#ECECF1; }
+
+.scroll-area{ flex:1; overflow-y:auto; padding:0 0 16px; scrollbar-width:none; scroll-behavior:smooth; }
+.scroll-area::-webkit-scrollbar{ display:none; }
+
+/* ── SCARE BANNER ── */
+.scare-banner{ background:linear-gradient(135deg,#FF7A33 0%,#E8530A 100%); margin:12px 12px 0; border-radius:14px; padding:14px; display:flex; align-items:center; gap:12px; cursor:pointer; position:relative; box-shadow:0 6px 18px rgba(232,83,10,.28); animation:pulseShadow 2.2s ease-in-out infinite; }
+@keyframes pulseShadow{ 0%,100%{ box-shadow:0 6px 18px rgba(232,83,10,.28); } 50%{ box-shadow:0 6px 26px rgba(232,83,10,.5); } }
+.scare-icon{ width:40px; height:40px; background:rgba(255,255,255,.22); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.scare-body{ flex:1; }
+.scare-title{ font-size:14px; font-weight:800; color:#fff; }
+.scare-sub{ font-size:11.5px; color:rgba(255,255,255,.9); margin-top:2px; line-height:1.35; }
+.scare-cta{ background:#fff; color:#E8530A; font-size:12px; font-weight:800; padding:8px 14px; border-radius:100px; border:none; flex-shrink:0; display:flex; align-items:center; gap:4px; cursor:pointer; }
+
+.card{ background:#fff; margin:10px 12px 0; border-radius:18px; border:1px solid #ECECF1; overflow:hidden; }
+.card-header{ padding:14px 16px 10px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #F3F3F7; }
+.card-title{ font-size:14px; font-weight:700; color:#0A0A0A; }
+.card-badge{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:100px; }
+.badge-live{ background:#DEFFEE; color:#04553A; } .badge-accepted{ background:#DEFFEE; color:#04553A; } .badge-sched{ background:#F4F3FF; color:#4736FE; }
+.auction-body{ padding:14px 16px; }
+.auction-meta{ display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.auction-stat{ display:flex; align-items:center; gap:4px; font-size:12px; color:#6B6980; }
+.map-placeholder{ background:#F2F2F6; border-radius:12px; height:100px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; position:relative; overflow:hidden; }
+.price-range{ background:var(--lego-color-surface-brand-subtle-rest); border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; }
+.price-label{ font-size:11px; color:#6B6980; margin-bottom:2px; }
+.price-value{ font-size:20px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); }
+.health-body{ padding:12px 16px; }
+.health-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.health-stat{ background:#F7F7FA; border:1px solid #ECECF1; border-radius:10px; padding:8px 10px; flex:1; min-width:70px; }
+.health-stat-label{ font-size:10px; color:#9E9CB0; margin-bottom:2px; }
+.health-stat-value{ font-size:13px; font-weight:700; color:#0A0A0A; }
+.star-row{ display:flex; align-items:center; gap:2px; margin-bottom:10px; }
+.star{ font-size:14px; } .star-value{ font-size:14px; font-weight:700; color:#0A0A0A; margin-left:4px; }
+.consultant-body{ padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.consultant-avatar{ width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#4736FE,#63FFB1); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:#fff; flex-shrink:0; }
+.consultant-name{ font-size:14px; font-weight:700; color:#0A0A0A; }
+.consultant-role{ font-size:12px; color:#6B6980; }
+.consultant-time{ font-size:11px; color:#04553A; margin-top:2px; }
+.call-btn{ width:36px; height:36px; background:var(--lego-color-surface-brand-primary-rest); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+/* ── CHECKLIST CARD ── */
+.do-card{ background:#fff; margin:10px 12px 0; border-radius:18px; border:1px solid #ECECF1; overflow:hidden; box-shadow:0 1px 2px rgba(10,10,10,.04); }
+.do-card-head{ padding:14px 16px 10px; }
+.do-title-row{ display:flex; align-items:center; gap:7px; }
+.do-title{ font-size:14px; font-weight:700; color:#0A0A0A; }
+.do-info-btn{ width:18px; height:18px; border-radius:50%; border:1.5px solid #C7C5D6; background:transparent; color:#6B6980; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; flex-shrink:0; padding:0; font-family:Georgia,serif; font-style:italic; }
+.do-info-btn:hover{ border-color:var(--do-primary); color:var(--do-primary); }
+.do-subline{ font-size:11px; color:#6B6980; margin-top:3px; line-height:1.35; }
+.do-subline.good{ color:var(--do-comp-ink); font-weight:600; }
+.do-body{ padding:4px 16px 14px; }
+.do-progress{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.do-track{ flex:1; height:6px; background:#EDEDF2; border-radius:100px; overflow:hidden; }
+.do-fill{ height:100%; background:linear-gradient(90deg,var(--do-primary),var(--do-comp)); border-radius:100px; transition:width .5s ease; }
+.do-plabel{ font-size:12px; font-weight:700; color:var(--do-comp-ink); white-space:nowrap; }
+.do-items{ position:relative; transition:max-height .35s ease; overflow:hidden; }
+.do-items.collapsed{ max-height:168px; }
+.do-item{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #F3F3F7; }
+.do-item:last-child{ border-bottom:none; }
+.do-ic{ width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.do-ic.pass{ background:var(--do-comp); } .do-ic.pend{ background:#fff; border:1.5px dashed #C7C5D6; }
+.do-itxt{ flex:1; min-width:0; }
+.do-iname{ font-size:13px; font-weight:600; color:#0A0A0A; }
+.do-isub{ font-size:11px; color:#6B6980; margin-top:1px; }
+.do-cta{ font-size:11px; font-weight:700; padding:6px 13px; border-radius:100px; border:none; cursor:pointer; background:var(--do-primary); color:#fff; white-space:nowrap; flex-shrink:0; font-family:var(--lego-font); }
+.do-fademask{ position:absolute; left:0; right:0; bottom:0; height:64px; background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 78%); pointer-events:none; }
+.do-morewrap{ display:flex; justify-content:center; margin-top:8px; }
+.do-morebtn{ font-size:12px; font-weight:700; color:var(--do-primary); background:#F4F3FF; border:1px solid #E3E1FF; border-radius:100px; padding:8px 18px; cursor:pointer; font-family:var(--lego-font); }
+
+/* ── DEAL / HANDOVER bits ── */
+.offer-body{ padding:16px; }
+.offer-amount-row{ display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
+.offer-amount{ font-size:30px; font-weight:800; color:#0A0A0A; letter-spacing:-.5px; }
+.offer-up{ font-size:12px; font-weight:700; color:#04553A; background:#DEFFEE; padding:2px 7px; border-radius:100px; }
+.offer-sub{ font-size:12px; color:#6B6980; margin-bottom:14px; }
+.offer-dealer{ display:flex; align-items:center; gap:10px; background:var(--lego-color-surface-brand-subtle-rest); border-radius:12px; padding:10px 12px; }
+.dealer-logo{ width:38px; height:38px; border-radius:10px; background:#4736FE; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0; }
+.dealer-name{ font-size:13px; font-weight:700; color:#0A0A0A; }
+.dealer-meta{ font-size:11px; color:#6B6980; }
+.pay-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px dashed #ECECF1; font-size:13px; }
+.pay-row:last-child{ border-bottom:none; }
+.pay-label{ color:#6B6980; } .pay-val{ font-weight:700; color:#0A0A0A; }
+.pay-total{ background:var(--lego-color-surface-brand-subtle-rest); margin:8px -16px -14px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; }
+.pay-total-label{ font-size:13px; font-weight:700; color:#0A0A0A; }
+.pay-total-val{ font-size:18px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); }
+.do-reminder{ background:#FFF6EE; border:1px solid #FFD9B8; border-radius:14px; margin:10px 12px 0; padding:12px 14px; display:flex; gap:10px; }
+.do-reminder .dr-ic{ font-size:18px; flex-shrink:0; }
+.do-reminder .dr-txt{ font-size:12px; color:#8A4B12; line-height:1.45; } .do-reminder .dr-txt b{ color:#C2410C; }
+.cta-bar{ padding:12px 16px; background:#fff; border-top:1px solid #ECECF1; flex-shrink:0; }
+.cta-btn{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; border:none; font-size:16px; font-weight:800; padding:15px 0; border-radius:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-family:var(--lego-font); }
+.cta-btn.locked{ background:#D9D8E4; color:#7A788C; }
+.slot-body{ padding:14px 16px; }
+.slot-pick{ display:flex; align-items:center; gap:12px; background:var(--lego-color-surface-brand-subtle-rest); border-radius:12px; padding:12px 14px; margin-bottom:12px; }
+.slot-date{ width:48px; height:52px; background:#4736FE; color:#fff; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; }
+.slot-date .sd-day{ font-size:18px; font-weight:800; line-height:1; } .slot-date .sd-mon{ font-size:10px; font-weight:600; opacity:.85; }
+.slot-info{ flex:1; }
+.slot-when{ font-size:14px; font-weight:700; color:#0A0A0A; } .slot-where{ font-size:12px; color:#6B6980; margin-top:2px; }
+.slot-edit{ font-size:12px; font-weight:700; color:#4736FE; background:none; border:none; cursor:pointer; }
+.ho-step{ display:flex; gap:12px; padding:10px 0; }
+.ho-num{ width:24px; height:24px; border-radius:50%; background:#F4F3FF; color:#4736FE; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ho-txt{ font-size:12px; color:#6B6980; line-height:1.45; } .ho-txt b{ color:#0A0A0A; }
+.ho-promise{ background:#EFFCF5; border:1px solid #A9F5CF; border-radius:14px; margin:10px 12px 0; padding:12px 14px; display:flex; gap:10px; }
+.ho-promise .hp-ic{ font-size:18px; flex-shrink:0; } .ho-promise .hp-txt{ font-size:12px; color:#04553A; line-height:1.45; } .ho-promise .hp-txt b{ font-weight:800; }
+
+/* ── EXPLAINER MODAL ── */
+.do-modal{ position:absolute; inset:0; background:rgba(10,10,10,.55); z-index:3000; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+.do-modal.show{ display:flex; }
+.do-video{ width:340px; max-width:100%; background:#0A0A0A; border-radius:22px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; }
+.do-video-stage{ height:320px; position:relative; background:radial-gradient(120% 90% at 50% 0%,#221C6B 0%,#0A0A0A 70%); overflow:hidden; }
+.do-scene{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px 26px; text-align:center; opacity:0; transform:translateY(8px) scale(.98); transition:opacity .5s ease,transform .5s ease; pointer-events:none; }
+.do-scene.active{ opacity:1; transform:none; }
+.do-scene-emoji{ font-size:50px; margin-bottom:14px; animation:doPop .6s ease; }
+@keyframes doPop{ 0%{ transform:scale(.3); opacity:0; } 60%{ transform:scale(1.15); } 100%{ transform:scale(1); opacity:1; } }
+.do-scene-title{ font-size:18px; font-weight:800; color:#fff; margin-bottom:8px; line-height:1.25; }
+.do-scene-text{ font-size:13px; color:rgba(255,255,255,.78); line-height:1.5; }
+.do-flowline{ display:flex; align-items:center; gap:8px; margin-top:8px; }
+.do-node{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:11px; font-weight:700; padding:7px 11px; border-radius:10px; }
+.do-node.mid{ background:#4736FE; border-color:#4736FE; }
+.do-arrow{ color:#63FFB1; font-size:16px; animation:doSlide 1s infinite; }
+@keyframes doSlide{ 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(3px); } }
+.do-doclist{ display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-top:14px; width:100%; }
+.do-doc{ display:flex; align-items:center; gap:6px; font-size:11px; color:#fff; background:rgba(99,255,177,.12); border:1px solid rgba(99,255,177,.3); border-radius:8px; padding:6px 8px; text-align:left; }
+.do-doc b{ color:#63FFB1; }
+.do-prog{ display:flex; gap:5px; padding:12px 16px; background:#0A0A0A; }
+.do-prog-seg{ flex:1; height:3px; border-radius:100px; background:rgba(255,255,255,.18); overflow:hidden; }
+.do-prog-seg i{ display:block; height:100%; width:0; background:#63FFB1; }
+.do-prog-seg.done i{ width:100%; } .do-prog-seg.active i{ animation:doSeg 2.6s linear forwards; }
+@keyframes doSeg{ from{ width:0; } to{ width:100%; } }
+.do-video-foot{ display:flex; align-items:center; justify-content:space-between; padding:0 16px 16px; background:#0A0A0A; }
+.do-skip{ background:none; border:none; color:rgba(255,255,255,.6); font-size:13px; font-weight:600; cursor:pointer; }
+.do-gotit{ background:#63FFB1; color:#0A0A0A; border:none; font-size:14px; font-weight:800; padding:10px 22px; border-radius:100px; cursor:pointer; }
+
+/* ── HAPPY POPUP ── */
+.do-pop{ position:absolute; inset:0; background:rgba(10,10,10,.5); z-index:2500; display:none; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+.do-pop.show{ display:flex; }
+.do-pop-card{ background:#fff; border-radius:22px; padding:24px 22px 20px; text-align:center; position:relative; width:100%; animation:doPopIn .4s cubic-bezier(.2,.8,.3,1.2); }
+@keyframes doPopIn{ from{ transform:scale(.85); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.do-pop-close{ position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%; background:#F3F3F7; border:none; cursor:pointer; font-size:15px; color:#6B6980; line-height:1; }
+.do-pop-emoji{ font-size:48px; margin-bottom:8px; }
+.do-pop-title{ font-size:19px; font-weight:800; color:#0A0A0A; margin-bottom:8px; line-height:1.25; }
+.do-pop-text{ font-size:13px; color:#6B6980; line-height:1.5; margin-bottom:18px; }
+.do-pop-btn{ background:var(--do-primary); color:#fff; border:none; font-size:15px; font-weight:700; padding:13px 0; border-radius:14px; cursor:pointer; width:100%; font-family:var(--lego-font); }
+
+/* ── CHALLAN ── */
+.page-header{ background:#fff; padding:14px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #ECECF1; flex-shrink:0; }
+.header-title-block{ flex:1; }
+.header-title{ font-size:17px; font-weight:700; color:#0A0A0A; display:flex; align-items:center; gap:6px; }
+.header-sub{ font-size:12px; color:#6B6980; margin-top:1px; }
+.verified-badge{ margin:12px 16px 0; background:#DEFFEE; border:1px solid #9DF5C8; border-radius:12px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
+.verified-badge-text{ font-size:13px; font-weight:700; color:#04553A; }
+.verified-badge-sub{ font-size:11px; color:#0B7A52; }
+.tabs{ background:#fff; display:flex; border-bottom:2px solid #ECECF1; flex-shrink:0; margin-top:12px; }
+.tab{ flex:1; padding:12px 0; text-align:center; font-size:14px; font-weight:600; color:#9E9CB0; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; }
+.tab.active{ color:var(--lego-color-text-brand-primary-rest); border-bottom-color:var(--lego-color-surface-brand-primary-rest); }
+.tab-panel{ display:none; padding:12px 16px; } .tab-panel.active{ display:block; }
+.section-title{ font-size:13px; font-weight:700; color:#6B6980; text-transform:uppercase; letter-spacing:.5px; margin:4px 0 8px; }
+.challan-card{ background:#fff; border-radius:14px; border:1px solid #ECECF1; padding:14px; margin-bottom:10px; }
+.challan-type-badge{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
+.badge-echallan{ background:#FFEFE7; color:#C2410C; } .badge-offline{ background:#FFF4E6; color:#A85A00; } .badge-settled{ background:#DEFFEE; color:#04553A; }
+.challan-number{ font-size:12px; font-weight:600; color:#0A0A0A; }
+.challan-date{ font-size:11px; color:#9E9CB0; margin-top:2px; }
+.challan-detail-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.challan-detail-label{ font-size:12px; color:#6B6980; } .challan-detail-value{ font-size:12px; font-weight:600; color:#0A0A0A; }
+.challan-divider{ height:1px; background:#F3F3F7; margin:10px 0; }
+.challan-amount-row{ display:flex; align-items:center; justify-content:space-between; }
+.challan-amount{ font-size:18px; font-weight:800; color:#0A0A0A; } .challan-amount.settled{ color:#04553A; }
+.paid-tag{ display:flex; align-items:center; gap:4px; font-size:12px; font-weight:700; color:#04553A; }
+.pay-footer{ background:#fff; border-top:1px solid #ECECF1; padding:14px 16px; flex-shrink:0; }
+.pay-footer-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.pay-total-label2{ font-size:13px; color:#6B6980; } .pay-total-value2{ font-size:20px; font-weight:800; color:#0A0A0A; }
+.pay-all-btn{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:16px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; font-family:var(--lego-font); }
+.sheet-scrim{ position:absolute; inset:0; background:rgba(10,10,10,.5); z-index:60; display:none; } .sheet-scrim.show{ display:block; }
+.sheet{ position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:24px 24px 0 0; z-index:61; transform:translateY(100%); transition:transform .35s cubic-bezier(.2,.8,.2,1); max-height:88%; display:flex; flex-direction:column; }
+.sheet.show{ transform:translateY(0); }
+.sheet-handle{ width:40px; height:4px; background:#E2E2EA; border-radius:100px; margin:10px auto 0; flex-shrink:0; }
+.sheet-head{ padding:12px 18px 10px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #F3F3F7; flex-shrink:0; }
+.sheet-title{ font-size:16px; font-weight:800; color:#0A0A0A; }
+.sheet-amt{ font-size:15px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); }
+.sheet-close{ background:#F3F3F7; border:none; width:28px; height:28px; border-radius:50%; font-size:15px; color:#6B6980; cursor:pointer; }
+.sheet-body{ padding:14px 18px 20px; overflow-y:auto; scrollbar-width:none; }
+.sheet-body::-webkit-scrollbar{ display:none; }
+.sheet-step{ display:none; } .sheet-step.active{ display:block; }
+.pm-option{ background:#fff; border:2px solid #ECECF1; border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer; }
+.pm-option.selected{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+.pm-icon{ width:38px; height:38px; border-radius:10px; background:#F4F3FF; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.pm-name{ font-size:14px; font-weight:700; color:#0A0A0A; } .pm-sub{ font-size:11px; color:#6B6980; margin-top:1px; }
+.pm-radio{ width:18px; height:18px; border-radius:50%; border:2px solid #D6D5E0; margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.pm-option.selected .pm-radio{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-primary-rest); }
+.sheet-cta{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:15px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; margin-top:6px; font-family:var(--lego-font); }
+.sheet-cta:disabled{ opacity:.5; }
+.demo-card{ background:linear-gradient(135deg,#0A0A0A 0%,#2A2566 60%,#4736FE 100%); border-radius:16px; padding:18px; color:#fff; margin-bottom:16px; position:relative; overflow:hidden; }
+.demo-card::after{ content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:rgba(99,255,177,.18); }
+.dc-chip{ width:34px; height:26px; border-radius:6px; background:linear-gradient(135deg,#FBD774,#E8B23E); margin-bottom:18px; }
+.dc-num{ font-size:18px; font-weight:700; letter-spacing:2px; }
+.dc-row{ display:flex; justify-content:space-between; margin-top:14px; }
+.dc-label{ font-size:9px; opacity:.6; text-transform:uppercase; letter-spacing:1px; } .dc-val{ font-size:12px; font-weight:600; margin-top:2px; }
+.field-label{ font-size:12px; font-weight:600; color:#6B6980; margin:10px 0 5px; }
+.field-input{ width:100%; border:1.5px solid #ECECF1; border-radius:10px; padding:11px 12px; font-size:14px; color:#0A0A0A; font-family:var(--lego-font); background:#F7F7FA; }
+.field-row{ display:flex; gap:10px; }
+.otp-box{ display:flex; gap:8px; justify-content:center; margin:18px 0; }
+.otp-digit{ width:42px; height:50px; border:1.5px solid #ECECF1; border-radius:10px; font-size:22px; font-weight:700; text-align:center; color:#0A0A0A; background:#F7F7FA; font-family:var(--lego-font); }
+.otp-digit.filled{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+.otp-hint{ text-align:center; font-size:12px; color:#6B6980; }
+.otp-bank{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; color:#6B6980; margin-bottom:6px; }
+.success-overlay{ display:none; position:absolute; inset:0; background:#fff; z-index:100; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center; }
+.success-overlay.show{ display:flex; }
+.success-icon{ width:88px; height:88px; background:#63FFB1; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; animation:popIn .5s cubic-bezier(.2,.8,.3,1.3); }
+@keyframes popIn{ from{ transform:scale(.3); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.success-title{ font-size:22px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
+.success-sub{ font-size:14px; color:#6B6980; line-height:1.5; margin-bottom:28px; }
+.back-to-pd{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:15px; font-weight:700; padding:14px 28px; border-radius:14px; border:none; cursor:pointer; font-family:var(--lego-font); }
+
+/* ── INSURANCE ── */
+.ins-step{ display:none; flex-direction:column; flex:1; overflow:hidden; } .ins-step.active{ display:flex; }
+.warning-header{ background:linear-gradient(135deg,#FF7A33 0%,#E8530A 100%); padding:18px 16px 22px; flex-shrink:0; }
+.warning-header-top{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.warning-title{ font-size:20px; font-weight:800; color:#fff; }
+.warning-sub{ font-size:13px; color:rgba(255,255,255,.85); line-height:1.4; }
+.insure24-badge{ display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); border-radius:100px; padding:4px 10px; margin-top:10px; }
+.insure24-badge-text{ font-size:12px; font-weight:700; color:#fff; }
+.warning-body{ flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; } .warning-body::-webkit-scrollbar{ display:none; }
+.car-info-card{ background:#fff; border-radius:14px; border:1px solid #ECECF1; padding:14px; margin-bottom:12px; display:flex; align-items:center; gap:12px; }
+.car-info-icon{ width:48px; height:48px; background:#FFEFE7; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.car-info-name{ font-size:15px; font-weight:700; color:#0A0A0A; } .car-info-sub{ font-size:12px; color:#6B6980; margin-top:2px; }
+.expired-tag{ font-size:11px; font-weight:700; color:#C2410C; background:#FFEFE7; padding:3px 8px; border-radius:100px; }
+.why-needed{ background:#FFF4E6; border:1px solid #FBD9A8; border-radius:12px; padding:12px 14px; margin-bottom:12px; }
+.why-needed-title{ font-size:13px; font-weight:700; color:#7A4100; margin-bottom:6px; }
+.why-item{ display:flex; align-items:flex-start; gap:6px; font-size:12px; color:#8A5000; margin-bottom:4px; line-height:1.4; }
+.cta-renew{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:16px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; font-family:var(--lego-font); }
+.cta-later{ width:100%; background:transparent; color:#9A9AA8; font-size:13px; font-weight:600; padding:12px; border-radius:14px; border:1px solid #E2E2EA; cursor:pointer; margin-top:10px; font-family:var(--lego-font); }
+.later-modal{ position:absolute; inset:0; background:rgba(10,10,10,.55); z-index:80; display:none; align-items:center; justify-content:center; padding:26px; } .later-modal.show{ display:flex; }
+.later-card{ background:#fff; border-radius:20px; padding:24px 20px 18px; text-align:center; width:100%; }
+.later-emoji{ font-size:42px; margin-bottom:6px; } .later-title{ font-size:18px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
+.later-text{ font-size:13px; color:#6B6980; line-height:1.5; margin-bottom:18px; }
+.later-risk{ background:#FFEFE7; border:1px solid #FBC4A8; border-radius:10px; padding:10px 12px; text-align:left; margin-bottom:18px; }
+.later-risk-item{ display:flex; gap:6px; font-size:12px; color:#9A3412; margin-bottom:4px; } .later-risk-item:last-child{ margin-bottom:0; }
+.later-btn-primary{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; border:none; font-size:15px; font-weight:700; padding:13px; border-radius:14px; cursor:pointer; font-family:var(--lego-font); }
+.later-btn-ghost{ width:100%; background:transparent; color:#9A3412; border:none; font-size:13px; font-weight:600; padding:11px; cursor:pointer; margin-top:6px; font-family:var(--lego-font); }
+.quote-header{ background:linear-gradient(135deg,#4736FE 0%,#2A2566 100%); padding:18px 16px 22px; flex-shrink:0; }
+.quote-header-row{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.quote-title{ font-size:18px; font-weight:800; color:#fff; } .quote-sub{ font-size:13px; color:rgba(255,255,255,.8); }
+.quote-body{ flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; } .quote-body::-webkit-scrollbar{ display:none; }
+.plan-card{ background:#fff; border-radius:16px; border:2px solid var(--lego-color-surface-brand-primary-rest); padding:16px; margin-bottom:12px; position:relative; }
+.plan-card.secondary{ border-color:#ECECF1; }
+.plan-recommended{ position:absolute; top:-10px; left:16px; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px; }
+.plan-name{ font-size:16px; font-weight:800; color:#0A0A0A; margin-bottom:2px; } .plan-desc{ font-size:12px; color:#6B6980; margin-bottom:10px; }
+.plan-feature{ display:flex; align-items:center; gap:6px; font-size:12px; color:#0A0A0A; margin-bottom:4px; }
+.plan-price-row{ display:flex; align-items:center; justify-content:space-between; border-top:1px solid #F3F3F7; padding-top:12px; margin-top:8px; }
+.plan-price{ font-size:22px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); } .plan-price-per{ font-size:12px; color:#6B6980; }
+.select-plan-btn{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:13px; font-weight:700; padding:9px 16px; border-radius:100px; border:none; cursor:pointer; font-family:var(--lego-font); }
+.select-plan-btn.secondary{ background:#F7F7FA; color:#0A0A0A; border:1px solid #ECECF1; }
+.payment-header{ background:#fff; padding:14px 16px; border-bottom:1px solid #ECECF1; flex-shrink:0; display:flex; align-items:center; gap:10px; }
+.payment-body{ flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; } .payment-body::-webkit-scrollbar{ display:none; }
+.order-summary{ background:#fff; border-radius:14px; border:1px solid #ECECF1; padding:14px; margin-bottom:12px; }
+.order-row{ display:flex; justify-content:space-between; align-items:center; font-size:13px; padding:6px 0; border-bottom:1px solid #F3F3F7; } .order-row:last-child{ border-bottom:none; }
+.order-label{ color:#6B6980; } .order-value{ font-weight:600; color:#0A0A0A; }
+.order-total-label{ font-size:14px; font-weight:700; color:#0A0A0A; } .order-total-value{ font-size:18px; font-weight:800; color:#0A0A0A; }
+.pm-title{ font-size:13px; font-weight:700; color:#0A0A0A; margin-bottom:8px; }
+.pay-btn{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:16px; font-weight:700; padding:14px; border-radius:14px; border:none; cursor:pointer; font-family:var(--lego-font); }
+.ins-success{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center; background:#fff; }
+.policy-card{ background:#F7F7FA; border:1px solid #ECECF1; border-radius:14px; padding:14px; width:100%; text-align:left; margin-bottom:24px; }
+.policy-row{ display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px solid #ECECF1; } .policy-row:last-child{ border-bottom:none; }
+.policy-label{ color:#6B6980; } .policy-value{ font-weight:600; color:#0A0A0A; }
+
+/* ── READY ── */
+.loading-screen{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; background:#fff; }
+.loading-title{ font-size:20px; font-weight:700; color:#0A0A0A; margin-bottom:8px; text-align:center; }
+.loading-sub{ font-size:13px; color:#6B6980; text-align:center; margin-bottom:32px; }
+.loading-spinner{ width:60px; height:60px; border:4px solid #EDEDF2; border-top-color:var(--primary); border-radius:50%; animation:spin .8s linear infinite; margin-bottom:24px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.rdy-checklist{ flex:1; display:none; flex-direction:column; overflow:hidden; } .rdy-checklist.show{ display:flex; }
+.checklist-header{ background:#fff; padding:14px 16px 12px; flex-shrink:0; border-bottom:1px solid #ECECF1; }
+.checklist-header-title{ font-size:17px; font-weight:800; color:#0A0A0A; } .checklist-header-sub{ font-size:12px; color:#6B6980; margin-top:2px; }
+.progress-ring-wrap{ display:flex; align-items:center; gap:16px; padding:12px 16px; background:#F4F3FF; border-bottom:1px solid #ECECF1; flex-shrink:0; }
+.ring-bg{ fill:none; stroke:#E2E1F2; stroke-width:5; }
+.ring-fill{ fill:none; stroke:var(--primary); stroke-width:5; stroke-linecap:round; stroke-dasharray:138.2; stroke-dashoffset:138.2; transform-origin:center; transform:rotate(-90deg); transition:stroke-dashoffset .6s ease; }
+.ring-count-text{ font-size:18px; font-weight:800; fill:var(--primary); }
+.progress-text{ flex:1; } .progress-main{ font-size:15px; font-weight:700; color:#0A0A0A; } .progress-done{ font-size:13px; color:var(--primary); font-weight:600; margin-top:2px; }
+.checks-scroll{ flex:1; overflow-y:auto; padding:12px 16px; scrollbar-width:none; } .checks-scroll::-webkit-scrollbar{ display:none; }
+.check-row{ display:flex; align-items:center; gap:12px; padding:12px 14px; background:#fff; border-radius:12px; border:1px solid #ECECF1; margin-bottom:8px; opacity:0; transform:translateY(10px); transition:opacity .4s ease,transform .4s ease,border-color .3s,background .3s; }
+.check-row.visible{ opacity:1; transform:translateY(0); }
+.check-row.done{ border-color:#A9F5CF; background:#F1FFF8; }
+.check-circle{ width:36px; height:36px; flex-shrink:0; position:relative; } .check-circle svg{ position:absolute; inset:0; }
+.check-path{ stroke:#04553A; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; fill:none; stroke-dasharray:30; stroke-dashoffset:30; transition:stroke-dashoffset .5s ease .1s; }
+.check-row.done .check-path{ stroke-dashoffset:0; }
+.check-bg-circle{ fill:none; stroke:#E2E1F2; stroke-width:2.5; transition:stroke .3s ease; }
+.check-row.done .check-bg-circle{ stroke:#63FFB1; fill:#DBFFEE; }
+.check-info{ flex:1; } .check-name{ font-size:14px; font-weight:700; color:#0A0A0A; } .check-sub{ font-size:12px; color:#6B6980; margin-top:1px; }
+.check-verifier{ font-size:11px; color:#04553A; font-weight:600; margin-top:3px; } .check-verifier.pending{ color:#9A98AE; }
+.check-status-badge{ font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; flex-shrink:0; }
+.check-status-badge.checking{ background:#FFF1E8; color:#C2410C; } .check-status-badge.verified{ background:#DBFFEE; color:#04553A; }
+.celebration-screen{ position:absolute; inset:0; background:linear-gradient(180deg,#4736FE 0%,#2C1FA8 100%); z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px; text-align:center; opacity:0; pointer-events:none; transition:opacity .6s ease; }
+.celebration-screen.show{ opacity:1; pointer-events:all; }
+#confettiCanvas{ position:absolute; inset:0; pointer-events:none; }
+.cel-topbar{ position:absolute; top:0; left:0; right:0; padding:16px; display:flex; align-items:center; justify-content:space-between; z-index:3; }
+.cel-iconbtn{ width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.12); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.seal{ position:relative; z-index:1; margin-bottom:18px; animation:sealPop .7s cubic-bezier(.2,.8,.3,1.4) .15s both; }
+@keyframes sealPop{ from{ transform:scale(0) rotate(-30deg); opacity:0; } to{ transform:scale(1) rotate(0); opacity:1; } }
+.seal-ring{ animation:sealSpin 14s linear infinite; transform-origin:center; }
+@keyframes sealSpin{ to{ transform:rotate(360deg); } }
+.celebration-title{ font-size:23px; font-weight:800; color:#fff; line-height:1.3; margin-bottom:8px; animation:fadeUp .5s ease .5s both; position:relative; z-index:1; }
+.celebration-sub{ font-size:14px; color:rgba(255,255,255,.82); margin-bottom:18px; line-height:1.5; animation:fadeUp .5s ease .7s both; position:relative; z-index:1; }
+@keyframes fadeUp{ from{ transform:translateY(16px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+.cel-promise{ display:flex; align-items:center; gap:10px; background:rgba(99,255,177,.16); border:1px solid rgba(99,255,177,.4); border-radius:14px; padding:12px 14px; width:100%; margin-bottom:14px; text-align:left; animation:fadeUp .5s ease .85s both; position:relative; z-index:1; }
+.cel-promise .cp-ic{ font-size:22px; flex-shrink:0; } .cel-promise .cp-txt{ font-size:13px; color:#fff; line-height:1.4; } .cel-promise .cp-txt b{ color:#63FFB1; }
+.checks-summary{ background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.22); border-radius:16px; padding:12px 14px; width:100%; margin-bottom:18px; animation:fadeUp .5s ease .95s both; position:relative; z-index:1; }
+.summary-row{ display:flex; align-items:center; justify-content:space-between; font-size:13px; padding:4px 0; }
+.summary-label{ color:rgba(255,255,255,.72); } .summary-value{ font-weight:700; color:#fff; }
+.proceed-btn{ background:#63FFB1; color:#04553A; font-size:16px; font-weight:800; padding:14px 32px; border-radius:14px; border:none; cursor:pointer; width:100%; animation:fadeUp .5s ease 1.1s both; position:relative; z-index:1; font-family:var(--lego-font); }
+
+/* ── CONTROLS OUTSIDE PHONE ── */
+.controls{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:999; align-items:center; }
+.theme-switcher{ background:#0A0A0A; border-radius:100px; padding:6px 8px; display:flex; gap:4px; }
+.theme-btn{ padding:6px 14px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:transparent; color:#9E9CB0; font-family:'Geist',sans-serif; transition:all .2s; }
+.theme-btn.active{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
+.restart-btn{ background:#0A0A0A; color:#fff; border:none; border-radius:100px; padding:9px 16px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Geist',sans-serif; }
+
+/* ── FLOW SELECT: 3rd scenario ── */
+.fs-btn.rcphoto{ background:#5468FF; color:#fff; } .fs-btn.rcphoto .fb-ic{ background:rgba(255,255,255,.2); }
+
+/* ── INSPECTION congrats banner ── */
+.insp-congrats{ background:#EFFCF5; border:1px solid #A9F5CF; border-radius:14px; margin:12px 12px 0; padding:14px; display:flex; gap:12px; align-items:center; }
+.insp-congrats .ic-emoji{ font-size:26px; flex-shrink:0; }
+.insp-congrats .ic-title{ font-size:14px; font-weight:800; color:#04553A; }
+.insp-congrats .ic-sub{ font-size:12px; color:#0B7A52; margin-top:2px; line-height:1.4; }
+
+/* ── PHOTO CAPTURE ── */
+.photo-step{ display:none; } .photo-step.active{ display:block; }
+.photo-step-title{ font-size:15px; font-weight:800; color:#0A0A0A; margin-bottom:4px; }
+.photo-step-sub{ font-size:12px; color:#6B6980; margin-bottom:14px; line-height:1.45; }
+.viewfinder{ background:#0A0A0A; border-radius:18px; height:230px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:14px; }
+.vf-frame{ width:78%; height:60%; border:2px dashed rgba(255,255,255,.5); border-radius:12px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.6); font-size:12px; text-align:center; padding:10px; }
+.vf-captured{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:linear-gradient(135deg,#1B2A4A,#0A0A0A); }
+.vf-captured.show{ display:flex; }
+.vf-rc-doc{ width:80%; background:#fff; border-radius:10px; padding:14px; transform:rotate(-2deg); box-shadow:0 12px 32px rgba(0,0,0,.45); animation:popIn .4s cubic-bezier(.2,.8,.3,1.3); }
+.capture-btn{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; border:none; font-size:15px; font-weight:700; padding:14px; border-radius:14px; cursor:pointer; font-family:var(--lego-font); display:flex; align-items:center; justify-content:center; gap:8px; }
+.capture-btn:disabled{ opacity:.5; cursor:default; }
+.photo-result{ display:none; background:#F1FFF8; border:1px solid #A9F5CF; border-radius:14px; padding:10px 14px; margin-bottom:14px; }
+.photo-result.show{ display:block; }
+.pr-row{ display:flex; align-items:center; justify-content:space-between; font-size:13px; padding:5px 0; }
+.pr-label{ color:#0B7A52; } .pr-val{ font-weight:800; color:#04553A; }
+.upload-grid{ display:flex; gap:12px; margin-bottom:16px; }
+.upload-tile{ flex:1; background:#F7F7FA; border:1.5px dashed #C7C5D6; border-radius:14px; padding:18px 10px; text-align:center; cursor:pointer; transition:all .2s; }
+.upload-tile.done{ border-style:solid; border-color:#63FFB1; background:#F1FFF8; }
+.upload-tile-ic{ font-size:26px; } .upload-tile-name{ font-size:12px; font-weight:700; color:#0A0A0A; margin-top:6px; }
+.upload-tile-status{ font-size:11px; color:#6B6980; margin-top:2px; } .upload-tile.done .upload-tile-status{ color:#04553A; font-weight:700; }
+
+/* ── CJ executive card ── */
+.exec-card{ display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #ECECF1; border-radius:16px; padding:14px; box-shadow:0 2px 10px rgba(20,18,40,.04); }
+.exec-photo{ width:52px; height:52px; border-radius:50%; object-fit:cover; background:#E7E5F5; flex-shrink:0; border:2px solid var(--lego-color-surface-brand-primary-rest); }
+.exec-info{ flex:1; min-width:0; }
+.exec-name{ font-size:14px; font-weight:800; color:#0A0A0A; }
+.exec-role{ font-size:11px; color:var(--lego-color-text-brand-primary-rest); font-weight:700; margin-top:1px; }
+.exec-line{ font-size:11px; color:#6B6980; margin-top:3px; line-height:1.4; }
+.exec-call{ display:flex; flex-direction:column; align-items:center; gap:4px; text-decoration:none; flex-shrink:0; }
+.exec-call-ic{ width:38px; height:38px; border-radius:50%; background:var(--lego-color-surface-brand-primary-rest); display:flex; align-items:center; justify-content:center; }
+.exec-call-num{ font-size:10px; font-weight:700; color:#0A0A0A; }
+
+/* ── inspection report review card (on inspection page) ── */
+.rep-review{ background:#fff; border:1px solid #ECECF1; border-radius:16px; padding:16px; box-shadow:0 2px 10px rgba(20,18,40,.04); }
+.rep-review-head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.rep-badge{ background:#EEFcF4; color:#04553A; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px; }
+.rep-review-title{ font-size:15px; font-weight:800; color:#0A0A0A; }
+.rep-review-sub{ font-size:12px; color:#6B6980; line-height:1.5; margin-bottom:12px; }
+.rep-open-btn{ width:100%; background:#F4F3FF; color:var(--lego-color-text-brand-primary-rest); border:1.5px solid var(--lego-color-surface-brand-primary-rest); font-size:14px; font-weight:800; padding:13px; border-radius:13px; cursor:pointer; font-family:var(--lego-font); display:flex; align-items:center; justify-content:center; gap:8px; }
+
+/* ── QC loader / result ── */
+.qc-card{ background:#fff; border:1px solid #ECECF1; border-radius:16px; padding:18px 16px; box-shadow:0 2px 10px rgba(20,18,40,.04); }
+.qc-loading{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; }
+.qc-spinner{ width:42px; height:42px; border:4px solid #EEE; border-top-color:var(--lego-color-surface-brand-primary-rest); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.qc-load-title{ font-size:14px; font-weight:800; color:#0A0A0A; }
+.qc-load-sub{ font-size:12px; color:#6B6980; line-height:1.5; }
+.qc-result-title{ font-size:15px; font-weight:800; color:#0A0A0A; margin-bottom:2px; }
+.qc-result-sub{ font-size:12px; color:#6B6980; margin-bottom:12px; line-height:1.5; }
+.qc-vrow{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 0; border-top:1px solid #F1F0F6; }
+.qc-vrow:first-of-type{ border-top:none; }
+.qc-vpart{ font-size:13px; color:#0A0A0A; font-weight:600; }
+.qc-vcond{ font-size:11px; color:#9A98AE; }
+.qc-verdict{ font-size:11px; font-weight:800; padding:4px 9px; border-radius:100px; white-space:nowrap; }
+.qc-verdict.conceded{ background:#EEFcF4; color:#04553A; }
+.qc-verdict.held{ background:#FFF1EC; color:#C2410C; }
+.qc-ok-btn{ width:100%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; border:none; font-size:15px; font-weight:800; padding:13px; border-radius:13px; cursor:pointer; font-family:var(--lego-font); margin-top:14px; }
+.qc-further{ width:100%; background:transparent; color:var(--lego-color-text-brand-primary-rest); border:none; font-size:12.5px; font-weight:700; padding:11px; cursor:pointer; font-family:var(--lego-font); margin-top:4px; text-decoration:underline; }
+.ra-card{ display:flex; align-items:center; gap:12px; background:#F7F7FA; border:1px solid #ECECF1; border-radius:14px; padding:12px; margin-top:12px; }
+.ra-avatar{ width:44px; height:44px; border-radius:50%; background:var(--lego-color-surface-brand-primary-rest); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; flex-shrink:0; }
+.ra-note{ background:#FFF8EC; border:1px solid #FBE2B5; border-radius:12px; padding:11px 13px; font-size:12px; color:#92400E; line-height:1.5; margin-top:12px; }
+
+/* ── report screen ── */
+.rep-intro{ font-size:12.5px; color:#6B6980; line-height:1.55; margin:2px 2px 14px; }
+.rep-section{ margin-bottom:16px; }
+.rep-sec-title{ font-size:13px; font-weight:800; color:var(--lego-color-text-brand-primary-rest); margin-bottom:8px; }
+.rep-row{ display:flex; align-items:center; gap:11px; background:#fff; border:1px solid #ECECF1; border-radius:13px; padding:11px 13px; margin-bottom:8px; }
+.rep-row.issue{ border-color:#F6D9CC; }
+.rep-stat{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; font-weight:800; }
+.rep-stat.ok{ background:#EEFcF4; color:#04553A; }
+.rep-stat.bad{ background:#FFF1EC; color:#E8530A; }
+.rep-rtxt{ flex:1; min-width:0; }
+.rep-part{ font-size:13.5px; font-weight:700; color:#0A0A0A; }
+.rep-cond{ font-size:11.5px; color:#6B6980; margin-top:1px; }
+.rep-check{ width:22px; height:22px; border-radius:6px; border:2px solid #C7C5D6; flex-shrink:0; display:none; align-items:center; justify-content:center; cursor:pointer; background:#fff; }
+.rep-row.contestable.contestmode .rep-check{ display:flex; }
+.rep-check.on{ background:var(--lego-color-surface-brand-primary-rest); border-color:var(--lego-color-surface-brand-primary-rest); }
+.rep-cta-bar{ position:absolute; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #ECECF1; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); display:flex; gap:10px; }
+.rep-btn{ flex:1; border:none; font-size:14.5px; font-weight:800; padding:14px; border-radius:13px; cursor:pointer; font-family:var(--lego-font); }
+.rep-btn.contest{ background:#FFF1EC; color:#C2410C; border:1.5px solid #F6C9B6; }
+.rep-btn.accept{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
+.rep-btn.submit{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
+.rep-btn.submit:disabled{ opacity:.45; cursor:default; }
+.rep-btn.cancel{ flex:0 0 auto; background:#F2F1F6; color:#0A0A0A; padding-left:20px; padding-right:20px; }
+.rep-contest-hint{ background:#FFF8EC; border:1px solid #FBE2B5; border-radius:12px; padding:11px 13px; font-size:12px; color:#92400E; line-height:1.5; margin-bottom:14px; display:none; }
+.rep-contest-hint.show{ display:block; }
+
+/* ── relevance tags (price + deal checklist items) ── */
+.do-tags{ display:flex; gap:5px; margin-top:5px; }
+.do-tag{ font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:100px; letter-spacing:.2px; }
+.do-tag.price{ background:#F4F3FF; color:#4736FE; }
+.do-tag.own{ background:#EAF7F1; color:#04553A; }
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+<div class="phone" id="app" data-theme="cars24">
+<!-- ════════ SCREEN: FLOW SELECT ════════ -->
+<div class="screen active" id="s-flow">
+  <div class="fs-wrap">
+    <div class="fs-logo"><div class="fs-logo-badge">🚗</div><div class="fs-logo-text">CARS24</div></div>
+    <div class="fs-h1">Your selling<br>journey walkthrough</div>
+    <div class="fs-sub">Pick a starting scenario. Everything after this stays in sync — capture photos or renew insurance at car inspection and the checklists, banners and celebration all update.</div>
+    <div class="fs-pick-label">Choose a flow to begin</div>
+    <button class="fs-btn happy" onclick="chooseFlow('happy')">
+      <span class="fb-ic">🎉</span>
+      <span><div class="fb-name">Happy flow</div><div class="fb-desc">All inspection checks already verified</div></span>
+      <span class="fb-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <button class="fs-btn pending" onclick="chooseFlow('insurance')">
+      <span class="fb-ic">⚠️</span>
+      <span><div class="fb-name">Insurance pending</div><div class="fb-desc">Insurance expired — renew during car inspection</div></span>
+      <span class="fb-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <button class="fs-btn rcphoto" onclick="chooseFlow('rcphoto')">
+      <span class="fb-ic">📸</span>
+      <span><div class="fb-name">RC, front &amp; rear images pending</div><div class="fb-desc">Capture RC, front main &amp; rear main during inspection</div></span>
+      <span class="fb-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <div class="fs-note">Next: a phone lock-screen notification → tap it to open the app at Car Inspection.</div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: LOCK ════════ -->
+<div class="screen" id="s-lock">
+  <div class="lock">
+    <div class="lock-status">
+      <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);">9:41</span>
+      <div style="display:flex;gap:6px;">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="white" stroke-opacity="0.5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="white"/></svg>
+      </div>
+    </div>
+    <div class="lock-time-block"><div class="lock-time">9:41</div><div class="lock-date">Thursday, 29 May</div></div>
+    <div class="push-notif" id="lockNotif" onclick="tapNotif()">
+      <div class="pn-head"><div class="pn-icon">🚗</div><span class="pn-app">CARS24</span><span class="pn-time">now</span></div>
+      <div class="pn-title" id="lockNotifTitle">⚠️ ₹1,000 e-challan pending</div>
+      <div class="pn-body" id="lockNotifBody">Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.</div>
+      <div class="pn-actions">
+        <button class="pn-action" onclick="event.stopPropagation();dismissLockNotif()">Dismiss</button>
+        <button class="pn-action primary" onclick="event.stopPropagation();tapNotif()">Tap & Proceed →</button>
+      </div>
+    </div>
+    <div class="lock-empty" id="lockEmpty">No new notifications · Tap below to open the app</div>
+    <div class="unlock-hint" id="unlockHint">Tap the notification to open the app</div>
+    <div class="swipe-bar"></div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: CAR INSPECTION ════════ -->
+<div class="screen" id="s-inspection">
+  <div class="status-bar blue"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sell-header">
+    <div class="sell-header-top">
+      <button class="back-btn" onclick="go('lock')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="car-title-block"><div class="car-year-make">Car inspection</div><div class="car-name">2023 HYUNDAI CRETA</div></div>
+      <div class="headset-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/></svg></div>
+    </div>
+    <div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div>
+  </div>
+  <div class="stepper">
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">2</div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">3</div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">4</div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+  <div class="scroll-area" id="inspectionScroll">
+    <div class="insp-congrats" id="inspCongrats" style="display:none;"><div class="ic-emoji">🎉</div><div><div class="ic-title">Car inspection complete!</div><div class="ic-sub">All your inspection checks are verified. You’re ready to discover your price.</div></div></div>
+    <div class="scare-banner" id="inspScareBanner" onclick="scrollToChecklist('inspection')">
+      <div class="scare-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2.5L2 19H20L11 2.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V13" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="16" r="1.1" fill="white"/></svg></div>
+      <div class="scare-body"><div class="scare-title" id="inspScareTitle">checks need action</div><div class="scare-sub">Complete these for your car inspection</div></div>
+      <button class="scare-cta" onclick="event.stopPropagation();scrollToChecklist('inspection')">Complete <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9M9 6L6 3M9 6L6 9" stroke="#E8530A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="exec-card">
+      <img class="exec-photo" id="execPhoto" src="https://randomuser.me/api/portraits/men/75.jpg" alt="Inspection executive" onerror="this.style.display='none'">
+      <div class="exec-info">
+        <div class="exec-name">Rakesh Yadav</div>
+        <div class="exec-role">Car Inspection Executive</div>
+        <div class="exec-line">Will reach your home shortly to inspect your car.</div>
+      </div>
+      <a class="exec-call" href="tel:+919045282841">
+        <span class="exec-call-ic"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M16.5 13.68v2.07a1.38 1.38 0 01-1.5 1.38 13.67 13.67 0 01-5.96-2.12 13.46 13.46 0 01-4.14-4.14A13.67 13.67 0 012.77 4.87 1.38 1.38 0 014.14 3.38h2.07a1.38 1.38 0 011.38 1.19c.09.67.26 1.33.49 1.96a1.38 1.38 0 01-.31 1.46L6.8 8.96a11.04 11.04 0 004.14 4.14l.97-.97a1.38 1.38 0 011.46-.31c.63.23 1.29.4 1.96.49a1.38 1.38 0 011.17 1.37z" fill="white"/></svg></span>
+        <span class="exec-call-num">+91 90452 82841</span>
+      </a>
+    </div>
+    <div style="margin:12px 0 2px;font-size:12px;color:#6B6980;line-height:1.5;">These checks are <b style="color:#0A0A0A;">important for your car inspection</b>. Providing them keeps your sale and RC transfer on track.</div>
+    <div id="doChecklist-inspection"></div>
+    <div id="inspReport"></div>
+    <div class="cta-bar" style="border-top:none;background:transparent;"><button class="cta-btn" id="inspContinueBtn" onclick="continueFromInspection()">Continue to price discovery →</button></div>
+    <div style="height:8px;"></div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: PHOTO CAPTURE ════════ -->
+<div class="screen" id="s-photo">
+  <div class="success-overlay" id="photoSuccess">
+    <div class="success-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M9 22L18 31L35 13" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="success-title">Photos added! 🎉</div>
+    <div class="success-sub">RC, Front Main &amp; Rear Main captured. Your car inspection checklist is updated.</div>
+    <button class="back-to-pd" onclick="closeSub()">Back to inspection</button>
+  </div>
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="header-title-block"><div class="header-title">Add inspection photos</div><div class="header-sub">RC &amp; car images · for verification</div></div>
+  </div>
+  <div class="scroll-area" style="padding:16px;">
+    <div class="photo-step active" id="photo-rc">
+      <div class="photo-step-title">Step 1 · Capture your RC</div>
+      <div class="photo-step-sub">Place your Registration Certificate inside the frame and capture it.</div>
+      <div class="viewfinder">
+        <div class="vf-frame">Align your RC within the frame</div>
+        <div class="vf-captured" id="vfCaptured"><div class="vf-rc-doc"><div style="font-size:10px;font-weight:700;color:#4736FE;letter-spacing:1px;">REGISTRATION CERTIFICATE</div><div style="font-size:13px;font-weight:800;color:#0A0A0A;margin-top:6px;">RJ 45 CP 6052</div><div style="font-size:11px;color:#6B6980;margin-top:4px;">2023 Hyundai Creta · Petrol</div><div style="font-size:10px;color:#9E9CB0;margin-top:8px;">Owner: Rahul Sharma</div></div></div>
+      </div>
+      <div class="photo-result" id="photoResult">
+        <div class="pr-row"><span class="pr-label">RC available</span><span class="pr-val">✅ Yes</span></div>
+        <div class="pr-row"><span class="pr-label">Condition</span><span class="pr-val">✅ Correct</span></div>
+      </div>
+      <button class="capture-btn" id="captureRcBtn" onclick="captureRC()">📷 Capture RC photo</button>
+      <button class="capture-btn" id="nextToMainsBtn" style="margin-top:10px;display:none;" onclick="photoShow('mains')">Next: car photos →</button>
+    </div>
+    <div class="photo-step" id="photo-mains">
+      <div class="photo-step-title">Step 2 · Front &amp; rear photos</div>
+      <div class="photo-step-sub">Upload a clear front main and rear main photo of your car.</div>
+      <div class="upload-grid">
+        <div class="upload-tile" id="tile-front" onclick="captureMain('front')"><div class="upload-tile-ic">🚗</div><div class="upload-tile-name">Front Main</div><div class="upload-tile-status">Tap to upload</div></div>
+        <div class="upload-tile" id="tile-rear" onclick="captureMain('rear')"><div class="upload-tile-ic">🚙</div><div class="upload-tile-name">Rear Main</div><div class="upload-tile-status">Tap to upload</div></div>
+      </div>
+      <button class="capture-btn" id="finishPhotosBtn" onclick="finishPhotos()" disabled>Finish &amp; update checklist</button>
+      <button class="capture-btn" style="margin-top:10px;background:#F7F7FA;color:#0A0A0A;" onclick="photoShow('rc')">← Back to RC</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: INSPECTION REPORT ════════ -->
+<div class="screen" id="s-report">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="go('inspection')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="header-title-block"><div class="header-title">Inspection Report</div><div class="header-sub">Honda Amaze · Report #10717586</div></div>
+  </div>
+  <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">CJ inspection complete</div><div class="verified-badge-sub">Findings recorded by Rakesh Yadav · 31 May</div></div></div>
+  <div class="scroll-area" style="padding:16px 16px 92px;">
+    <div class="rep-intro">Your car was inspected by our Car Jockey. Below is the condition recorded. Review it and let us know if you <b>accept</b> these findings or want to <b>contest</b> any of them before pricing.</div>
+    <div class="rep-contest-hint" id="repContestHint">Select the findings you disagree with, then submit. Our quality-check team will re-validate and get back to you.</div>
+    <div id="repBody"></div>
+  </div>
+  <div class="rep-cta-bar" id="repCtaReview">
+    <button class="rep-btn contest" onclick="startContest()">I Contest</button>
+    <button class="rep-btn accept" onclick="acceptReport()">I Accept</button>
+  </div>
+  <div class="rep-cta-bar" id="repCtaContest" style="display:none;">
+    <button class="rep-btn cancel" onclick="cancelContest()">Cancel</button>
+    <button class="rep-btn submit" id="repSubmitBtn" onclick="submitContest()" disabled>Submit contest (0)</button>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: PRICE DISCOVERY ════════ -->
+<div class="screen" id="s-price">
+  <div class="status-bar blue"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sell-header">
+    <div class="sell-header-top">
+      <button class="back-btn" onclick="go('inspection')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="car-title-block"><div class="car-year-make">Your selling journey</div><div class="car-name">2023 HYUNDAI CRETA</div></div>
+      <div class="headset-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/></svg></div>
+    </div>
+    <div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div>
+  </div>
+  <div class="stepper">
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector active"></div>
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">3</div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">4</div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+  <div class="scroll-area" id="priceScroll">
+    <div class="scare-banner" id="scareBanner" onclick="scrollToChecklist('price')">
+      <div class="scare-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2.5L2 19H20L11 2.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V13" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="16" r="1.1" fill="white"/></svg></div>
+      <div class="scare-body"><div class="scare-title" id="scareTitle">2 of 7 ownership checks failing</div><div class="scare-sub">Fix now to avoid RC transfer holdbacks</div></div>
+      <button class="scare-cta" onclick="event.stopPropagation();scrollToChecklist('price')">Proceed Now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9M9 6L6 3M9 6L6 9" stroke="#E8530A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Your car is live for auction!</span><span class="card-badge badge-live">● Live</span></div>
+      <div class="auction-body">
+        <div class="auction-meta">
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#6B6980" stroke-width="1.1"/><path d="M7 4V7L9 9" stroke="#6B6980" stroke-width="1.2" stroke-linecap="round"/></svg><span>Closes in 14h 32m</span></div>
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7C1 7 3.5 2.5 7 2.5C10.5 2.5 13 7 13 7C13 7 10.5 11.5 7 11.5C3.5 11.5 1 7 1 7Z" stroke="#6B6980" stroke-width="1.1"/><circle cx="7" cy="7" r="2" fill="#6B6980"/></svg><span>242 views</span></div>
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5C4.5 1.5 2.5 3.5 2.5 6C2.5 9.5 7 12.5 7 12.5C7 12.5 11.5 9.5 11.5 6C11.5 3.5 9.5 1.5 7 1.5Z" stroke="#6B6980" stroke-width="1.1"/><circle cx="7" cy="6" r="1.5" fill="#6B6980"/></svg><span>18 dealers</span></div>
+        </div>
+        <div class="map-placeholder">
+          <svg width="160" height="90" viewBox="0 0 160 90" fill="none" opacity="0.35"><path d="M78 4 L86 8 L90 14 L88 22 L94 26 L98 32 L96 40 L100 46 L98 54 L94 62 L88 68 L82 72 L78 78 L74 72 L68 66 L64 58 L62 50 L60 42 L64 34 L68 26 L72 18 L74 10 Z" fill="#C5C3D6"/><circle cx="78" cy="45" r="6" fill="#4736FE" opacity="0.85"/><circle cx="78" cy="45" r="3" fill="#4736FE"/></svg>
+          <div style="position:absolute;top:8px;right:8px;background:white;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:#0A0A0A;border:1px solid #ECECF1;">18 dealers bidding</div>
+        </div>
+        <div class="price-range"><div><div class="price-label">Expected price range</div><div class="price-value">₹7.8L – ₹8.4L</div></div><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="var(--lego-color-surface-brand-primary-rest)" opacity="0.1"/><path d="M16 10V22M10 16H22" stroke="var(--lego-color-text-brand-primary-rest)" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+    </div>
+    <div id="doChecklist-price"></div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Car Health Report</span><span class="card-badge" style="background:#F4F3FF;color:#4736FE;">4.5 ★</span></div>
+      <div class="health-body">
+        <div class="star-row"><span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#ECECF1;">★</span><span class="star-value">4.5 / 5</span></div>
+        <div class="health-row"><div class="health-stat"><div class="health-stat-label">KM Driven</div><div class="health-stat-value">42,180</div></div><div class="health-stat"><div class="health-stat-label">Fuel</div><div class="health-stat-value">Petrol</div></div><div class="health-stat"><div class="health-stat-label">RTO</div><div class="health-stat-value">DL-03</div></div><div class="health-stat"><div class="health-stat-label">Owners</div><div class="health-stat-value">1st</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Your Relationship Manager</span></div>
+      <div class="consultant-body"><div class="consultant-avatar">AS</div><div style="flex:1;"><div class="consultant-name">Ayush Sharma</div><div class="consultant-role">Senior Relationship Manager</div><div class="consultant-time">● Available 10AM – 7PM</div></div><div class="call-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16.5 13.68v2.07a1.38 1.38 0 01-1.5 1.38 13.67 13.67 0 01-5.96-2.12 13.46 13.46 0 01-4.14-4.14A13.67 13.67 0 012.77 4.87 1.38 1.38 0 014.14 3.38h2.07a1.38 1.38 0 011.38 1.19c.09.67.26 1.33.49 1.96a1.38 1.38 0 01-.31 1.46L6.8 8.96a11.04 11.04 0 004.14 4.14l.97-.97a1.38 1.38 0 011.46-.31c.63.23 1.29.4 1.96.49a1.38 1.38 0 011.17 1.37z" fill="white"/></svg></div></div>
+    </div>
+    <div class="cta-bar" style="border-top:none;background:transparent;"><button class="cta-btn" onclick="go('deal')">Continue to deal closure →</button></div>
+    <div style="height:8px;"></div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: CHALLAN ════════ -->
+<div class="screen" id="s-challan">
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M9 22L18 31L35 13" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="success-title">Challans Cleared! 🎉</div>
+    <div class="success-sub">All e-challans for RJ 45 CP 6052 are paid. Your checklist is updated.</div>
+    <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+  </div>
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="page-header">
+    <button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="header-title-block"><div class="header-title">RJ 45 CP 6052</div><div class="header-sub">2023 Hyundai Creta · Parivahan verified</div></div>
+  </div>
+  <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+  <div class="tabs"><div class="tab active" onclick="switchTab('pending',this)">Pending <span style="background:#FFEFE7;color:#C2410C;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;margin-left:4px;">1</span></div><div class="tab" onclick="switchTab('settlement',this)">Settlement <span style="background:#DEFFEE;color:#04553A;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;margin-left:4px;">2</span></div></div>
+  <div class="scroll-area">
+    <div class="tab-panel active" id="tab-pending">
+      <div class="section-title">E-Challans (Mandatory to clear)</div>
+      <div class="challan-card">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="challan-type-badge badge-echallan">E-Challan</span><span style="background:#FFF4E6;color:#A85A00;font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;">Parivahan</span></div>
+        <div class="challan-number">#HR43232604222225406</div>
+        <div class="challan-date">Issued: 22 Jun 2024 · Faridabad, HR</div>
+        <div class="challan-divider"></div>
+        <div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">Red light jumping</span></div>
+        <div class="challan-detail-row"><span class="challan-detail-label">Section</span><span class="challan-detail-value">MV Act 119</span></div>
+        <div class="challan-divider"></div>
+        <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Pay Now</button></div>
+      </div>
+      <div style="background:#FFF4E6;border:1px solid #FBD9A8;border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14H15L8 1.5Z" stroke="#A85A00" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6V9" stroke="#A85A00" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="#A85A00"/></svg><div style="font-size:12px;color:#7A4100;line-height:1.5;"><strong>E-Challan clearance is mandatory</strong> for your sale.</div></div>
+    </div>
+    <div class="tab-panel" id="tab-settlement">
+      <div class="section-title">Settlement Done</div>
+      <div class="challan-card"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="challan-type-badge badge-settled">Cleared</span><span style="background:#EFFAF3;color:#04553A;font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;">Via Cars24</span></div><div class="challan-number">#DL4312022023001234</div><div class="challan-date">Issued: 14 Jan 2023 · South Delhi, DL</div><div class="challan-divider"></div><div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">Overspeeding</span></div><div class="challan-divider"></div><div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Amount paid</div><div class="challan-amount settled">₹500</div></div><div class="paid-tag"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#63FFB1"/><path d="M5 8L7 10.5L11 5.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Paid</div></div></div>
+      <div class="challan-card"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="challan-type-badge badge-offline">Offline</span><span style="background:#F7F7FA;color:#6B6980;font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;">External</span></div><div class="challan-number">#44798498</div><div class="challan-date">Issued: 05 Sep 2022 · Gurugram, HR</div><div class="challan-divider"></div><div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">No Helmet</span></div><div class="challan-divider"></div><div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount settled">₹200</div></div><div class="paid-tag"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#63FFB1"/><path d="M5 8L7 10.5L11 5.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Settled</div></div></div>
+    </div>
+    <div style="height:24px;"></div>
+  </div>
+  <div class="pay-footer" id="payFooter"><div class="pay-footer-row"><span class="pay-total-label2">Total pending e-challan</span><span class="pay-total-value2">₹1,000</span></div><button class="pay-all-btn" onclick="openSheet()">Pay ₹1,000 →</button></div>
+  <div class="sheet-scrim" id="scrim" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><div class="sheet-title" id="sheetTitle">Choose payment method</div><div style="display:flex;align-items:center;gap:10px;"><span class="sheet-amt">₹1,000</span><button class="sheet-close" onclick="closeSheet()">×</button></div></div>
+    <div class="sheet-body">
+      <div class="sheet-step active" id="ss-methods">
+        <div class="pm-option selected" data-pm="upi" onclick="pickPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm, BHIM</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
+        <div class="pm-option" data-pm="card" onclick="pickPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit / Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div>
+        <div class="pm-option" data-pm="netbanking" onclick="pickPM(this)"><div class="pm-icon">🏦</div><div><div class="pm-name">Net Banking</div><div class="pm-sub">All major banks</div></div><div class="pm-radio"></div></div>
+        <button class="sheet-cta" id="methodCta" onclick="methodNext()">Continue with UPI</button>
+      </div>
+      <div class="sheet-step" id="ss-card">
+        <div class="demo-card"><div class="dc-chip"></div><div class="dc-num">4111 2742 8891 1234</div><div class="dc-row"><div><div class="dc-label">Card holder</div><div class="dc-val">RAHUL SHARMA</div></div><div><div class="dc-label">Expires</div><div class="dc-val">12 / 27</div></div></div></div>
+        <div class="field-label">Card number</div><input class="field-input" value="4111 2742 8891 1234" readonly>
+        <div class="field-row"><div style="flex:1;"><div class="field-label">Expiry</div><input class="field-input" value="12/27" readonly></div><div style="flex:1;"><div class="field-label">CVV</div><input class="field-input" value="•••" readonly></div></div>
+        <button class="sheet-cta" onclick="cardNext()">Pay ₹1,000 securely</button>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;"><span style="font-size:11px;color:#9E9CB0;">Demo card prefilled · 256-bit SSL</span></div>
+      </div>
+      <div class="sheet-step" id="ss-otp">
+        <div class="otp-bank"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="#6B6980" stroke-width="1.2"/><path d="M8 2L14 6H2L8 2Z" stroke="#6B6980" stroke-width="1.2" stroke-linejoin="round"/></svg>Verify with bank OTP</div>
+        <div style="text-align:center;font-size:13px;color:#6B6980;margin-bottom:4px;">Sent to +91 XXXXXX4521</div>
+        <div class="otp-box" id="otpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
+        <div class="otp-hint">Didn’t get it? <button onclick="autoOtp()" style="background:none;border:none;color:#4736FE;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
+        <button class="sheet-cta" id="otpCta" onclick="submitOtp()">Submit &amp; Pay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: INSURANCE ════════ -->
+<div class="screen" id="s-insurance">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="ins-step active" id="ins1">
+    <div class="warning-header">
+      <div class="warning-header-top">
+        <button onclick="closeSub()" style="width:32px;height:32px;background:rgba(255,255,255,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 13L7 9L11 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div><div class="warning-title">Insurance Expired!</div><div class="warning-sub">Your car insurance has lapsed. Renew now for a smooth ownership transfer.</div></div>
+      </div>
+      <div class="insure24-badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.8 5.6L14 6L10.8 9L11.8 13.2L8 11L4.2 13.2L5.2 9L2 6L6.2 5.6L8 1.5Z" fill="white"/></svg><span class="insure24-badge-text">Powered by Insure24</span></div>
+    </div>
+    <div class="warning-body">
+      <div class="car-info-card"><div class="car-info-icon">🚗</div><div style="flex:1;"><div class="car-info-name">2023 Hyundai Creta</div><div class="car-info-sub">1.5L Petrol · 1497 cc · RJ 45 CP 6052</div><div style="margin-top:4px;"><span class="expired-tag">Expired: 12 Mar 2025</span></div></div></div>
+      <div class="why-needed"><div class="why-needed-title">⚠️ Why insurance is required</div><div class="why-item">• Mandatory for RC ownership transfer</div><div class="why-item">• Motor Vehicles Act requires valid insurance at all times</div><div class="why-item">• Insured cars fetch 5–8% better resale price</div></div>
+      <button class="cta-renew" onclick="insStep(2)">Renew via Insure24 →</button>
+      <button class="cta-later" onclick="openLater()">⚠️ No, I’ll risk it &amp; insure myself later</button>
+    </div>
+    <div class="later-modal" id="laterModal"><div class="later-card"><div class="later-emoji">😬</div><div class="later-title">Are you sure you want to skip?</div><div class="later-text">Skipping insurance now can hold up your entire sale.</div><div class="later-risk"><div class="later-risk-item">⛔ RC transfer can get blocked at the RTO</div><div class="later-risk-item">📉 Dealers bid 5–8% lower on uninsured cars</div><div class="later-risk-item">⏳ Your payout could be delayed by days</div></div><button class="later-btn-primary" onclick="closeLater();insStep(2)">Okay, renew now</button><button class="later-btn-ghost" onclick="closeLater();closeSub()">Skip anyway &amp; go back</button></div></div>
+  </div>
+  <div class="ins-step" id="ins2">
+    <div class="quote-header"><div class="quote-header-row"><button onclick="insStep(1)" style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 13L7 9L11 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><div class="quote-title">Choose Your Plan</div><div class="quote-sub">Quotes tailored for your 1497cc Creta</div></div></div></div>
+    <div class="quote-body">
+      <div class="plan-card" style="margin-top:16px;"><div class="plan-recommended">Recommended</div><div class="plan-name">Comprehensive</div><div class="plan-desc">Own damage + third party + personal accident</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Own damage cover (accident, theft, fire)</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Third party liability ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Zero depreciation add-on available</div>
+        <div class="plan-price-row"><div><div class="plan-price">₹8,490</div><div class="plan-price-per">per year</div></div><button class="select-plan-btn" onclick="selectPlan('Comprehensive','₹8,490','₹7,200','₹1,290')">Select Plan</button></div></div>
+      <div class="plan-card secondary"><div class="plan-name">Third Party Only</div><div class="plan-desc">Basic legal coverage as per Motor Vehicles Act</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#63FFB1"/><path d="M4 7L6 9.5L10 4.5" stroke="#04553A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Third party liability ₹15 lakh</div>
+        <div class="plan-feature"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#F0F0F4"/><path d="M4.5 9.5L9.5 4.5M4.5 4.5L9.5 9.5" stroke="#9E9CB0" stroke-width="1.2" stroke-linecap="round"/></svg><span style="color:#9E9CB0;">No own damage cover</span></div>
+        <div class="plan-price-row"><div><div class="plan-price" style="color:#0A0A0A;">₹3,290</div><div class="plan-price-per">per year</div></div><button class="select-plan-btn secondary" onclick="selectPlan('Third Party','₹3,290','₹2,790','₹500')">Select</button></div></div>
+    </div>
+  </div>
+  <div class="ins-step" id="ins3">
+    <div class="payment-header"><button onclick="insStep(2)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><div style="font-size:16px;font-weight:700;color:#0A0A0A;">Complete Payment</div><div style="font-size:12px;color:#6B6980;" id="selectedPlanLabel">Comprehensive · ₹8,490/year</div></div></div>
+    <div class="payment-body">
+      <div class="order-summary"><div style="font-size:14px;font-weight:700;color:#0A0A0A;margin-bottom:8px;">Order Summary</div>
+        <div class="order-row"><span class="order-label">Plan</span><span class="order-value" id="orderPlanName">Comprehensive</span></div>
+        <div class="order-row"><span class="order-label">Vehicle</span><span class="order-value">2023 Hyundai Creta</span></div>
+        <div class="order-row"><span class="order-label">Base premium</span><span class="order-value" id="basePremium">₹7,200</span></div>
+        <div class="order-row"><span class="order-label">GST (18%)</span><span class="order-value" id="gstAmount">₹1,290</span></div>
+        <div class="order-row" style="padding-top:8px;"><span class="order-total-label">Total payable</span><span class="order-total-value" id="totalAmount">₹8,490</span></div></div>
+      <div style="margin-bottom:12px;"><div class="pm-title">Payment Method</div>
+        <div class="pm-option selected" onclick="selectPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
+        <div class="pm-option" onclick="selectPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit/Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div></div>
+      <button class="pay-btn" onclick="insStep(4)">Pay <span id="payBtnAmount">₹8,490</span> Securely →</button>
+    </div>
+  </div>
+  <div class="ins-step" id="ins4">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Insurance Renewed! 🎉</div>
+      <div class="success-sub">Your vehicle is now insured. Your checklist updated automatically.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Policy number</span><span class="policy-value">INS24-2025-CR-78421</span></div><div class="policy-row"><span class="policy-label">Plan</span><span class="policy-value" id="successPlanName">Comprehensive</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">28 May 2026</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value" id="successAmount">₹8,490</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: DEAL CLOSURE ════════ -->
+<div class="screen" id="s-deal">
+  <div class="status-bar blue"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sell-header"><div class="sell-header-top"><button class="back-btn" onclick="go('price')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="car-title-block"><div class="car-year-make">Deal closure</div><div class="car-name">2023 HYUNDAI CRETA</div></div><div class="headset-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/></svg></div></div><div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div></div>
+  <div class="stepper">
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector done"></div>
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector active"></div>
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">4</div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+  <div class="scroll-area" id="dealScroll">
+    <div class="card"><div class="card-header"><span class="card-title">🎉 Winning offer accepted</span><span class="card-badge badge-accepted">● Accepted</span></div><div class="offer-body"><div class="offer-amount-row"><span class="offer-amount">₹8,32,000</span><span class="offer-up">▲ ₹32K above estimate</span></div><div class="offer-sub">Highest bid from 18 dealers · locked for 24 hours</div><div class="offer-dealer"><div class="dealer-logo">SM</div><div style="flex:1;"><div class="dealer-name">Sai Motors, Jaipur</div><div class="dealer-meta">★ 4.7 · 2,300+ cars purchased</div></div><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" fill="#63FFB1"/><path d="M7 11L10 14L15 8" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">Payout breakdown</span></div><div style="padding:4px 16px 14px;"><div class="pay-row"><span class="pay-label">Accepted bid</span><span class="pay-val">₹8,32,000</span></div><div class="pay-row"><span class="pay-label">Cars24 service fee</span><span class="pay-val">– ₹0</span></div><div class="pay-row"><span class="pay-label">RC transfer charges</span><span class="pay-val">Included</span></div><div class="pay-total"><span class="pay-total-label">You receive</span><span class="pay-total-val">₹8,32,000</span></div></div></div>
+    <div class="do-reminder"><span class="dr-ic">⚠️</span><div class="dr-txt">Your payout releases only after <b>all ownership transfer checks pass</b>. Clear any pending items below to avoid holdbacks.</div></div>
+    <div id="doChecklist-deal"></div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="cta-bar"><button class="cta-btn" onclick="go('handover')">Schedule car handover →</button></div>
+</div>
+
+<!-- ════════ SCREEN: CAR HANDOVER ════════ -->
+<div class="screen" id="s-handover">
+  <div class="status-bar blue"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sell-header"><div class="sell-header-top"><button class="back-btn" onclick="go('deal')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="car-title-block"><div class="car-year-make">Car handover</div><div class="car-name">2023 HYUNDAI CRETA</div></div><div class="headset-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/></svg></div></div><div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div></div>
+  <div class="stepper">
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector done"></div>
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector done"></div>
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector active"></div>
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+  <div class="scroll-area" id="handoverScroll">
+    <div class="card"><div class="card-header"><span class="card-title">Handover scheduled</span><span class="card-badge badge-sched">● Confirmed</span></div><div class="slot-body"><div class="slot-pick"><div class="slot-date"><span class="sd-day">31</span><span class="sd-mon">MAY</span></div><div class="slot-info"><div class="slot-when">Saturday · 11:00 AM – 1:00 PM</div><div class="slot-where">Cars24 Hub, Malviya Nagar, Jaipur</div></div><button class="slot-edit">Edit</button></div><div class="ho-step"><div class="ho-num">1</div><div class="ho-txt"><b>Bring originals:</b> RC, valid ID, insurance & PUCC copy.</div></div><div class="ho-step"><div class="ho-num">2</div><div class="ho-txt"><b>Final inspection</b> & document verification at the hub.</div></div><div class="ho-step"><div class="ho-num">3</div><div class="ho-txt"><b>Instant payout</b> credited to your bank account on handover.</div></div></div></div>
+    <div class="ho-promise"><span class="hp-ic">⏱️</span><div class="hp-txt">Once all checks pass, your <b>ownership transfer completes within 48 hours of handover</b> — RC moves smoothly to Cars24.</div></div>
+    <div id="doChecklist-handover"></div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="cta-bar"><button class="cta-btn" id="handoverCta" onclick="completeHandover()">Complete handover →</button></div>
+</div>
+
+<!-- ════════ SCREEN: OWNERSHIP READY ════════ -->
+<div class="screen" id="s-ready">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="loading-screen" id="loadingScreen"><div class="loading-spinner"></div><div class="loading-title">Verifying your vehicle…</div><div class="loading-sub">Checking all ownership transfer requirements<br>via Parivahan &amp; Vahan portals</div><div style="font-size:12px;color:#9A98AE;margin-top:24px;" id="loadingStatus">Connecting to Parivahan…</div></div>
+  <div class="rdy-checklist" id="checklistScreen">
+    <div class="checklist-header"><div style="display:flex;align-items:center;gap:8px;"><button onclick="go('handover')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><div class="checklist-header-title">Ownership Transfer Checks</div><div class="checklist-header-sub">2023 Hyundai Creta · RJ 45 CP 6052</div></div></div></div>
+    <div class="progress-ring-wrap"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="ring-bg" cx="28" cy="28" r="22"/><circle class="ring-fill" id="ringFill" cx="28" cy="28" r="22"/><text class="ring-count-text" x="28" y="32" text-anchor="middle" id="ringCountText">0</text></svg><div class="progress-text"><div class="progress-main" id="progressMain">Verifying checks…</div><div class="progress-done" id="progressDone">0 of 6 verified</div></div></div>
+    <div class="checks-scroll"><div id="checksContainer"></div><div style="height:16px;"></div></div>
+  </div>
+  <div class="celebration-screen" id="celebrationScreen">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="cel-topbar"><button onclick="go('deal')" class="cel-iconbtn" title="Back to deal closure"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="cel-iconbtn" title="Close" onclick="closeCelebration()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="seal"><svg width="104" height="104" viewBox="0 0 104 104" fill="none"><g class="seal-ring"><circle cx="52" cy="52" r="48" stroke="#63FFB1" stroke-width="2" stroke-dasharray="6 7" opacity="0.7"/></g><circle cx="52" cy="52" r="38" fill="#63FFB1"/><circle cx="52" cy="52" r="38" stroke="#fff" stroke-opacity="0.5" stroke-width="2"/><path d="M38 53L48 63L68 42" stroke="#04553A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="celebration-title">You're all set for<br>Ownership Transfer!</div>
+    <div class="celebration-sub">All 6 ownership transfer checks have passed.<br>Your RC transfer can proceed smoothly.</div>
+    <div class="cel-promise"><span class="cp-ic">⏱️</span><span class="cp-txt">Your ownership transfer will now be completed <b>within 48 hours of car handover</b>.</span></div>
+    <div class="checks-summary"><div class="summary-row"><span class="summary-label">E-Challans</span><span class="summary-value">✅ Cleared</span></div><div class="summary-row"><span class="summary-label">Hypothecation</span><span class="summary-value">✅ None</span></div><div class="summary-row"><span class="summary-label">Insurance</span><span class="summary-value">✅ Valid</span></div><div class="summary-row"><span class="summary-label">PUCC</span><span class="summary-value">✅ Valid · Sep 2026</span></div><div class="summary-row"><span class="summary-label">Mobile linked</span><span class="summary-value">✅ +91 XXXXXX4521</span></div><div class="summary-row"><span class="summary-label">HSRP</span><span class="summary-value">✅ Fitted</span></div></div>
+    <button class="proceed-btn" onclick="restart()">Done · Restart demo ↺</button>
+  </div>
+</div>
+
+<!-- ════════ EXPLAINER MODAL ════════ -->
+<div class="do-modal" id="do-explainer">
+  <div class="do-video">
+    <div class="do-video-stage">
+      <div class="do-scene" data-i="0"><div class="do-scene-emoji">🔄</div><div class="do-scene-title">How your sale works</div><div class="do-scene-text">While we find your buyer, the car’s RC moves from you to Cars24 in the interim — then on to the buyer.</div><div class="do-flowline"><span class="do-node">You</span><span class="do-arrow">→</span><span class="do-node mid">Cars24</span><span class="do-arrow">→</span><span class="do-node">Buyer</span></div></div>
+      <div class="do-scene" data-i="1"><div class="do-scene-emoji">⚡</div><div class="do-scene-title">Why it matters</div><div class="do-scene-text">A clean, verified vehicle gets you a <b style="color:#63FFB1">better price</b> and a <b style="color:#63FFB1">faster transfer</b> — no surprises later.</div></div>
+      <div class="do-scene" data-i="2"><div class="do-scene-emoji">⚠️</div><div class="do-scene-title">If you skip it…</div><div class="do-scene-text">Pending dues or expired docs can <b style="color:#FF8A65">block the RC transfer</b>, delay your payment, and keep liabilities in your name.</div></div>
+      <div class="do-scene" data-i="3"><div class="do-scene-emoji">📋</div><div class="do-scene-title">What we verify</div><div class="do-doclist"><div class="do-doc"><b>1</b> E-Challans</div><div class="do-doc"><b>2</b> Hypothecation</div><div class="do-doc"><b>3</b> Insurance</div><div class="do-doc"><b>4</b> PUCC</div><div class="do-doc"><b>5</b> Mobile linked</div><div class="do-doc"><b>6</b> Fitness cert</div><div class="do-doc"><b>7</b> HSRP plate</div><div class="do-doc"><b>8</b> RC &amp; photos</div></div></div>
+    </div>
+    <div class="do-prog" id="do-prog"><div class="do-prog-seg"><i></i></div><div class="do-prog-seg"><i></i></div><div class="do-prog-seg"><i></i></div><div class="do-prog-seg"><i></i></div></div>
+    <div class="do-video-foot"><button class="do-skip" onclick="closeExplainer()">Skip</button><button class="do-gotit" onclick="closeExplainer()">Got it 👍</button></div>
+  </div>
+</div>
+
+<!-- ════════ HAPPY POPUP ════════ -->
+<div class="do-pop" id="do-happy-pop">
+  <div class="do-pop-card"><button class="do-pop-close" onclick="dismissHappyPopup()">×</button><div class="do-pop-emoji">🎉</div><div class="do-pop-title">All your documents are in place!</div><div class="do-pop-text">Every car inspection check is verified. Let’s get you a great price!</div><button class="do-pop-btn" onclick="dismissHappyPopup()">Awesome, let’s go</button></div>
+</div>
+</div>
+</div>
+
+<div class="controls">
+  <button class="restart-btn" onclick="restart()">⟲ Restart</button>
+  <div class="theme-switcher">
+    <button class="theme-btn active" onclick="setTheme('cars24',this)">Cars24</button>
+    <button class="theme-btn" onclick="setTheme('carsinfo',this)">CarsInfo</button>
+    <button class="theme-btn" onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+  </div>
+</div>
+
+<script>
+/* ════════════ STATE ════════════ */
+var S = { flow:'pending', echallan:true, insurance:true, rcImage:true, frontMain:true, rearMain:true, reportPhase:'accepted', contestItems:[] };
+var subReturn = 'inspection';
+var qcTimer = null;
+var happyDismissed = false;
+var selectedPM = 'upi';
+var plan = { name:'Comprehensive', amount:'₹8,490', base:'₹7,200', gst:'₹1,290' };
+
+/* ════════════ FACTORS (11) ════════════ */
+/* pages: inspection (A2I) · price (I2P before auction) · deal+handover (I2P after auction) */
+var FACTORS = [
+  /* ── CAR INSPECTION page: RC images, front main, rear main, insurance, duplicate key ── */
+  { key:'rcimage',   name:'RC Images',              pages:['inspection','price','deal','handover'], rel:['price'], good:'RC available · condition correct', pend:'Capture your RC photo', action:'photo', cta:'Capture' },
+  { key:'frontmain', name:'Front Main Image',       pages:['inspection','price','deal','handover'], rel:['price'], good:'Front photo uploaded', pend:'Upload front main photo', action:'photo', cta:'Upload' },
+  { key:'rearmain',  name:'Rear Main Image',        pages:['inspection','price','deal','handover'], rel:['price'], good:'Rear photo uploaded',  pend:'Upload rear main photo',  action:'photo', cta:'Upload' },
+  { key:'insurance', name:'Insurance',              pages:['inspection','price','deal','handover'], rel:['price','own'], good:'Comprehensive · valid till May 2026', pend:'Expired 12 Mar 2025 · renew now', action:'insurance', cta:'Renew' },
+  { key:'dupkey',    name:'Duplicate Key',          pages:['inspection','price','deal','handover'], rel:['price'], good:'Spare key available' },
+  /* ── PRICE / DEAL / HANDOVER pages: everything else ── */
+  { key:'echallan',  name:'E-Challans',             pages:['price','deal','handover'], rel:['own'], good:'All challans cleared · Parivahan', pend:'₹1,000 pending · clear to proceed', action:'challan', cta:'Pay ₹1,000' },
+  { key:'hypo',      name:'No Hypothecation',       pages:['price','deal','handover'], rel:['own'], good:'No active loan / lien on RC' },
+  { key:'pucc',      name:'PUCC',                   pages:['price','deal','handover'], rel:['own'], good:'Valid till Sep 2026' },
+  { key:'mobile',    name:'Mobile linked to Vahan', pages:['price','deal','handover'], rel:['own'], good:'+91 XXXXXX4521' },
+  { key:'fitness',   name:'Fitness Certificate',    pages:['price','deal'],            rel:['own'], good:'Valid till May 2038' },
+  { key:'hsrp',      name:'HSRP',                   pages:['price','deal','handover'], rel:['own'], good:'High-security plate fitted' }
+];
+
+var PAGE_TITLE   = { inspection:'Car inspection checks', price:'Price & ownership-transfer checks', deal:'Price & ownership-transfer checks', handover:'Ownership transfer checks' };
+var PAGE_CONTEXT = { inspection:'car inspection', price:'price & ownership transfer', deal:'price & ownership transfer', handover:'ownership transfer' };
+var PAGE_DONE_MSG = {
+  inspection:'✅ Great — all car inspection checks are complete!',
+  price:'✅ Great — all price &amp; ownership-transfer checks have passed!',
+  deal:'✅ Great — all price &amp; ownership-transfer checks have passed!',
+  handover:'✅ Great — all ownership transfer checks have passed!'
+};
+var SHOW_TAGS = { price:true, deal:true };
+
+function isPass(key){
+  switch(key){
+    case 'echallan':  return S.echallan;
+    case 'insurance': return S.insurance;
+    case 'rcimage':   return S.rcImage;
+    case 'frontmain': return S.frontMain;
+    case 'rearmain':  return S.rearMain;
+    default:          return true;
+  }
+}
+function pageFactors(page){ return FACTORS.filter(function(f){ return f.pages.indexOf(page) !== -1; }); }
+function pageTotal(page){ return pageFactors(page).length; }
+function pageDone(page){ return pageFactors(page).filter(function(f){ return isPass(f.key); }).length; }
+function pageAllDone(page){ return pageDone(page) === pageTotal(page); }
+
+/* ════════════ FLOW SELECT + LOCK ════════════ */
+function chooseFlow(kind){
+  S.flow = kind;
+  S.echallan = true; S.insurance = true; S.rcImage = true; S.frontMain = true; S.rearMain = true;
+  S.contestItems = [];
+  /* only the RC-photo prototype gates inspection→price on the report review */
+  S.reportPhase = (kind === 'rcphoto') ? 'gate' : 'accepted';
+  if (kind === 'insurance'){ S.insurance = false; }
+  if (kind === 'rcphoto'){ S.rcImage = false; S.frontMain = false; S.rearMain = false; }
+  happyDismissed = false;
+  setLockCopy();
+  go('lock');
+}
+
+function setLockCopy(){
+  var notif = document.getElementById('lockNotif');
+  var title = document.getElementById('lockNotifTitle');
+  var body  = document.getElementById('lockNotifBody');
+  var empty = document.getElementById('lockEmpty');
+  notif.style.display = '';
+  empty.style.display = 'none';
+  if (S.flow === 'happy'){
+    title.textContent = '🎉 Your car inspection is complete';
+    body.textContent  = 'All checks are verified. Tap to view your inspection summary and continue.';
+  } else if (S.flow === 'rcphoto'){
+    title.textContent = '📸 Add your RC & car photos';
+    body.textContent  = 'Capture your RC, front and rear photos to complete your car inspection.';
+  } else {
+    title.textContent = '⚠️ Your insurance has expired';
+    body.textContent  = 'Renew your insurance to complete your car inspection. Tap now and proceed.';
+  }
+}
+
+function tapNotif(){ go('inspection'); }
+
+function dismissLockNotif(){
+  document.getElementById('lockNotif').style.display = 'none';
+  var empty = document.getElementById('lockEmpty');
+  empty.style.display = '';
+  empty.textContent = 'Notification dismissed · Tap here to open the app';
+  empty.style.cursor = 'pointer';
+  empty.onclick = function(){ go('inspection'); };
+}
+
+/* ════════════ ROUTER ════════════ */
+function go(id){
+  var screens = document.querySelectorAll('.screen');
+  for (var i=0;i<screens.length;i++) screens[i].classList.remove('active');
+  document.getElementById('s-'+id).classList.add('active');
+
+  if (id === 'inspection'){
+    renderChecklist('doChecklist-inspection','inspection');
+    syncBanner('inspection');
+    maybeInspectionCongrats();
+    renderInspectionReport();
+    updateInspContinue();
+  } else if (id === 'report'){
+    renderReportScreen();
+  } else if (id === 'price'){
+    renderChecklist('doChecklist-price','price');
+    syncBanner('price');
+  } else if (id === 'deal'){
+    renderChecklist('doChecklist-deal','deal');
+    var dealWarn = document.querySelector('#s-deal .do-reminder');
+    if (dealWarn) dealWarn.style.display = pageAllDone('deal') ? 'none' : '';
+  } else if (id === 'handover'){
+    renderChecklist('doChecklist-handover','handover');
+    var hoBtn = document.getElementById('handoverCta');
+    if (hoBtn){
+      if (pageAllDone('handover')){ hoBtn.textContent = 'Complete handover →'; hoBtn.classList.remove('locked'); }
+      else { hoBtn.textContent = 'Clear pending checks to continue'; hoBtn.classList.add('locked'); }
+    }
+  } else if (id === 'ready'){
+    startReadyAnimation();
+  }
+}
+
+/* ════════════ CHECKLIST ════════════ */
+var TICK = '<svg width="14" height="11" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#04553A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function renderChecklist(containerId, page){
+  var fs = pageFactors(page);
+  var pending = [], passed = [];
+  for (var i=0;i<fs.length;i++){ (isPass(fs[i].key) ? passed : pending).push(fs[i]); }
+  var ordered = pending.concat(passed);            /* actionable items first */
+  var total = fs.length, done = passed.length;
+  var pct = Math.round(done/total*100);
+  var allDone = done === total;
+  var sub = allDone
+    ? '<div class="do-subline good">' + PAGE_DONE_MSG[page] + '</div>'
+    : '<div class="do-subline">' + (total-done) + ' of ' + total + ' checks need action — important for your ' + PAGE_CONTEXT[page] + '.</div>';
+
+  var items = '';
+  for (var j=0;j<ordered.length;j++){
+    var c = ordered[j];
+    var pass = isPass(c.key);
+    var icon = pass ? '<div class="do-ic pass">'+TICK+'</div>' : '<div class="do-ic pend"></div>';
+    var subtxt = pass ? c.good : (c.pend || 'Action needed');
+    var ctaBtn = (!pass && c.action)
+      ? '<button class="do-cta" onclick="openSub(\''+c.action+'\',\''+page+'\')">'+c.cta+'</button>'
+      : '';
+    var tags = '';
+    if (SHOW_TAGS[page] && c.rel){
+      tags = '<div class="do-tags">';
+      if (c.rel.indexOf('price') !== -1) tags += '<span class="do-tag price">Price</span>';
+      if (c.rel.indexOf('own')   !== -1) tags += '<span class="do-tag own">Ownership</span>';
+      tags += '</div>';
+    }
+    items += '<div class="do-item">'+icon+
+      '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+subtxt+'</div>'+tags+'</div>'+
+      ctaBtn+'</div>';
+  }
+
+  var collapsible = total > 3;
+  var itemsCls = collapsible ? 'do-items collapsed' : 'do-items';
+  var fade = collapsible ? '<div class="do-fademask"></div>' : '';
+  var moreBtn = collapsible
+    ? '<div class="do-morewrap"><button class="do-morebtn" onclick="toggleChecklist(this,'+total+')">View all '+total+' checks →</button></div>'
+    : '';
+
+  var html =
+    '<div class="do-card">'+
+      '<div class="do-card-head">'+
+        '<div class="do-title-row"><span class="do-title">'+PAGE_TITLE[page]+'</span>'+
+        '<button class="do-info-btn" onclick="showExplainer()" title="What is this?">i</button></div>'+
+        sub+
+      '</div>'+
+      '<div class="do-body">'+
+        '<div class="do-progress"><div class="do-track"><div class="do-fill" style="width:'+pct+'%"></div></div>'+
+        '<span class="do-plabel">'+done+'/'+total+'</span></div>'+
+        '<div class="'+itemsCls+'">'+items+fade+'</div>'+
+        moreBtn+
+      '</div>'+
+    '</div>';
+
+  document.getElementById(containerId).innerHTML = html;
+}
+
+function toggleChecklist(btn, total){
+  var body = btn.closest('.do-body');
+  var items = body.querySelector('.do-items');
+  var mask = items.querySelector('.do-fademask');
+  var nowCollapsed = items.classList.toggle('collapsed');
+  if (nowCollapsed){ btn.innerHTML = 'View all '+total+' checks →'; if(mask) mask.style.display=''; }
+  else { btn.innerHTML = 'Show less ↑'; if(mask) mask.style.display='none'; }
+}
+
+/* ════════════ SUB-FLOW NAV ════════════ */
+function openSub(kind, owner){
+  subReturn = owner;
+  if (kind === 'challan'){ resetChallan(); go('challan'); }
+  else if (kind === 'photo'){ resetPhoto(); go('photo'); }
+  else { resetInsurance(); go('insurance'); }
+}
+
+function closeSub(){
+  closeSheet();
+  var so = document.getElementById('successOverlay'); if (so) so.classList.remove('show');
+  var po = document.getElementById('photoSuccess');  if (po) po.classList.remove('show');
+  closeLater();
+  go(subReturn || 'inspection');
+}
+
+/* ════════════ SCARE BANNERS ════════════ */
+function syncBanner(page){
+  if (page === 'price'){
+    var b = document.getElementById('scareBanner');
+    var pend = pageTotal('price') - pageDone('price');
+    if (pend <= 0){ b.style.display = 'none'; }
+    else { b.style.display = ''; document.getElementById('scareTitle').textContent = pend + ' of ' + pageTotal('price') + ' price & ownership checks need action'; }
+  } else if (page === 'inspection'){
+    var ib = document.getElementById('inspScareBanner');
+    var ipend = pageTotal('inspection') - pageDone('inspection');
+    if (ipend <= 0){ ib.style.display = 'none'; }
+    else { ib.style.display = ''; document.getElementById('inspScareTitle').textContent = ipend + ' of ' + pageTotal('inspection') + ' inspection checks need action'; }
+  }
+}
+
+function scrollToChecklist(owner){
+  var el = document.getElementById('doChecklist-'+owner);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function completeHandover(){
+  if (!pageAllDone('handover')){ scrollToChecklist('handover'); return; }
+  go('ready');
+}
+
+/* ════════════ INSPECTION CONGRATS ════════════ */
+function maybeInspectionCongrats(){
+  var congrats = document.getElementById('inspCongrats');
+  if (pageAllDone('inspection')){
+    if (congrats) congrats.style.display = '';
+    if (S.flow === 'happy' && !happyDismissed){
+      setTimeout(function(){ document.getElementById('do-happy-pop').classList.add('show'); }, 450);
+    }
+  } else {
+    if (congrats) congrats.style.display = 'none';
+  }
+}
+function dismissHappyPopup(){
+  document.getElementById('do-happy-pop').classList.remove('show');
+  happyDismissed = true;
+}
+
+/* ════════════ INSPECTION REPORT + CONTEST ════════════ */
+var REPORT = [
+  { sec:'Exterior &amp; Body', items:[
+    { key:'frontbumper', part:'Front Bumper',        cond:'Damaged',                    bad:true },
+    { key:'rearbumper',  part:'Rear Bumper',         cond:'Damaged',                    bad:true },
+    { key:'bonnet',      part:'Bonnet / Hood',       cond:'Dented, Scratched',          bad:true },
+    { key:'roof',        part:'Roof',                cond:'Dented, Scratched',          bad:true },
+    { key:'lhsfender',   part:'LHS Fender',          cond:'Dented, Scratched',          bad:true },
+    { key:'rhsquarter',  part:'RHS Quarter Panel',   cond:'Dented, Scratched',          bad:true },
+    { key:'bootdoor',    part:'Boot / Dicky Door',   cond:'Dented, Scratched / Repainted', bad:true },
+    { key:'crossmember', part:'Lower Cross Member',  cond:'Rusted',                     bad:true },
+    { key:'windshield',  part:'Front Windshield',    cond:'Spots, Scratched / Replaced',bad:true },
+    { key:'rhsorvm',     part:'RHS ORVM',            cond:'Damaged',                    bad:true },
+    { key:'pillars',     part:'Pillars (LHS A/B/C)', cond:'No damage',                  bad:false }
+  ]},
+  { sec:'Interior &amp; Electricals', items:[
+    { key:'fabricseat',  part:'Fabric Seat',         cond:'Worn out, cushion damaged',  bad:true },
+    { key:'sunroof',     part:'Sunroof',             cond:'Not working',                bad:true },
+    { key:'revcam',      part:'Reverse Camera',      cond:'Not working',                bad:true },
+    { key:'airbags',     part:'Airbags (2)',         cond:'Working',                    bad:false },
+    { key:'abs',         part:'ABS',                 cond:'Working',                    bad:false },
+    { key:'music',       part:'Music System',        cond:'Working',                    bad:false }
+  ]},
+  { sec:'Engine &amp; Transmission', items:[
+    { key:'engine',      part:'Engine',              cond:'RPM fluctuating',            bad:true },
+    { key:'coolant',     part:'Coolant',             cond:'Level low',                  bad:true },
+    { key:'enginesound', part:'Engine Sound',        cond:'Minor sound · no blow-by',   bad:true },
+    { key:'battery',     part:'Battery',             cond:'Healthy',                    bad:false }
+  ]}
+];
+/* QC verdict: which contested findings the team concedes (condition revised) */
+var CONCEDED = { bonnet:1, roof:1, lhsfender:1, fabricseat:1, coolant:1, rearbumper:1 };
+
+function findingByKey(key){
+  for (var g=0;g<REPORT.length;g++){
+    for (var i=0;i<REPORT[g].items.length;i++){ if (REPORT[g].items[i].key === key) return REPORT[g].items[i]; }
+  }
+  return null;
+}
+
+function renderReportScreen(){
+  var contesting = (S.reportPhase === 'contesting');
+  document.getElementById('repContestHint').classList.toggle('show', contesting);
+  document.getElementById('repCtaReview').style.display  = contesting ? 'none' : '';
+  document.getElementById('repCtaContest').style.display = contesting ? '' : 'none';
+  var html = '';
+  for (var g=0;g<REPORT.length;g++){
+    html += '<div class="rep-section"><div class="rep-sec-title">'+REPORT[g].sec+'</div>';
+    for (var i=0;i<REPORT[g].items.length;i++){
+      var it = REPORT[g].items[i];
+      var contestable = it.bad;
+      var on = S.contestItems.indexOf(it.key) !== -1;
+      var rowCls = 'rep-row' + (it.bad ? ' issue' : '') + (contestable ? ' contestable' : '') + (contesting && contestable ? ' contestmode' : '');
+      var stat = it.bad ? '<div class="rep-stat bad">✕</div>' : '<div class="rep-stat ok">✓</div>';
+      var chk = contestable
+        ? '<div class="rep-check'+(on?' on':'')+'" onclick="toggleContest(\''+it.key+'\',this)">'+(on?'<svg width="13" height="11" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'
+        : '';
+      html += '<div class="'+rowCls+'">'+stat+
+        '<div class="rep-rtxt"><div class="rep-part">'+it.part+'</div><div class="rep-cond">'+it.cond+'</div></div>'+chk+'</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('repBody').innerHTML = html;
+}
+
+function openReport(){ go('report'); }
+
+function acceptReport(){
+  S.reportPhase = 'accepted';
+  go('inspection');
+}
+
+function startContest(){
+  S.reportPhase = 'contesting';
+  renderReportScreen();
+}
+function cancelContest(){
+  S.reportPhase = 'gate';
+  S.contestItems = [];
+  renderReportScreen();
+}
+function toggleContest(key, el){
+  var i = S.contestItems.indexOf(key);
+  if (i === -1){ S.contestItems.push(key); el.classList.add('on'); el.innerHTML = '<svg width="13" height="11" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+  else { S.contestItems.splice(i,1); el.classList.remove('on'); el.innerHTML = ''; }
+  var n = S.contestItems.length;
+  var btn = document.getElementById('repSubmitBtn');
+  btn.textContent = 'Submit contest (' + n + ')';
+  btn.disabled = n === 0;
+}
+
+function submitContest(){
+  S.reportPhase = 'qcloading';
+  go('inspection');
+  document.getElementById('inspReport').scrollIntoView({ behavior:'smooth', block:'center' });
+  clearTimeout(qcTimer);
+  qcTimer = setTimeout(function(){
+    S.reportPhase = 'qcresult';
+    renderInspectionReport();
+    updateInspContinue();
+    document.getElementById('inspReport').scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 3000);
+}
+
+function contestResultOk(){
+  S.reportPhase = 'resolved';
+  renderInspectionReport();
+  updateInspContinue();
+}
+function contestFurther(){
+  S.reportPhase = 'qcfurther';
+  renderInspectionReport();
+  updateInspContinue();
+}
+
+function renderInspectionReport(){
+  var box = document.getElementById('inspReport');
+  if (!box) return;
+  if (S.flow !== 'rcphoto'){ box.innerHTML = ''; return; }
+  var p = S.reportPhase, html = '';
+
+  if (p === 'gate' || p === 'contesting'){
+    html =
+      '<div class="rep-review">'+
+        '<div class="rep-review-head"><span class="rep-badge">CJ inspection complete</span></div>'+
+        '<div class="rep-review-title">Your inspection report is ready</div>'+
+        '<div class="rep-review-sub">Rakesh Yadav has finished inspecting your car. Review the recorded condition and <b>accept</b> or <b>contest</b> the findings to continue to pricing.</div>'+
+        '<button class="rep-open-btn" onclick="openReport()">📋 Review inspection report →</button>'+
+      '</div>';
+  } else if (p === 'qcloading'){
+    html =
+      '<div class="qc-card"><div class="qc-loading">'+
+        '<div class="qc-spinner"></div>'+
+        '<div class="qc-load-title">Validating your contested findings…</div>'+
+        '<div class="qc-load-sub">Our quality-check executive is reviewing the '+S.contestItems.length+' item'+(S.contestItems.length===1?'':'s')+' you contested. We\'ll get back to you shortly.</div>'+
+      '</div></div>';
+  } else if (p === 'qcresult' || p === 'qcfurther'){
+    var rows = '';
+    for (var i=0;i<S.contestItems.length;i++){
+      var it = findingByKey(S.contestItems[i]);
+      if (!it) continue;
+      var conc = !!CONCEDED[it.key];
+      rows += '<div class="qc-vrow"><div><div class="qc-vpart">'+it.part+'</div><div class="qc-vcond">'+it.cond+'</div></div>'+
+        '<span class="qc-verdict '+(conc?'conceded':'held')+'">'+(conc?'Conceded':'Not conceded')+'</span></div>';
+    }
+    var concededN = S.contestItems.filter(function(k){ return CONCEDED[k]; }).length;
+    var heldN = S.contestItems.length - concededN;
+    html =
+      '<div class="qc-card">'+
+        '<div class="qc-result-title">Quality-check result</div>'+
+        '<div class="qc-result-sub">'+concededN+' conceded · '+heldN+' upheld. Conceded findings have been revised in your report.</div>'+
+        rows;
+    if (p === 'qcfurther'){
+      html +=
+        '<div class="ra-note">Thanks — we\'ve escalated this. Your <b>retail associate</b> will get in touch with you shortly to resolve it.</div>'+
+        '<div class="ra-card"><div class="ra-avatar">AS</div><div style="flex:1;"><div class="exec-name">Ayush Sharma</div><div class="exec-role">Senior Retail Associate</div><div class="exec-line">● Available 10 AM – 7 PM · +91 98730 41265</div></div>'+
+        '<a class="exec-call" href="tel:+919873041265"><span class="exec-call-ic"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M16.5 13.68v2.07a1.38 1.38 0 01-1.5 1.38 13.67 13.67 0 01-5.96-2.12 13.46 13.46 0 01-4.14-4.14A13.67 13.67 0 012.77 4.87 1.38 1.38 0 014.14 3.38h2.07a1.38 1.38 0 011.38 1.19c.09.67.26 1.33.49 1.96a1.38 1.38 0 01-.31 1.46L6.8 8.96a11.04 11.04 0 004.14 4.14l.97-.97a1.38 1.38 0 011.46-.31c.63.23 1.29.4 1.96.49a1.38 1.38 0 011.17 1.37z" fill="white"/></svg></span></a></div>'+
+        '<button class="qc-ok-btn" onclick="contestResultOk()">OK, continue</button>';
+    } else {
+      html +=
+        '<button class="qc-ok-btn" onclick="contestResultOk()">OK</button>'+
+        '<button class="qc-further" onclick="contestFurther()">Still not satisfied? Contest further</button>';
+    }
+    html += '</div>';
+  } else { /* accepted or resolved */
+    var msg = (p === 'resolved')
+      ? 'Your contest has been reviewed and your report updated. You\'re ready to discover your price.'
+      : 'You\'ve accepted the inspection findings. You\'re ready to discover your price.';
+    html =
+      '<div class="rep-review">'+
+        '<div class="rep-review-head"><span class="rep-badge">Report '+(p==='resolved'?'resolved':'accepted')+'</span></div>'+
+        '<div class="rep-review-title">✅ Inspection report '+(p==='resolved'?'resolved':'accepted')+'</div>'+
+        '<div class="rep-review-sub">'+msg+'</div>'+
+      '</div>';
+  }
+  box.innerHTML = html;
+}
+
+function inspContinueUnlocked(){
+  if (S.flow !== 'rcphoto') return true;
+  return S.reportPhase === 'accepted' || S.reportPhase === 'resolved' || S.reportPhase === 'qcfurther';
+}
+function updateInspContinue(){
+  var btn = document.getElementById('inspContinueBtn');
+  if (!btn) return;
+  if (inspContinueUnlocked()){ btn.classList.remove('locked'); btn.textContent = 'Continue to price discovery →'; }
+  else { btn.classList.add('locked'); btn.textContent = 'Review your inspection report to continue'; }
+}
+function continueFromInspection(){
+  if (!inspContinueUnlocked()){
+    document.getElementById('inspReport').scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  go('price');
+}
+
+/* ════════════ PHOTO CAPTURE ════════════ */
+function resetPhoto(){
+  document.getElementById('photoSuccess').classList.remove('show');
+  photoShow('rc');
+  var cap = document.getElementById('vfCaptured');
+  var res = document.getElementById('photoResult');
+  var capBtn = document.getElementById('captureRcBtn');
+  var nextBtn = document.getElementById('nextToMainsBtn');
+  if (S.rcImage){ cap.classList.add('show'); res.classList.add('show'); capBtn.style.display='none'; nextBtn.style.display=''; }
+  else { cap.classList.remove('show'); res.classList.remove('show'); capBtn.style.display=''; nextBtn.style.display='none'; }
+  syncTile('front'); syncTile('rear');
+}
+function photoShow(step){
+  document.getElementById('photo-rc').classList.toggle('active', step === 'rc');
+  document.getElementById('photo-mains').classList.toggle('active', step === 'mains');
+}
+function captureRC(){
+  S.rcImage = true;
+  document.getElementById('vfCaptured').classList.add('show');
+  document.getElementById('photoResult').classList.add('show');
+  document.getElementById('captureRcBtn').style.display = 'none';
+  document.getElementById('nextToMainsBtn').style.display = '';
+}
+function syncTile(which){
+  var t = document.getElementById('tile-'+which);
+  var on = (which === 'front') ? S.frontMain : S.rearMain;
+  t.classList.toggle('done', on);
+  t.querySelector('.upload-tile-status').textContent = on ? '✓ Uploaded' : 'Tap to upload';
+  syncFinish();
+}
+function captureMain(which){
+  if (which === 'front') S.frontMain = true; else S.rearMain = true;
+  syncTile(which);
+}
+function syncFinish(){
+  var btn = document.getElementById('finishPhotosBtn');
+  if (!btn) return;
+  btn.disabled = !(S.frontMain && S.rearMain);
+}
+function finishPhotos(){
+  document.getElementById('photoSuccess').classList.add('show');
+}
+
+/* ════════════ CHALLAN PAYMENT ════════════ */
+function resetChallan(){
+  document.getElementById('successOverlay').classList.remove('show');
+  switchTab('pending', document.querySelector('#s-challan .tab'));
+  closeSheet();
+  showStep('methods');
+}
+
+function switchTab(which, el){
+  var tabs = document.querySelectorAll('#s-challan .tab');
+  for (var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
+  if (el) el.classList.add('active');
+  document.getElementById('tab-pending').classList.toggle('active', which==='pending');
+  document.getElementById('tab-settlement').classList.toggle('active', which==='settlement');
+}
+
+function openSheet(){
+  selectedPM = 'upi';
+  showStep('methods');
+  var opts = document.querySelectorAll('#ss-methods .pm-option');
+  for (var i=0;i<opts.length;i++) opts[i].classList.toggle('selected', opts[i].dataset.pm==='upi');
+  document.getElementById('methodCta').textContent = 'Continue with UPI';
+  document.getElementById('scrim').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
+}
+function closeSheet(){
+  document.getElementById('scrim').classList.remove('show');
+  document.getElementById('sheet').classList.remove('show');
+}
+
+function pickPM(el){
+  var opts = document.querySelectorAll('#ss-methods .pm-option');
+  for (var i=0;i<opts.length;i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  selectedPM = el.dataset.pm;
+  var label = { upi:'UPI', card:'Card', netbanking:'Net Banking' }[selectedPM];
+  document.getElementById('methodCta').textContent = 'Continue with ' + label;
+}
+
+function showStep(step){
+  var ids = { methods:'ss-methods', card:'ss-card', otp:'ss-otp' };
+  for (var k in ids) document.getElementById(ids[k]).classList.toggle('active', k===step);
+  var titles = { methods:'Choose payment method', card:'Enter card details', otp:'Verify payment' };
+  document.getElementById('sheetTitle').textContent = titles[step];
+}
+
+function methodNext(){
+  if (selectedPM === 'card') showStep('card');
+  else showStep('otp');
+}
+function cardNext(){ showStep('otp'); }
+
+function autoOtp(){
+  var digits = document.querySelectorAll('#otpBox .otp-digit');
+  var code = '482913';
+  for (var i=0;i<digits.length;i++) digits[i].value = code[i];
+}
+
+function submitOtp(){
+  S.echallan = true;
+  closeSheet();
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+/* ════════════ INSURANCE ════════════ */
+function resetInsurance(){
+  insStep(1);
+  closeLater();
+}
+function insStep(n){
+  for (var i=1;i<=4;i++) document.getElementById('ins'+i).classList.toggle('active', i===n);
+  if (n === 4) S.insurance = true;
+}
+function selectPlan(name, amount, base, gst){
+  plan = { name:name, amount:amount, base:base, gst:gst };
+  document.getElementById('selectedPlanLabel').textContent = name + ' · ' + amount + '/year';
+  document.getElementById('orderPlanName').textContent = name;
+  document.getElementById('basePremium').textContent = base;
+  document.getElementById('gstAmount').textContent = gst;
+  document.getElementById('totalAmount').textContent = amount;
+  document.getElementById('payBtnAmount').textContent = amount;
+  document.getElementById('successPlanName').textContent = name;
+  document.getElementById('successAmount').textContent = amount;
+  insStep(3);
+}
+function selectPM(el){
+  var opts = el.parentNode.querySelectorAll('.pm-option');
+  for (var i=0;i<opts.length;i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+}
+function openLater(){ document.getElementById('laterModal').classList.add('show'); }
+function closeLater(){ var m=document.getElementById('laterModal'); if(m) m.classList.remove('show'); }
+
+/* ════════════ EXPLAINER ════════════ */
+var explainerTimer = null;
+function showExplainer(){
+  document.getElementById('do-explainer').classList.add('show');
+  playExplainer(0);
+}
+function playExplainer(i){
+  var scenes = document.querySelectorAll('#do-explainer .do-scene');
+  var segs = document.querySelectorAll('#do-prog .do-prog-seg');
+  for (var s=0;s<scenes.length;s++) scenes[s].classList.toggle('active', s===i);
+  for (var p=0;p<segs.length;p++){
+    segs[p].classList.remove('active','done');
+    if (p < i) segs[p].classList.add('done');
+    else if (p === i) segs[p].classList.add('active');
+  }
+  clearTimeout(explainerTimer);
+  if (i < scenes.length - 1){
+    explainerTimer = setTimeout(function(){ playExplainer(i+1); }, 2600);
+  }
+}
+function closeExplainer(){
+  clearTimeout(explainerTimer);
+  document.getElementById('do-explainer').classList.remove('show');
+}
+
+/* ════════════ READY ANIMATION (ownership transfer · 6 checks) ════════════ */
+var READY = [
+  { name:'E-Challans cleared',     sub:'No pending traffic challans',    via:'Verified via Parivahan' },
+  { name:'No Hypothecation',       sub:'No active loan / lien on RC',    via:'Verified via Vahan' },
+  { name:'Insurance valid',        sub:'Comprehensive · till May 2026',  via:'Verified via Insure24' },
+  { name:'PUCC valid',             sub:'Pollution cert till Sep 2026',   via:'Verified via Vahan' },
+  { name:'Mobile linked to Vahan', sub:'+91 XXXXXX4521',                 via:'Verified via Vahan' },
+  { name:'HSRP fitted',            sub:'High-security plate installed',  via:'Verified via RTO' }
+];
+var CIRC = 2 * Math.PI * 22;
+
+function startReadyAnimation(){
+  var loading = document.getElementById('loadingScreen');
+  var checklist = document.getElementById('checklistScreen');
+  var celebration = document.getElementById('celebrationScreen');
+  loading.style.display = 'flex';
+  checklist.classList.remove('show');
+  celebration.classList.remove('show');
+
+  buildReadyChecks();
+  updateRing(0);
+  document.getElementById('progressMain').textContent = 'Verifying checks…';
+  document.getElementById('progressDone').textContent = '0 of ' + READY.length + ' verified';
+
+  var msgs = ['Connecting to Parivahan…','Fetching RC details…','Checking challans & insurance…','Verifying documents…'];
+  var mi = 0;
+  var msgTimer = setInterval(function(){
+    mi = (mi+1) % msgs.length;
+    var ls = document.getElementById('loadingStatus');
+    if (ls) ls.textContent = msgs[mi];
+  }, 500);
+
+  setTimeout(function(){
+    clearInterval(msgTimer);
+    loading.style.display = 'none';
+    checklist.classList.add('show');
+    runChecks();
+  }, 1800);
+}
+
+function buildReadyChecks(){
+  var html = '';
+  for (var i=0;i<READY.length;i++){
+    html += '<div class="check-row" id="chk-'+i+'">'+
+      '<div class="check-circle"><svg viewBox="0 0 36 36">'+
+        '<circle class="check-bg-circle" cx="18" cy="18" r="16"/>'+
+        '<path class="check-path" d="M11 18.5L16 23.5L25.5 13"/></svg></div>'+
+      '<div class="check-info"><div class="check-name">'+READY[i].name+'</div>'+
+        '<div class="check-sub">'+READY[i].sub+'</div>'+
+        '<div class="check-verifier pending">'+READY[i].via+'</div></div>'+
+      '<div class="check-status-badge checking">Checking…</div>'+
+    '</div>';
+  }
+  document.getElementById('checksContainer').innerHTML = html;
+}
+
+function updateRing(done){
+  document.getElementById('ringFill').style.strokeDashoffset = CIRC * (1 - done/READY.length);
+  document.getElementById('ringCountText').textContent = done;
+}
+
+function runChecks(){
+  var i = 0;
+  function visibleStep(){
+    if (i >= READY.length){ tickStep(0); return; }
+    var row = document.getElementById('chk-'+i);
+    row.classList.add('visible');
+    i++;
+    setTimeout(visibleStep, 130);
+  }
+  function tickStep(j){
+    if (j >= READY.length){
+      document.getElementById('progressMain').textContent = 'All checks verified!';
+      setTimeout(showCelebration, 700);
+      return;
+    }
+    var row = document.getElementById('chk-'+j);
+    row.classList.add('done');
+    var badge = row.querySelector('.check-status-badge');
+    badge.classList.remove('checking'); badge.classList.add('verified'); badge.textContent = '✓ Verified';
+    row.querySelector('.check-verifier').classList.remove('pending');
+    updateRing(j+1);
+    document.getElementById('progressDone').textContent = (j+1) + ' of ' + READY.length + ' verified';
+    setTimeout(function(){ tickStep(j+1); }, 420);
+  }
+  visibleStep();
+}
+
+function showCelebration(){
+  document.getElementById('celebrationScreen').classList.add('show');
+  startConfetti();
+}
+function closeCelebration(){
+  document.getElementById('celebrationScreen').classList.remove('show');
+}
+
+function startConfetti(){
+  var canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var rect = canvas.parentNode.getBoundingClientRect();
+  canvas.width = rect.width; canvas.height = rect.height;
+  var colors = ['#63FFB1','#4736FE','#FFFFFF','#8E7BFF','#34D399'];
+  var pieces = [];
+  for (var i=0;i<90;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*-canvas.height,
+      w: 6+Math.random()*6, h: 8+Math.random()*8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vy: 2+Math.random()*3, vx: -1+Math.random()*2,
+      rot: Math.random()*Math.PI, vr: -0.1+Math.random()*0.2
+    });
+  }
+  var frames = 0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (var i=0;i<pieces.length;i++){
+      var p = pieces[i];
+      p.y += p.vy; p.x += p.vx; p.rot += p.vr;
+      if (p.y > canvas.height + 20){ p.y = -20; p.x = Math.random()*canvas.width; }
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    }
+    frames++;
+    if (frames < 260) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+/* ════════════ THEME ════════════ */
+function setTheme(name, btn){
+  document.getElementById('app').setAttribute('data-theme', name);
+  var btns = document.querySelectorAll('.theme-btn');
+  for (var i=0;i<btns.length;i++) btns[i].classList.remove('active');
+  if (btn) btn.classList.add('active');
+}
+
+/* ════════════ RESTART ════════════ */
+function restart(){
+  S = { flow:'pending', echallan:true, insurance:true, rcImage:true, frontMain:true, rearMain:true, reportPhase:'accepted', contestItems:[] };
+  subReturn = 'inspection';
+  happyDismissed = false;
+  selectedPM = 'upi';
+  clearTimeout(qcTimer);
+  closeSheet();
+  closeLater();
+  clearTimeout(explainerTimer);
+  var so = document.getElementById('successOverlay'); if (so) so.classList.remove('show');
+  var po = document.getElementById('photoSuccess');  if (po) po.classList.remove('show');
+  document.getElementById('do-explainer').classList.remove('show');
+  document.getElementById('do-happy-pop').classList.remove('show');
+  document.getElementById('celebrationScreen').classList.remove('show');
+  go('flow');
+}
+
+/* ════════════ OTP INPUT UX ════════════ */
+document.addEventListener('DOMContentLoaded', function(){
+  var digits = document.querySelectorAll('#otpBox .otp-digit');
+  for (var i=0;i<digits.length;i++){
+    (function(idx){
+      digits[idx].addEventListener('input', function(){
+        if (this.value && idx < digits.length-1) digits[idx+1].focus();
+      });
+      digits[idx].addEventListener('keydown', function(e){
+        if (e.key === 'Backspace' && !this.value && idx > 0) digits[idx-1].focus();
+      });
+    })(i);
+  }
+});
+</script>
+</body>
+</html>

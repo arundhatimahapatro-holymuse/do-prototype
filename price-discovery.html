@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars24 — Price Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-text-primary-rest:   #0A0A0A;
+      --lego-color-text-secondary-rest: #6B6980;
+      --lego-color-surface-subtle-rest: #F7F7FA;
+      --lego-color-surface-light-rest:  #FFFFFF;
+      --lego-color-border-tertiary-rest: #ECECF1;
+    }
+    [data-theme="cars24"] {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest: #4736FE;
+      --lego-color-surface-brand-subtle-rest:  #F4F3FF;
+      --lego-color-text-brand-primary-rest:    #4736FE;
+    }
+    [data-theme="carsinfo"] {
+      --lego-font: 'Manrope', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest: #13C2C2;
+      --lego-color-surface-brand-subtle-rest:  #D3FCFB;
+      --lego-color-text-brand-primary-rest:    #13C2C2;
+    }
+    [data-theme="vehicleinfo"] {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --lego-color-surface-brand-primary-rest: #456DFF;
+      --lego-color-surface-brand-subtle-rest:  #EEF1FF;
+      --lego-color-text-brand-primary-rest:    #456DFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #E9E9EE;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 80px;
+      font-family: var(--lego-font);
+    }
+
+    .proto-nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      background: #0A0A0A; border-radius: 100px; padding: 6px 10px;
+      display: flex; gap: 4px; z-index: 1000; white-space: nowrap;
+    }
+    .proto-nav a {
+      color: #9E9CB0; font-size: 11px; font-weight: 500; text-decoration: none;
+      padding: 4px 10px; border-radius: 100px; transition: all 0.15s; font-family: 'Geist', sans-serif;
+    }
+    .proto-nav a.active, .proto-nav a:hover { background: #4736FE; color: #fff; }
+
+    .phone-wrap { margin-top: 52px; }
+    .phone {
+      width: 390px; height: 844px;
+      background: var(--lego-color-surface-subtle-rest);
+      border-radius: 44px; overflow: hidden; position: relative;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(10,10,10,0.22), 0 0 0 1px rgba(10,10,10,0.06);
+      font-family: var(--lego-font);
+    }
+
+    .status-bar {
+      background: #DDE9F6; height: 48px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+    }
+    .status-bar-time { font-size: 15px; font-weight: 700; color: #0A0A0A; }
+    .status-bar-icons { display: flex; align-items: center; gap: 6px; }
+
+    .sell-header { background: #DDE9F6; padding: 12px 16px 16px; flex-shrink: 0; }
+    .sell-header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .back-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .car-title-block { flex: 1; }
+    .car-year-make { font-size: 13px; font-weight: 500; color: #6B6980; }
+    .car-name { font-size: 17px; font-weight: 700; color: #0A0A0A; letter-spacing: -0.3px; }
+    .appointment-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .appt-id { font-size: 12px; color: #6B6980; }
+    .headset-btn {
+      width: 36px; height: 36px; background: #FFFFFF; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .stepper {
+      background: #FFFFFF; padding: 14px 16px; display: flex; align-items: center;
+      flex-shrink: 0; border-bottom: 1px solid #ECECF1;
+    }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+    .step-dot {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; z-index: 1;
+    }
+    .step.done .step-dot { background: #63FFB1; }
+    .step.active .step-dot { background: #4736FE; }
+    .step.todo .step-dot { background: #ECECF1; color: #9E9CB0; }
+    .step-label { font-size: 9px; font-weight: 600; text-align: center; line-height: 1.2; }
+    .step.done .step-label { color: #04553A; }
+    .step.active .step-label { color: #4736FE; }
+    .step.todo .step-label { color: #9E9CB0; }
+    .step-connector { height: 2px; flex: 0.8; margin-top: -16px; z-index: 0; }
+    .step-connector.done { background: #63FFB1; }
+    .step-connector.active { background: linear-gradient(to right, #63FFB1, #4736FE); }
+    .step-connector.todo { background: #ECECF1; }
+
+    .scroll-area { flex: 1; overflow-y: auto; padding: 0 0 16px; scrollbar-width: none; scroll-behavior: smooth; }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── SCARE BANNER ── */
+    .scare-banner {
+      background: linear-gradient(135deg, #FF7A33 0%, #E8530A 100%);
+      margin: 12px 12px 0; border-radius: 14px; padding: 14px;
+      display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative;
+      box-shadow: 0 6px 18px rgba(232,83,10,0.28);
+      animation: pulseShadow 2.2s ease-in-out infinite;
+    }
+    @keyframes pulseShadow {
+      0%,100% { box-shadow: 0 6px 18px rgba(232,83,10,0.28); }
+      50% { box-shadow: 0 6px 26px rgba(232,83,10,0.5); }
+    }
+    .scare-icon {
+      width: 40px; height: 40px; background: rgba(255,255,255,0.22); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .scare-body { flex: 1; }
+    .scare-title { font-size: 14px; font-weight: 800; color: #FFFFFF; }
+    .scare-sub { font-size: 11.5px; color: rgba(255,255,255,0.9); margin-top: 2px; line-height: 1.35; }
+    .scare-cta {
+      background: #FFFFFF; color: #E8530A; font-size: 12px; font-weight: 800;
+      padding: 8px 14px; border-radius: 100px; border: none; flex-shrink: 0;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .card {
+      background: #FFFFFF; margin: 10px 12px 0; border-radius: 18px;
+      border: 1px solid #ECECF1; overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #F3F3F7;
+    }
+    .card-title { font-size: 14px; font-weight: 700; color: #0A0A0A; }
+    .card-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+    .badge-live { background: #DEFFEE; color: #04553A; }
+
+    .auction-body { padding: 14px 16px; }
+    .auction-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .auction-stat { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #6B6980; }
+    .map-placeholder {
+      background: #F2F2F6; border-radius: 12px; height: 100px; display: flex;
+      align-items: center; justify-content: center; margin-bottom: 12px; position: relative; overflow: hidden;
+    }
+    .price-range {
+      background: var(--lego-color-surface-brand-subtle-rest); border-radius: 12px; padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .price-label { font-size: 11px; color: #6B6980; margin-bottom: 2px; }
+    .price-value { font-size: 20px; font-weight: 800; color: var(--lego-color-text-brand-primary-rest); }
+
+    .health-body { padding: 12px 16px; }
+    .health-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .health-stat { background: #F7F7FA; border: 1px solid #ECECF1; border-radius: 10px; padding: 8px 10px; flex: 1; min-width: 70px; }
+    .health-stat-label { font-size: 10px; color: #9E9CB0; margin-bottom: 2px; }
+    .health-stat-value { font-size: 13px; font-weight: 700; color: #0A0A0A; }
+    .star-row { display: flex; align-items: center; gap: 2px; margin-bottom: 10px; }
+    .star { font-size: 14px; }
+    .star-value { font-size: 14px; font-weight: 700; color: #0A0A0A; margin-left: 4px; }
+
+    .consultant-body { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+    .consultant-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #4736FE, #63FFB1);
+      display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .consultant-info { flex: 1; }
+    .consultant-name { font-size: 14px; font-weight: 700; color: #0A0A0A; }
+    .consultant-role { font-size: 12px; color: #6B6980; }
+    .consultant-time { font-size: 11px; color: #04553A; margin-top: 2px; }
+    .call-btn {
+      width: 36px; height: 36px; background: var(--lego-color-surface-brand-primary-rest); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #0A0A0A; border-radius: 100px; padding: 6px 8px; display: flex; gap: 4px; z-index: 999;
+    }
+    .theme-btn {
+      padding: 6px 14px; border-radius: 100px; border: none; font-size: 12px; font-weight: 600;
+      cursor: pointer; background: transparent; color: #9E9CB0; font-family: 'Geist', sans-serif; transition: all 0.2s;
+    }
+    .theme-btn.active { background: var(--lego-color-surface-brand-primary-rest); color: #FFFFFF; }
+  </style>
+</head>
+<body>
+
+<nav class="proto-nav">
+  <a href="notifications.html">🔔 Notify</a>
+  <a href="price-discovery.html" class="active">💰 Price</a>
+  <a href="challan-flow.html">🏷️ Challans</a>
+  <a href="insurance-renewal.html">🛡️ Insurance</a>
+  <a href="deal-closure.html">🤝 Deal</a>
+  <a href="car-handover.html">🚗 Handover</a>
+  <a href="ownership-ready.html">✅ Ready</a>
+</nav>
+
+<div class="phone-wrap">
+<div class="phone" id="app" data-theme="cars24">
+
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="#0A0A0A" opacity="0.3"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/><path d="M23.5 4.5V7.5C24.3 7.2 24.3 4.8 23.5 4.5Z" fill="#0A0A0A" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <div class="sell-header">
+    <div class="sell-header-top">
+      <div class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="car-title-block">
+        <div class="car-year-make">Your selling journey</div>
+        <div class="car-name">2023 HYUNDAI CRETA</div>
+      </div>
+      <div class="headset-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C5.41 1.5 2.5 4.41 2.5 8V10.5C2.5 11.33 3.17 12 4 12H5C5.55 12 6 11.55 6 11V8.5C6 7.95 5.55 7.5 5 7.5H4.04C4.49 5.09 6.54 3.25 9 3.25C11.46 3.25 13.51 5.09 13.96 7.5H13C12.45 7.5 12 7.95 12 8.5V11C12 11.55 12.45 12 13 12H14C14.83 12 15.5 11.33 15.5 10.5V8C15.5 4.41 12.59 1.5 9 1.5Z" fill="#4736FE"/><path d="M6.5 14.5C6.5 15.33 7.17 16 8 16H10C10.83 16 11.5 15.33 11.5 14.5V14H6.5V14.5Z" fill="#4736FE"/></svg>
+      </div>
+    </div>
+    <div class="appointment-row"><span class="appt-id">Appointment ID: 10115964793</span></div>
+  </div>
+
+  <div class="stepper">
+    <div class="step done"><div class="step-dot"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-label">Car<br>Inspection</div></div>
+    <div class="step-connector active"></div>
+    <div class="step active"><div class="step-dot"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div><div class="step-label">Price<br>Discovery</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">3</div><div class="step-label">Deal<br>Closure</div></div>
+    <div class="step-connector todo"></div>
+    <div class="step todo"><div class="step-dot">4</div><div class="step-label">Car<br>Handover</div></div>
+  </div>
+
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- SCARE BANNER (shown only when checks pending) -->
+    <div class="scare-banner" id="scareBanner" onclick="scrollToChecklist()">
+      <div class="scare-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2.5L2 19H20L11 2.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V13" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="16" r="1.1" fill="white"/></svg>
+      </div>
+      <div class="scare-body">
+        <div class="scare-title" id="scareTitle">2 of 7 ownership checks failing</div>
+        <div class="scare-sub">Fix now to avoid RC transfer holdbacks</div>
+      </div>
+      <button class="scare-cta" onclick="event.stopPropagation(); scrollToChecklist()">
+        Proceed Now
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9M9 6L6 3M9 6L6 9" stroke="#E8530A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <!-- AUCTION LIVE CARD -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Your car is live for auction!</span>
+        <span class="card-badge badge-live">● Live</span>
+      </div>
+      <div class="auction-body">
+        <div class="auction-meta">
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#6B6980" stroke-width="1.1"/><path d="M7 4V7L9 9" stroke="#6B6980" stroke-width="1.2" stroke-linecap="round"/></svg><span>Closes in 14h 32m</span></div>
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7C1 7 3.5 2.5 7 2.5C10.5 2.5 13 7 13 7C13 7 10.5 11.5 7 11.5C3.5 11.5 1 7 1 7Z" stroke="#6B6980" stroke-width="1.1"/><circle cx="7" cy="7" r="2" fill="#6B6980"/></svg><span>242 views</span></div>
+          <div class="auction-stat"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5C4.5 1.5 2.5 3.5 2.5 6C2.5 9.5 7 12.5 7 12.5C7 12.5 11.5 9.5 11.5 6C11.5 3.5 9.5 1.5 7 1.5Z" stroke="#6B6980" stroke-width="1.1"/><circle cx="7" cy="6" r="1.5" fill="#6B6980"/></svg><span>18 dealers</span></div>
+        </div>
+        <div class="map-placeholder">
+          <svg width="160" height="90" viewBox="0 0 160 90" fill="none" opacity="0.35">
+            <path d="M78 4 L86 8 L90 14 L88 22 L94 26 L98 32 L96 40 L100 46 L98 54 L94 62 L88 68 L82 72 L78 78 L74 72 L68 66 L64 58 L62 50 L60 42 L64 34 L68 26 L72 18 L74 10 Z" fill="#C5C3D6"/>
+            <circle cx="78" cy="45" r="6" fill="#4736FE" opacity="0.85"/><circle cx="78" cy="45" r="3" fill="#4736FE"/>
+            <circle cx="90" cy="30" r="3" fill="#04553A" opacity="0.7"/><circle cx="66" cy="40" r="3" fill="#04553A" opacity="0.7"/><circle cx="82" cy="60" r="3" fill="#04553A" opacity="0.7"/>
+          </svg>
+          <div style="position:absolute;top:8px;right:8px;background:white;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:#0A0A0A;border:1px solid #ECECF1;">18 dealers bidding</div>
+        </div>
+        <div class="price-range">
+          <div>
+            <div class="price-label">Expected price range</div>
+            <div class="price-value">₹7.8L – ₹8.4L</div>
+          </div>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="var(--lego-color-surface-brand-primary-rest)" opacity="0.1"/><path d="M16 10V22M10 16H22" stroke="var(--lego-color-text-brand-primary-rest)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEEMED OWNERSHIP CHECKLIST (rendered by do-state.js) -->
+    <div id="doChecklist"></div>
+
+    <!-- CAR HEALTH -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Car Health Report</span>
+        <span class="card-badge" style="background:#F4F3FF;color:#4736FE;">4.5 ★</span>
+      </div>
+      <div class="health-body">
+        <div class="star-row">
+          <span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#FBBF24;">★</span>
+          <span class="star" style="color:#FBBF24;">★</span><span class="star" style="color:#FBBF24;">★</span>
+          <span class="star" style="color:#ECECF1;">★</span>
+          <span class="star-value">4.5 / 5</span><span style="font-size:11px;color:#6B6980;margin-left:4px;">Excellent</span>
+        </div>
+        <div class="health-row">
+          <div class="health-stat"><div class="health-stat-label">KM Driven</div><div class="health-stat-value">42,180</div></div>
+          <div class="health-stat"><div class="health-stat-label">Fuel</div><div class="health-stat-value">Petrol</div></div>
+          <div class="health-stat"><div class="health-stat-label">RTO</div><div class="health-stat-value">DL-03</div></div>
+          <div class="health-stat"><div class="health-stat-label">Owners</div><div class="health-stat-value">1st</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSULTANT -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">Your Relationship Manager</span></div>
+      <div class="consultant-body">
+        <div class="consultant-avatar">AS</div>
+        <div class="consultant-info">
+          <div class="consultant-name">Ayush Sharma</div>
+          <div class="consultant-role">Senior Relationship Manager</div>
+          <div class="consultant-time">● Available 10AM – 7PM</div>
+        </div>
+        <div class="call-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16.5 13.68v2.07a1.38 1.38 0 01-1.5 1.38 13.67 13.67 0 01-5.96-2.12 13.46 13.46 0 01-4.14-4.14A13.67 13.67 0 012.77 4.87 1.38 1.38 0 014.14 3.38h2.07a1.38 1.38 0 011.38 1.19c.09.67.26 1.33.49 1.96a1.38 1.38 0 01-.31 1.46L6.8 8.96a11.04 11.04 0 004.14 4.14l.97-.97a1.38 1.38 0 011.46-.31c.63.23 1.29.4 1.96.49a1.38 1.38 0 011.17 1.37z" fill="white"/></svg></div>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+  </div>
+
+</div>
+</div>
+
+<div class="theme-switcher">
+  <button class="theme-btn active" onclick="setTheme('cars24',this)">Cars24</button>
+  <button class="theme-btn" onclick="setTheme('carsinfo',this)">CarsInfo</button>
+  <button class="theme-btn" onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+</div>
+
+<script src="do-state.js"></script>
+<script>
+  function scrollToChecklist() {
+    document.getElementById('doChecklist').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function setTheme(theme, btn) {
+    const app = document.getElementById('app');
+    app.setAttribute('data-theme', theme);
+    app.style.fontFamily = getComputedStyle(app).getPropertyValue('--lego-font').trim();
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Render checklist + banner state on load
+  DOState.renderChecklistCard('doChecklist', 'price-discovery.html', true);
+  (function syncBanner() {
+    const pending = DOState.pendingCount();
+    const banner = document.getElementById('scareBanner');
+    if (pending > 0) {
+      banner.style.display = 'flex';
+      document.getElementById('scareTitle').textContent = pending + ' of 7 ownership checks failing';
+    } else {
+      banner.style.display = 'none';
+    }
+  })();
+  DOState.maybeShowHappyPopup();
+</script>
+</body>
+</html>

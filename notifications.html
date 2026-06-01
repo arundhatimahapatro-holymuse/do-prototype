@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars24 — Notifications</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --lego-font: 'Geist', system-ui, -apple-system, sans-serif;
+      --ink: #0A0A0A;
+      --primary: #4736FE;
+      --comp: #63FFB1;
+    }
+    [data-theme="cars24"]      { --lego-font:'Geist',sans-serif;   --primary:#4736FE; }
+    [data-theme="carsinfo"]    { --lego-font:'Manrope',sans-serif; --primary:#13C2C2; }
+    [data-theme="vehicleinfo"] { --lego-font:'Geist',sans-serif;   --primary:#456DFF; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #E5E7EB;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 16px 80px;
+    }
+
+    .proto-nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      background: #0A0A0A; border-radius: 100px; padding: 6px 8px;
+      display: flex; gap: 2px; z-index: 1000; white-space: nowrap;
+    }
+    .proto-nav a {
+      color: #9A98AE; font-size: 10.5px; font-weight: 500; text-decoration: none;
+      padding: 4px 9px; border-radius: 100px; transition: all 0.15s; font-family: 'Geist', sans-serif;
+    }
+    .proto-nav a.active, .proto-nav a:hover { background: #4736FE; color: #fff; }
+
+    .phone-wrap { margin-top: 52px; }
+    .phone {
+      width: 390px; height: 844px; background: #F7F7FB;
+      border-radius: 44px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.08);
+      font-family: var(--lego-font); position: relative;
+    }
+
+    /* LOCK SCREEN */
+    .lock-screen {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, #1A1F2E 0%, #0A0A0A 55%, #161427 100%);
+      z-index: 50; display: flex; flex-direction: column; align-items: center;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .lock-screen.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    .lock-status {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px 0;
+    }
+    .lock-time-block { text-align: center; width: 100%; margin: 24px 0 16px; }
+    .lock-time { font-size: 64px; font-weight: 800; color: #FFFFFF; letter-spacing: -2px; line-height: 1; }
+    .lock-date { font-size: 16px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 500; }
+
+    .push-notif {
+      width: calc(100% - 32px); margin: 0 16px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 12px 14px;
+      cursor: pointer; animation: slideDown 0.5s ease 0.3s both;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .push-notif.dismissing { transform: translateX(110%); opacity: 0; }
+    .push-notif:active { transform: scale(0.98); opacity: 0.9; }
+    @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .push-notif-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .push-app-icon {
+      width: 22px; height: 22px; border-radius: 5px; background: #4736FE;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .push-app-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .push-time { font-size: 11px; color: rgba(255,255,255,0.5); margin-left: auto; }
+    .push-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 2px; }
+    .push-body { font-size: 12px; color: rgba(255,255,255,0.78); line-height: 1.4; }
+    .push-actions {
+      display: flex; gap: 8px; margin-top: 10px; padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .push-action {
+      flex: 1; padding: 7px 0; text-align: center; font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.9); border-radius: 8px; background: rgba(255,255,255,0.1);
+      cursor: pointer; border: none;
+    }
+    .push-action.primary { background: #4736FE; color: #FFFFFF; }
+
+    .lock-empty {
+      width: calc(100% - 32px); margin: 0 16px; text-align: center;
+      color: rgba(255,255,255,0.45); font-size: 13px; padding: 18px 0;
+      display: none;
+    }
+    .unlock-hint { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; }
+    .swipe-bar {
+      position: absolute; bottom: 32px; width: 130px; height: 5px;
+      background: rgba(255,255,255,0.4); border-radius: 100px;
+    }
+
+    /* MAIN APP */
+    .main-app { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .status-bar {
+      background: #FFFFFF; height: 48px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+    }
+    .status-bar-time { font-size: 15px; font-weight: 700; color: #0A0A0A; }
+    .page-header {
+      background: #FFFFFF; padding: 14px 16px; border-bottom: 1px solid #ECECF1; flex-shrink: 0;
+    }
+    .page-title { font-size: 20px; font-weight: 800; color: #0A0A0A; }
+    .page-sub { font-size: 13px; color: #6B6980; margin-top: 2px; }
+
+    .scroll-area { flex: 1; overflow-y: auto; padding: 16px; scrollbar-width: none; }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    .section-label {
+      font-size: 12px; font-weight: 700; color: #9A98AE; text-transform: uppercase;
+      letter-spacing: 0.5px; margin: 16px 0 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* FLOW CONTROL PANEL */
+    .flow-panel {
+      background: #0A0A0A; border-radius: 16px; padding: 14px; margin-bottom: 16px;
+    }
+    .flow-panel-title {
+      font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 3px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .flow-panel-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-bottom: 12px; line-height: 1.4; }
+    .flow-btns { display: flex; flex-direction: column; gap: 8px; }
+    .flow-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      padding: 11px 12px; border-radius: 11px; border: none; cursor: pointer;
+      font-family: var(--lego-font); transition: transform 0.12s;
+    }
+    .flow-btn:active { transform: scale(0.98); }
+    .flow-btn .fb-ic {
+      width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .flow-btn .fb-txt { flex: 1; }
+    .flow-btn .fb-name { font-size: 13px; font-weight: 700; }
+    .flow-btn .fb-desc { font-size: 11px; opacity: 0.7; margin-top: 1px; }
+    .flow-btn.happy   { background: #63FFB1; color: #04553A; }
+    .flow-btn.happy .fb-ic   { background: rgba(4,85,58,0.12); }
+    .flow-btn.pending { background: #FF7A33; color: #FFFFFF; }
+    .flow-btn.pending .fb-ic { background: rgba(255,255,255,0.18); }
+    .flow-btn.reset   { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
+    .flow-btn.reset .fb-ic   { background: rgba(255,255,255,0.1); }
+
+    .flow-state {
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.7);
+    }
+    .flow-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* WHATSAPP */
+    .wa-bubble {
+      background: #FFFFFF; border-radius: 14px; border: 1px solid #ECECF1;
+      overflow: hidden; margin-bottom: 10px; cursor: pointer; transition: box-shadow 0.15s, transform 0.25s, opacity 0.25s;
+    }
+    .wa-bubble:hover { box-shadow: 0 4px 16px rgba(10,10,10,0.08); }
+    .wa-bubble.dismissing { transform: translateX(110%); opacity: 0; }
+    .wa-header { background: #25D366; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    .wa-icon {
+      width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .wa-header-text { flex: 1; }
+    .wa-app-name { font-size: 13px; font-weight: 700; color: #FFFFFF; }
+    .wa-notif-time { font-size: 11px; color: rgba(255,255,255,0.75); }
+    .wa-body { padding: 14px; }
+    .wa-from { font-size: 12px; font-weight: 700; color: #0A0A0A; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .wa-message {
+      font-size: 13px; color: #0A0A0A; line-height: 1.6; background: #F0FDF4;
+      border-radius: 0 10px 10px 10px; padding: 10px 12px; border: 1px solid #BBF7D0; margin-bottom: 10px;
+    }
+    .wa-cta {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: #25D366; color: #FFFFFF; font-size: 13px; font-weight: 700;
+      padding: 10px; border-radius: 8px; text-decoration: none; border: none; cursor: pointer; width: 100%;
+    }
+
+    /* IN-APP PUSH CARD */
+    .push-card { background: #0A0A0A; border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: transform 0.25s, opacity 0.25s; }
+    .push-card.dismissing { transform: translateX(110%); opacity: 0; }
+    .push-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .push-card-icon {
+      width: 28px; height: 28px; background: #4736FE; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .push-card-app { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .push-card-time { font-size: 11px; color: rgba(255,255,255,0.4); margin-left: auto; }
+    .push-card-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 3px; }
+    .push-card-body { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 10px; }
+    .push-card-actions { display: flex; gap: 8px; }
+    .push-card-btn { flex: 1; padding: 8px 0; text-align: center; font-size: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; }
+    .push-card-btn.dismiss { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+    .push-card-btn.pay { background: #4736FE; color: #FFFFFF; }
+
+    .empty-note {
+      text-align: center; color: #9A98AE; font-size: 12px; padding: 14px;
+      background: #fff; border: 1px dashed #D9D8E3; border-radius: 12px; display: none;
+    }
+
+    .demo-btns { display: flex; gap: 8px; margin-bottom: 16px; }
+    .demo-btn { flex: 1; padding: 10px 0; font-size: 12px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; text-align: center; }
+    .demo-btn.lock { background: #0A0A0A; color: #FFFFFF; }
+    .demo-btn.wa { background: #25D366; color: #FFFFFF; }
+
+    .theme-switcher {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #0A0A0A; border-radius: 100px; padding: 6px 8px; display: flex; gap: 4px; z-index: 999;
+    }
+    .theme-btn {
+      padding: 6px 14px; border-radius: 100px; border: none; font-size: 12px; font-weight: 600;
+      cursor: pointer; background: transparent; color: #9A98AE; font-family: 'Geist', sans-serif; transition: all 0.2s;
+    }
+    .theme-btn.active { background: var(--primary); color: #FFFFFF; }
+  </style>
+</head>
+<body>
+
+<nav class="proto-nav">
+  <a href="notifications.html" class="active">🔔 Notify</a>
+  <a href="price-discovery.html">💰 Price</a>
+  <a href="challan-flow.html">🏷️ Challans</a>
+  <a href="insurance-renewal.html">🛡️ Insurance</a>
+  <a href="deal-closure.html">🤝 Deal</a>
+  <a href="car-handover.html">🚗 Handover</a>
+  <a href="ownership-ready.html">✅ Ready</a>
+</nav>
+
+<div class="phone-wrap">
+<div class="phone" id="app" data-theme="cars24">
+
+  <!-- LOCK SCREEN -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-status">
+      <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);">9:41</span>
+      <div style="display:flex;gap:6px;">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="white"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="white"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="white" opacity="0.3"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="white" stroke-opacity="0.5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="white"/></svg>
+      </div>
+    </div>
+
+    <div class="lock-time-block">
+      <div class="lock-time">9:41</div>
+      <div class="lock-date">Thursday, 29 May</div>
+    </div>
+
+    <div class="push-notif" id="lockNotif" onclick="tapNotif()">
+      <div class="push-notif-header">
+        <div class="push-app-icon">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><text y="12" font-size="12">🚗</text></svg>
+        </div>
+        <span class="push-app-name">CARS24</span>
+        <span class="push-time">now</span>
+      </div>
+      <div class="push-title">⚠️ ₹1,000 e-challan pending</div>
+      <div class="push-body">Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.</div>
+      <div class="push-actions">
+        <button class="push-action" onclick="event.stopPropagation();dismissLockNotif()">Dismiss</button>
+        <button class="push-action primary" onclick="event.stopPropagation();tapNotif()">Tap & Proceed →</button>
+      </div>
+    </div>
+    <div class="lock-empty" id="lockEmpty">No new notifications · Swipe up to unlock</div>
+
+    <div class="unlock-hint">Tap notification to open · Swipe up to unlock</div>
+    <div class="swipe-bar"></div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="main-app">
+    <div class="status-bar">
+      <span class="status-bar-time">9:41</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg>
+      </div>
+    </div>
+    <div class="page-header">
+      <div class="page-title">Notifications</div>
+      <div class="page-sub">Deemed ownership alerts · RJ 45 CP 6052</div>
+    </div>
+    <div class="scroll-area">
+
+      <!-- FLOW CONTROL PANEL -->
+      <div class="flow-panel">
+        <div class="flow-panel-title">🎛️ Demo flow controls</div>
+        <div class="flow-panel-sub">Pick a starting state, then walk through the screens.</div>
+        <div class="flow-btns">
+          <button class="flow-btn happy" onclick="pickFlow('happy')">
+            <span class="fb-ic">🎉</span>
+            <span class="fb-txt"><div class="fb-name">Happy flow</div><div class="fb-desc">All 7 checks already verified post-inspection</div></span>
+          </button>
+          <button class="flow-btn pending" onclick="pickFlow('pending')">
+            <span class="fb-ic">⚠️</span>
+            <span class="fb-txt"><div class="fb-name">2 pending flow</div><div class="fb-desc">Insurance + e-challan unpaid (2 of 7 failing)</div></span>
+          </button>
+          <button class="flow-btn reset" onclick="pickFlow('reset')">
+            <span class="fb-ic">↺</span>
+            <span class="fb-txt"><div class="fb-name">Reset flow</div><div class="fb-desc">Clear all progress, back to pending</div></span>
+          </button>
+        </div>
+        <div class="flow-state">
+          <span class="flow-dot" id="flowDot"></span>
+          <span id="flowStateText">Current: —</span>
+        </div>
+      </div>
+
+      <!-- WHATSAPP -->
+      <div class="section-label" id="waSection">💬 WhatsApp</div>
+      <div class="wa-bubble" id="waBubble" onclick="tapNotif()">
+        <div class="wa-header">
+          <div class="wa-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1C4.58 1 1 4.58 1 9C1 10.46 1.43 11.82 2.15 12.97L1.06 17L5.22 15.93C6.33 16.6 7.62 17 9 17C13.42 17 17 13.42 17 9C17 4.58 13.42 1 9 1Z" fill="white" opacity="0.9"/></svg>
+          </div>
+          <div class="wa-header-text">
+            <div class="wa-app-name">WhatsApp</div>
+            <div class="wa-notif-time">9:41 AM · today</div>
+          </div>
+          <div style="width:8px;height:8px;background:#FF3B30;border-radius:50%;margin-right:4px;"></div>
+        </div>
+        <div class="wa-body">
+          <div class="wa-from">
+            CARS24
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#25D366"/><path d="M4 7L6.5 9.5L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Business Account
+          </div>
+          <div class="wa-message">
+            Hi Rahul 👋<br><br>
+            <strong>⚠️ Action needed before deemed ownership transfer</strong><br><br>
+            Clear your <strong>₹1,000 e-challan</strong> on <strong>RJ 45 CP 6052</strong> to avoid holdbacks on your deal. Tap now and proceed.
+          </div>
+          <button class="wa-cta" onclick="event.stopPropagation();tapNotif()">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Tap & Proceed · ₹1,000
+          </button>
+        </div>
+      </div>
+
+      <!-- IN-APP PUSH -->
+      <div class="section-label">🔔 Push notification</div>
+      <div class="push-card" id="pushCard" onclick="tapNotif()">
+        <div class="push-card-header">
+          <div class="push-card-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><text y="14" font-size="14">🚗</text></svg>
+          </div>
+          <span class="push-card-app">CARS24</span>
+          <span class="push-card-time">Just now</span>
+        </div>
+        <div class="push-card-title">⚠️ ₹1,000 e-challan pending</div>
+        <div class="push-card-body">Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.</div>
+        <div class="push-card-actions">
+          <button class="push-card-btn dismiss" onclick="event.stopPropagation();dismissCard('pushCard')">Dismiss</button>
+          <button class="push-card-btn pay" onclick="event.stopPropagation();tapNotif()">Tap & Proceed →</button>
+        </div>
+      </div>
+
+      <div class="empty-note" id="emptyNote">🎉 You're all caught up — no notifications left.</div>
+
+      <div class="demo-btns" style="margin-top:16px;">
+        <button class="demo-btn lock" onclick="showLockScreen()">🔔 Show lock screen</button>
+        <button class="demo-btn wa" onclick="scrollToWA()">💬 Jump to WhatsApp</button>
+      </div>
+
+      <div style="height:16px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="theme-switcher">
+  <button class="theme-btn active" id="btn-cars24" onclick="setTheme('cars24',this)">Cars24</button>
+  <button class="theme-btn" id="btn-carsinfo" onclick="setTheme('carsinfo',this)">CarsInfo</button>
+  <button class="theme-btn" id="btn-vehicleinfo" onclick="setTheme('vehicleinfo',this)">VehicleInfo</button>
+</div>
+
+<script src="do-state.js"></script>
+<script>
+  function tapNotif() { window.location.href = 'price-discovery.html'; }
+
+  function dismissLockNotif() {
+    const n = document.getElementById('lockNotif');
+    n.classList.add('dismissing');
+    setTimeout(() => {
+      n.style.display = 'none';
+      document.getElementById('lockEmpty').style.display = 'block';
+      document.querySelector('.unlock-hint').style.display = 'none';
+    }, 250);
+  }
+
+  function dismissCard(id) {
+    const c = document.getElementById(id);
+    c.classList.add('dismissing');
+    setTimeout(() => { c.style.display = 'none'; checkEmpty(); }, 250);
+  }
+
+  function checkEmpty() {
+    const wa = document.getElementById('waBubble');
+    const pc = document.getElementById('pushCard');
+    const waGone = wa.style.display === 'none';
+    const pcGone = pc.style.display === 'none';
+    if (waGone && pcGone) document.getElementById('emptyNote').style.display = 'block';
+  }
+
+  function showLockScreen() {
+    const ls = document.getElementById('lockScreen');
+    ls.classList.remove('hidden');
+    // restore notif if it was dismissed
+    const n = document.getElementById('lockNotif');
+    n.classList.remove('dismissing');
+    n.style.display = '';
+    document.getElementById('lockEmpty').style.display = 'none';
+    document.querySelector('.unlock-hint').style.display = '';
+  }
+  function scrollToWA() { document.getElementById('waSection').scrollIntoView({ behavior: 'smooth' }); }
+
+  function pickFlow(kind) {
+    if (kind === 'happy') DOState.setHappy();
+    else DOState.reset(); // both 'pending' and 'reset' clear to all-pending
+    renderFlowState();
+    flash(kind);
+  }
+
+  function flash(kind) {
+    const text = kind === 'happy'
+      ? 'Happy flow set — open Price to see the congrats popup.'
+      : kind === 'pending'
+        ? '2-pending flow set — open Price to see the scare banner.'
+        : 'Flow reset — all checks back to pending.';
+    const el = document.getElementById('flowStateText');
+    const old = el.textContent;
+    el.textContent = text;
+    setTimeout(() => renderFlowState(), 2200);
+  }
+
+  function renderFlowState() {
+    const flow = DOState.get('flow');
+    const done = DOState.doneCount();
+    const dot = document.getElementById('flowDot');
+    const txt = document.getElementById('flowStateText');
+    if (flow === 'happy' || done === 7) {
+      dot.style.background = '#63FFB1';
+      txt.textContent = `Current: Happy flow · ${done}/7 verified`;
+    } else {
+      dot.style.background = '#FF7A33';
+      txt.textContent = `Current: ${7 - done} of 7 pending`;
+    }
+  }
+
+  function setTheme(theme, btn) {
+    document.getElementById('app').setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  renderFlowState();
+</script>
+</body>
+</html>
