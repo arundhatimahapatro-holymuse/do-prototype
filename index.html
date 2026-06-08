@@ -50,6 +50,22 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .fs-btn.happy{ background:#63FFB1; color:#04553A; } .fs-btn.happy .fb-ic{ background:rgba(4,85,58,.13); }
 .fs-btn.pending{ background:#FF7A33; color:#fff; } .fs-btn.pending .fb-ic{ background:rgba(255,255,255,.2); }
 .fs-note{ font-size:11.5px; color:rgba(255,255,255,.4); text-align:center; margin-top:14px; line-height:1.5; }
+.fs-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.fs-chip{ position:relative; display:flex; align-items:center; gap:8px; padding:13px 12px; border-radius:13px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#fff; font-size:13px; font-weight:700; font-family:var(--lego-font); cursor:pointer; text-align:left; transition:background .15s,border-color .15s; }
+.fs-chip:hover{ background:rgba(255,255,255,.12); border-color:rgba(99,255,177,.5); }
+.fs-chip .fc-ic{ font-size:18px; }
+.fs-chip .fc-tag{ position:absolute; top:8px; right:8px; background:#4736FE; color:#fff; font-size:9px; font-weight:800; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.fs-combo{ width:100%; margin-top:14px; padding:12px; border-radius:13px; border:1px dashed rgba(255,122,51,.6); background:rgba(255,122,51,.12); color:#FFC9A8; font-size:12.5px; font-weight:700; font-family:var(--lego-font); cursor:pointer; }
+.hypo-pick{ position:absolute; inset:0; z-index:200; background:rgba(10,10,10,.6); display:none; align-items:flex-end; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+.hypo-pick.show{ display:flex; }
+.hypo-pick-card{ background:#fff; width:100%; border-radius:22px 22px 0 0; padding:20px 18px 22px; animation:doPopIn .3s ease; }
+.hp-title{ font-size:17px; font-weight:800; color:#0A0A0A; }
+.hp-sub{ font-size:12px; color:#6B6980; margin:3px 0 14px; }
+.hp-opt{ display:block; width:100%; text-align:left; background:#F7F7FA; border:1px solid #ECECF1; border-radius:13px; padding:12px 14px; margin-bottom:10px; cursor:pointer; font-family:var(--lego-font); }
+.hp-opt b{ font-size:13.5px; font-weight:800; color:#0A0A0A; display:block; }
+.hp-opt span{ font-size:11.5px; color:#6B6980; }
+.hp-opt:hover{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+.hp-cancel{ width:100%; background:none; border:none; color:#6B6980; font-size:13px; font-weight:700; padding:8px; cursor:pointer; font-family:var(--lego-font); margin-top:2px; }
 
 /* ── LOCK SCREEN ── */
 .lock{ flex:1; background:linear-gradient(180deg,#1A1F2E 0%,#0A0A0A 55%,#161427 100%); display:flex; flex-direction:column; align-items:center; position:relative; }
@@ -294,6 +310,89 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .otp-digit.filled{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
 .otp-hint{ text-align:center; font-size:12px; color:#6B6980; }
 .otp-bank{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; color:#6B6980; margin-bottom:6px; }
+/* ── Challan review + Razorpay flow (from Figma) ── */
+.rev-challan{ background:#FFF8F0; border:1px solid #FBE2C0; border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+.rev-chal-top{ display:flex; justify-content:space-between; align-items:center; }
+.rev-chal-name{ font-size:14px; font-weight:700; color:#0A0A0A; }
+.rev-chal-amt{ font-size:14px; font-weight:800; color:#0A0A0A; }
+.rev-chal-num{ font-size:11px; color:#9E9CB0; margin-top:3px; }
+.rev-chal-note{ font-size:11px; color:#A85A00; margin-top:6px; }
+.rev-summary{ background:#F7F7FA; border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+.rev-row{ display:flex; justify-content:space-between; font-size:13px; color:#6B6980; margin-bottom:8px; }
+.rev-row span:last-child{ color:#0A0A0A; font-weight:600; }
+.rev-row .rev-info{ color:#9E9CB0; }
+.rev-total{ display:flex; justify-content:space-between; font-size:15px; font-weight:800; color:#0A0A0A; border-top:1px solid #ECECF1; padding-top:10px; margin-top:2px; }
+.spotify-offer{ background:linear-gradient(135deg,#0A0A0A,#1DB954); border-radius:12px; padding:12px 14px; margin-bottom:14px; color:#fff; }
+.sp-badge{ display:inline-block; background:#63FFB1; color:#04553A; font-size:9px; font-weight:800; padding:2px 7px; border-radius:100px; letter-spacing:.5px; margin-bottom:6px; }
+.sp-title{ font-size:13px; font-weight:800; }
+.sp-sub{ font-size:11px; opacity:.85; margin-top:2px; }
+.rev-terms{ font-size:11px; color:#9E9CB0; text-align:center; margin-bottom:10px; }
+.rev-terms b{ color:var(--lego-color-text-brand-primary-rest); }
+.rzp-amt-big{ font-size:22px; font-weight:800; color:#0A0A0A; text-align:center; margin:4px 0 16px; }
+.link-more{ display:block; margin:0 auto 14px; background:none; border:none; color:var(--lego-color-text-brand-primary-rest); font-weight:700; font-size:13px; cursor:pointer; font-family:var(--lego-font); }
+.rzp-secured{ font-size:11px; color:#9E9CB0; text-align:center; }
+.gpay-ic{ background:#fff; border:1px solid #ECECF1; font-size:15px; font-weight:800; }
+.success-overlay.rzp{ background:linear-gradient(180deg,#1FA463 0%,#0B7A4B 100%); color:#fff; }
+.success-overlay.rzp .success-title{ color:#fff; }
+.rzp-redirect{ font-size:12px; color:rgba(255,255,255,.85); margin-bottom:6px; }
+.rzp-check{ width:88px; height:88px; background:#63FFB1; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:14px 0 18px; }
+.rzp-receipt{ background:rgba(255,255,255,.15); border-radius:12px; padding:14px 16px; width:100%; margin-bottom:16px; }
+.rzp-rrow{ display:flex; justify-content:space-between; font-size:15px; font-weight:800; }
+.rzp-rsub{ font-size:11px; color:rgba(255,255,255,.8); margin-top:3px; }
+.rzp-rhelp{ font-size:10px; color:rgba(255,255,255,.7); margin-top:8px; }
+.success-overlay.rzp .back-to-pd{ background:#fff; color:#0B7A4B; }
+/* ── Hypothecation flow ── */
+.hyp-step{ display:none; flex-direction:column; flex:1; overflow:hidden; } .hyp-step.active{ display:flex; }
+.hyp-card{ background:#fff; border:1px solid #ECECF1; border-radius:16px; padding:16px; margin:12px 16px 0; box-shadow:0 1px 2px rgba(10,10,10,.04); }
+.hyp-financier{ display:flex; align-items:center; gap:12px; }
+.hyp-bank-logo{ width:44px; height:44px; border-radius:12px; background:#F4F3FF; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.hyp-bank-name{ font-size:15px; font-weight:800; color:#0A0A0A; }
+.hyp-bank-sub{ font-size:11px; color:#6B6980; margin-top:2px; }
+.hyp-pill{ display:inline-block; font-size:12px; font-weight:800; padding:5px 12px; border-radius:100px; margin-top:14px; }
+.hyp-pill.open{ background:#FFEDE7; color:#C2410C; } .hyp-pill.closed{ background:#DEFFEE; color:#04553A; }
+.hyp-note{ font-size:12px; color:#6B6980; line-height:1.5; margin-top:10px; }
+.hyp-steps-box{ background:#FFF8F0; border:1px solid #FBE2C0; border-radius:14px; padding:14px 16px; margin:12px 16px 0; }
+.hyp-sb-title{ font-size:13px; font-weight:800; color:#7A4100; margin-bottom:8px; }
+.hyp-pan-banner{ margin:12px 16px 0; border-radius:12px; padding:11px 14px; font-size:12px; line-height:1.5; }
+.hyp-pan-banner.need{ background:#FFF4E6; border:1px solid #FBD9A8; color:#7A4100; }
+.hyp-pan-banner.have{ background:#EFFAF3; border:1px solid #A9F5CF; color:#04553A; }
+.hyp-section-label{ font-size:13px; font-weight:800; color:#0A0A0A; margin:18px 16px 8px; display:flex; align-items:center; gap:8px; }
+.hyp-section-label .req{ font-size:10px; font-weight:700; color:#C2410C; background:#FFEDE7; padding:2px 7px; border-radius:100px; }
+.hyp-section-label .opt{ font-size:10px; font-weight:700; color:#6B6980; background:#F1F1F6; padding:2px 7px; border-radius:100px; }
+.loan-opts{ padding:0 16px; }
+.loan-opt{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:#fff; border:2px solid #ECECF1; border-radius:14px; padding:13px 14px; margin-bottom:10px; cursor:pointer; font-family:var(--lego-font); }
+.loan-opt.selected{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+.lo-radio{ width:20px; height:20px; border-radius:50%; border:2px solid #D6D5E0; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.loan-opt.selected .lo-radio{ border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-primary-rest); }
+.loan-opt.selected .lo-radio::after{ content:''; width:7px; height:7px; border-radius:50%; background:#fff; }
+.lo-txt{ display:flex; flex-direction:column; }
+.lo-name{ font-size:14px; font-weight:700; color:#0A0A0A; } .lo-sub{ font-size:11px; color:#6B6980; margin-top:2px; }
+.upload-intro{ font-size:13px; color:#6B6980; line-height:1.5; padding:14px 16px 0; }
+.upload-box{ margin:14px 16px 0; border:2px dashed #C7C5D6; border-radius:16px; padding:26px 16px; text-align:center; cursor:pointer; background:#FAFAFE; transition:border-color .2s,background .2s; }
+.upload-box.attached{ border-style:solid; border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
+.up-ic{ font-size:30px; margin-bottom:8px; }
+.up-main{ font-size:14px; font-weight:700; color:#0A0A0A; } .up-sub{ font-size:11px; color:#9E9CB0; margin-top:3px; }
+.gen-stub{ margin:24px 16px 0; text-align:center; }
+.gen-emoji{ font-size:48px; margin-bottom:12px; }
+.gen-h{ font-size:18px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
+.gen-sub{ font-size:13px; color:#6B6980; line-height:1.55; }
+/* ── Shared sub-flow step container (PUCC / Mobile / HSRP) ── */
+.sub-step{ display:none; flex-direction:column; flex:1; overflow:hidden; } .sub-step.active{ display:flex; }
+.back-btn-text{ background:none; border:none; color:#6B6980; font-size:14px; font-weight:700; cursor:pointer; font-family:var(--lego-font); }
+/* ── Vahan government portal styling ── */
+.vahan-header{ background:linear-gradient(135deg,#0B5FA5,#0A4A80); padding:16px; flex-shrink:0; }
+.vh-top{ display:flex; align-items:center; gap:10px; }
+.vh-emblem{ font-size:26px; }
+.vh-title{ font-size:14px; font-weight:800; color:#fff; letter-spacing:.3px; }
+.vh-sub{ font-size:10px; color:rgba(255,255,255,.8); margin-top:1px; }
+.vahan-card{ background:#fff; border:1px solid #D6DEE8; border-radius:10px; margin:14px 16px; padding:16px; }
+.vh-row{ display:flex; justify-content:space-between; align-items:center; }
+.vh-lbl{ font-size:12px; color:#6B6980; } .vh-val{ font-size:13px; font-weight:800; color:#0A4A80; }
+.vh-divider{ height:1px; background:#E5EAF0; margin:12px 0; }
+.vh-field-label{ font-size:12px; font-weight:600; color:#334155; margin-bottom:6px; }
+.vahan-btn{ width:100%; background:#0B5FA5; color:#fff; border:none; font-size:14px; font-weight:700; padding:12px; border-radius:8px; cursor:pointer; margin-top:14px; font-family:var(--lego-font); }
+.vh-help{ font-size:11px; color:#9E9CB0; margin-top:10px; line-height:1.4; }
+.vh-alert{ background:#FDECEA; border:1px solid #F5C6CB; color:#A11; font-size:12px; padding:10px 12px; border-radius:6px; margin-bottom:14px; line-height:1.4; }
 .success-overlay{ display:none; position:absolute; inset:0; background:#fff; z-index:100; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center; }
 .success-overlay.show{ display:flex; }
 .success-icon{ width:88px; height:88px; background:#63FFB1; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; animation:popIn .5s cubic-bezier(.2,.8,.3,1.3); }
@@ -418,18 +517,23 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="fs-logo"><div class="fs-logo-badge">🚗</div><div class="fs-logo-text">CARS24</div></div>
     <div class="fs-h1">Deemed Ownership<br>walkthrough</div>
     <div class="fs-sub">Pick a starting scenario. Everything after this stays in sync — pay a challan or renew insurance and the checklist, banners and celebration all update.</div>
-    <div class="fs-pick-label">Choose a flow to begin</div>
+    <div class="fs-pick-label">Ideal journey</div>
     <button class="fs-btn happy" onclick="chooseFlow('happy')">
       <span class="fb-ic">🎉</span>
       <span><div class="fb-name">Happy flow</div><div class="fb-desc">All 7 checks already verified post-inspection</div></span>
       <span class="fb-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </button>
-    <button class="fs-btn pending" onclick="chooseFlow('pending')">
-      <span class="fb-ic">⚠️</span>
-      <span><div class="fb-name">2 pending flow</div><div class="fb-desc">Insurance + e-challan unpaid (2 of 7 failing)</div></span>
-      <span class="fb-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    </button>
-    <div class="fs-note">Next: a phone lock-screen notification → tap it to open the app at Price Discovery.</div>
+    <div class="fs-pick-label" style="margin-top:20px;">One check failing — pick which</div>
+    <div class="fs-grid">
+      <button class="fs-chip" onclick="chooseSingle('echallan')"><span class="fc-ic">🚦</span>E-Challan</button>
+      <button class="fs-chip" onclick="chooseSingle('hypo')"><span class="fc-ic">📄</span>Hypothecation</button>
+      <button class="fs-chip" onclick="chooseSingle('insurance')"><span class="fc-ic">🛡️</span>Insurance</button>
+      <button class="fs-chip" onclick="chooseSingle('pucc')"><span class="fc-ic">🌿</span>PUCC</button>
+      <button class="fs-chip" onclick="chooseSingle('mobile')"><span class="fc-ic">📱</span>Mobile · Vahan</button>
+      <button class="fs-chip" onclick="chooseSingle('hsrp')"><span class="fc-ic">🔖</span>HSRP</button>
+    </div>
+    <button class="fs-combo" onclick="chooseFlow('pending')">⚠️ Combo: Insurance + E-Challan both failing →</button>
+    <div class="fs-note">Each scenario fails exactly one check; the rest pass. Hypothecation asks your loan status (required) and an optional bank-card upload in-flow — that’s its 4 variants.</div>
   </div>
 </div>
 
@@ -519,10 +623,17 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 <!-- ════════ SCREEN: CHALLAN ════════ -->
 <div class="screen" id="s-challan">
-  <div class="success-overlay" id="successOverlay">
-    <div class="success-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M9 22L18 31L35 13" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="success-title">Challans Cleared! 🎉</div>
-    <div class="success-sub">All e-challans for RJ 45 CP 6052 are paid. The Deemed Ownership checklist is updated.</div>
+  <div class="success-overlay rzp" id="successOverlay">
+    <div class="rzp-redirect">You will be redirected in 2 seconds</div>
+    <div class="success-title">Payment Successful</div>
+    <div class="rzp-check"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M9 22L18 31L35 13" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="rzp-receipt">
+      <div class="rzp-rrow"><span>Cars24</span><span>₹1,293.82</span></div>
+      <div class="rzp-rsub">08 Jun 2026, 9:39 AM</div>
+      <div class="rzp-rsub">UPI: pay_SrsRFL5bsu3MBa</div>
+      <div class="rzp-rhelp">ⓘ Visit razorpay.com/support for queries</div>
+    </div>
+    <div class="rzp-secured" style="color:rgba(255,255,255,.85);margin-bottom:18px;">Secured by Razorpay</div>
     <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
   </div>
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
@@ -537,13 +648,13 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <div class="section-title">E-Challans (Mandatory to clear)</div>
       <div class="challan-card">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="challan-type-badge badge-echallan">E-Challan</span><span style="background:#FFF4E6;color:#A85A00;font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;">Parivahan</span></div>
-        <div class="challan-number">#HR43232604222225406</div>
-        <div class="challan-date">Issued: 22 Jun 2024 · Faridabad, HR</div>
+        <div class="challan-number">#HR4323260422225406</div>
+        <div class="challan-date">Issued: 23 Apr 2026 · Gurugram, HR</div>
         <div class="challan-divider"></div>
-        <div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">Red light jumping</span></div>
-        <div class="challan-detail-row"><span class="challan-detail-label">Section</span><span class="challan-detail-value">MV Act 119</span></div>
+        <div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">Driver w/o seat belt</span></div>
+        <div class="challan-detail-row"><span class="challan-detail-label">Section</span><span class="challan-detail-value">MV Act 194B</span></div>
         <div class="challan-divider"></div>
-        <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Pay Now</button></div>
+        <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div><div style="font-size:10px;color:#9E9CB0;margin-top:1px;">+ convenience fee</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Continue to pay</button></div>
       </div>
       <div style="background:#FFF4E6;border:1px solid #FBD9A8;border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14H15L8 1.5Z" stroke="#A85A00" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6V9" stroke="#A85A00" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="#A85A00"/></svg><div style="font-size:12px;color:#7A4100;line-height:1.5;"><strong>E-Challan clearance is mandatory</strong> for deemed ownership.</div></div>
     </div>
@@ -554,31 +665,38 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     </div>
     <div style="height:24px;"></div>
   </div>
-  <div class="pay-footer" id="payFooter"><div class="pay-footer-row"><span class="pay-total-label2">Total pending e-challan</span><span class="pay-total-value2">₹1,000</span></div><button class="pay-all-btn" onclick="openSheet()">Pay ₹1,000 →</button></div>
+  <div class="pay-footer" id="payFooter"><div class="pay-footer-row"><span class="pay-total-label2">Total pending e-challan</span><span class="pay-total-value2">₹1,000</span></div><button class="pay-all-btn" onclick="openSheet()">Continue to pay →</button></div>
   <div class="sheet-scrim" id="scrim" onclick="closeSheet()"></div>
   <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-head"><div class="sheet-title" id="sheetTitle">Choose payment method</div><div style="display:flex;align-items:center;gap:10px;"><span class="sheet-amt">₹1,000</span><button class="sheet-close" onclick="closeSheet()">×</button></div></div>
+    <div class="sheet-head"><div class="sheet-title" id="sheetTitle">Review details</div><div style="display:flex;align-items:center;gap:10px;"><span class="sheet-amt" id="sheetAmt">₹1,293.82</span><button class="sheet-close" onclick="closeSheet()">×</button></div></div>
     <div class="sheet-body">
-      <div class="sheet-step active" id="ss-methods">
-        <div class="pm-option selected" data-pm="upi" onclick="pickPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm, BHIM</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
-        <div class="pm-option" data-pm="card" onclick="pickPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit / Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div>
-        <div class="pm-option" data-pm="netbanking" onclick="pickPM(this)"><div class="pm-icon">🏦</div><div><div class="pm-name">Net Banking</div><div class="pm-sub">All major banks</div></div><div class="pm-radio"></div></div>
-        <button class="sheet-cta" id="methodCta" onclick="methodNext()">Continue with UPI</button>
+      <div class="sheet-step active" id="ss-review">
+        <div class="rev-challan">
+          <div class="rev-chal-top"><span class="rev-chal-name">Driver w/o seat belt</span><span class="rev-chal-amt">₹1,000</span></div>
+          <div class="rev-chal-num">#HR4323260422225406</div>
+          <div class="rev-chal-note">This challan will be settled online in 1–3 days</div>
+        </div>
+        <div class="rev-summary">
+          <div class="rev-row"><span>Total challan amount</span><span>₹1,000</span></div>
+          <div class="rev-row"><span>Total convenience fees <span class="rev-info">ⓘ</span></span><span>₹249</span></div>
+          <div class="rev-row"><span>GST (18%)</span><span>₹44.82</span></div>
+          <div class="rev-total"><span>Total Amount</span><span>₹1,293.82</span></div>
+        </div>
+        <div class="spotify-offer">
+          <div class="sp-badge">LIMITED TIME OFFER</div>
+          <div class="sp-title">🎵 Claim 3 Months of FREE Spotify Premium</div>
+          <div class="sp-sub">on clearing your challans today</div>
+        </div>
+        <div class="rev-terms">By continuing, you accept Cars24's <b>terms &amp; conditions</b></div>
+        <button class="sheet-cta" onclick="reviewNext()">Pay Challan · ₹1,293.82</button>
       </div>
-      <div class="sheet-step" id="ss-card">
-        <div class="demo-card"><div class="dc-chip"></div><div class="dc-num">4111 2742 8891 1234</div><div class="dc-row"><div><div class="dc-label">Card holder</div><div class="dc-val">RAHUL SHARMA</div></div><div><div class="dc-label">Expires</div><div class="dc-val">12 / 27</div></div></div></div>
-        <div class="field-label">Card number</div><input class="field-input" value="4111 2742 8891 1234" readonly>
-        <div class="field-row"><div style="flex:1;"><div class="field-label">Expiry</div><input class="field-input" value="12/27" readonly></div><div style="flex:1;"><div class="field-label">CVV</div><input class="field-input" value="•••" readonly></div></div>
-        <button class="sheet-cta" onclick="cardNext()">Pay ₹1,000 securely</button>
-        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;"><span style="font-size:11px;color:#9E9CB0;">Demo card prefilled · 256-bit SSL</span></div>
-      </div>
-      <div class="sheet-step" id="ss-otp">
-        <div class="otp-bank"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="#6B6980" stroke-width="1.2"/><path d="M8 2L14 6H2L8 2Z" stroke="#6B6980" stroke-width="1.2" stroke-linejoin="round"/></svg>Verify with bank OTP</div>
-        <div style="text-align:center;font-size:13px;color:#6B6980;margin-bottom:4px;">Sent to +91 XXXXXX4521</div>
-        <div class="otp-box" id="otpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
-        <div class="otp-hint">Didn’t get it? <button onclick="autoOtp()" style="background:none;border:none;color:#4736FE;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
-        <button class="sheet-cta" id="otpCta" onclick="submitOtp()">Submit &amp; Pay</button>
+      <div class="sheet-step" id="ss-method">
+        <div class="rzp-amt-big">Pay ₹1,293.82</div>
+        <div class="pm-option selected"><div class="pm-icon gpay-ic">G</div><div><div class="pm-name">Google Pay</div><div class="pm-sub">UPI · Recommended</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
+        <button class="link-more">More Options</button>
+        <button class="sheet-cta" onclick="payNow()">Pay ₹1,293.82</button>
+        <div class="rzp-secured" style="margin-top:12px;">🔒 Secured by Razorpay</div>
       </div>
     </div>
   </div>
@@ -638,6 +756,220 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <div class="success-title">Insurance Renewed! 🎉</div>
       <div class="success-sub">Your vehicle is now insured. The Deemed Ownership checklist updated automatically.</div>
       <div class="policy-card"><div class="policy-row"><span class="policy-label">Policy number</span><span class="policy-value">INS24-2025-CR-78421</span></div><div class="policy-row"><span class="policy-label">Plan</span><span class="policy-value" id="successPlanName">Comprehensive</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">28 May 2026</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value" id="successAmount">₹8,490</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: HYPOTHECATION ════════ -->
+<div class="screen" id="s-hypo">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+
+  <!-- STEP 1 — Bank card & loan status -->
+  <div class="hyp-step active" id="hyp1">
+    <div class="page-header">
+      <button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="header-title-block"><div class="header-title">PAN card &amp; loan status</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div>
+    </div>
+    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-card">
+        <div class="hyp-financier"><div class="hyp-bank-logo">🏦</div><div><div class="hyp-bank-name">HDFC Bank Ltd</div><div class="hyp-bank-sub">Loan A/C ••••4421 · Hypothecation registered</div></div></div>
+      </div>
+
+      <div class="hyp-section-label">What is your loan status? <span class="req">required</span></div>
+      <div class="loan-opts">
+        <button class="loan-opt" id="loanClosed" onclick="selectLoanStatus('closed')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan closed</span><span class="lo-sub">Fully paid · NOC received from bank</span></span></button>
+        <button class="loan-opt" id="loanOpen" onclick="selectLoanStatus('open')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan still active</span><span class="lo-sub">EMIs ongoing · loan not yet closed</span></span></button>
+      </div>
+
+      <div class="hyp-section-label">Upload PAN card</div>
+      <input type="file" id="hypPanFile" accept="image/*" style="display:none" onchange="hypPanFileChosen(this)">
+      <div class="upload-box" id="hypCardBox" onclick="document.getElementById('hypPanFile').click()">
+        <div class="up-ic">🪪</div>
+        <div class="up-main" id="hypCardMain">Tap to upload PAN card</div>
+        <div class="up-sub">JPG or PNG · choose from your device</div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn locked" id="hyp1Cta" onclick="hyp1Next()">Select loan status to continue</button></div>
+  </div>
+
+  <!-- STEP 2 — Close loan (open loan only) -->
+  <div class="hyp-step" id="hyp2">
+    <div class="page-header"><button class="back-btn" onclick="hypStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Close your loan</div><div class="header-sub">Required to remove hypothecation</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-card"><div class="hyp-pill open">Loan active</div><div class="hyp-note">Your loan with HDFC Bank is still active. Close it fully and the bank issues Form 35 (hypothecation termination) to the RTO.</div></div>
+      <div class="hyp-steps-box">
+        <div class="hyp-sb-title">To remove hypothecation</div>
+        <div class="ho-step"><div class="ho-num">1</div><div class="ho-txt">Close your loan fully with <b>HDFC Bank</b> and collect the <b>NOC</b>.</div></div>
+        <div class="ho-step"><div class="ho-num">2</div><div class="ho-txt">Bank issues <b>Form 35</b> (hypothecation termination) to the RTO.</div></div>
+        <div class="ho-step"><div class="ho-num">3</div><div class="ho-txt">We file the hypothecation removal with the RTO.</div></div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="hypFinish()">I’ve closed my loan →</button></div>
+  </div>
+
+  <!-- STEP 3 — Success -->
+  <div class="hyp-step" id="hyp3">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Hypothecation removal initiated! 🎉</div>
+      <div class="success-sub">Form 35 has been filed with the RTO. The lien will be removed in 2–3 working days and the Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Financier</span><span class="policy-value">HDFC Bank Ltd</span></div><div class="policy-row"><span class="policy-label">Loan status</span><span class="policy-value" id="hypSumLoan">Closed</span></div><div class="policy-row"><span class="policy-label">PAN card</span><span class="policy-value" id="hypSumCard">Not uploaded</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Filed with RTO</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: GENERIC RESOLVE (PUCC / Mobile / HSRP — full flows next) ════════ -->
+<div class="screen" id="s-generic">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title" id="genTitle">Resolve check</div><div class="header-sub">RJ 45 CP 6052</div></div></div>
+  <div class="scroll-area">
+    <div class="gen-stub">
+      <div class="gen-emoji" id="genEmoji">🛠️</div>
+      <div class="gen-h" id="genHead">Flow coming next</div>
+      <div class="gen-sub" id="genSub">The full Figma-matched journey for this check is being built. For now you can mark it resolved to see the checklist sync.</div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="cta-bar"><button class="cta-btn" id="genCta" onclick="genResolve()">Mark as resolved →</button></div>
+</div>
+
+<!-- ════════ SCREEN: PUCC RENEWAL ════════ -->
+<div class="screen" id="s-pucc">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sub-step active" id="puc1">
+    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">PUCC renewal</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
+    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-card">
+        <div class="hyp-financier"><div class="hyp-bank-logo">🌿</div><div><div class="hyp-bank-name">Pollution Certificate</div><div class="hyp-bank-sub">PUCC No. RJ45/PUC/2024/8841</div></div></div>
+        <div class="hyp-pill open">Expired: 14 Mar 2026</div>
+        <div class="hyp-note">A valid PUCC is mandatory at all times under the Motor Vehicles Act and is required for the deemed ownership RC transfer. Renew it online in under a minute.</div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="pucStep(2)">Renew PUCC →</button></div>
+  </div>
+  <div class="sub-step" id="puc2">
+    <div class="page-header"><button class="back-btn" onclick="pucStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Renew PUCC</div><div class="header-sub">Petrol · BS6 emission test</div></div></div>
+    <div class="scroll-area">
+      <div class="rev-summary" style="margin:14px 16px 0;">
+        <div class="rev-row"><span>PUCC test fee</span><span>₹100</span></div>
+        <div class="rev-row"><span>Convenience fee</span><span>₹20</span></div>
+        <div class="rev-total"><span>Total Amount</span><span>₹120</span></div>
+      </div>
+      <div style="padding:14px 16px 0;"><div class="pm-title" style="font-size:13px;font-weight:700;color:#6B6980;margin-bottom:8px;">Payment Method</div>
+        <div class="pm-option selected" onclick="selectPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
+        <div class="pm-option" onclick="selectPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit/Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="pucPay()">Pay ₹120 &amp; renew →</button></div>
+  </div>
+  <div class="sub-step" id="puc3">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">PUCC Renewed! 🎉</div>
+      <div class="success-sub">Your pollution certificate is renewed and synced to Vahan. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">PUCC No.</span><span class="policy-value">RJ45/PUC/2026/2207</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">07 Jun 2027</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value">₹120</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: MOBILE LINKED TO VAHAN ════════ -->
+<div class="screen" id="s-mobile">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sub-step active" id="mob1">
+    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Link mobile to Vahan</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
+    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-card">
+        <div class="hyp-financier"><div class="hyp-bank-logo">📱</div><div><div class="hyp-bank-name">Mobile not linked</div><div class="hyp-bank-sub">No mobile mapped to this RC on Vahan</div></div></div>
+        <div class="hyp-pill open">Verification pending</div>
+        <div class="hyp-note">Your mobile number must be linked to the RC on the Vahan portal so the RTO can send transfer OTPs. We’ll verify it instantly via Vahan.</div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="mobStep(2)">Verify on Vahan →</button></div>
+  </div>
+  <div class="sub-step" id="mob2">
+    <div class="vahan-header"><div class="vh-top"><span class="vh-emblem">🇮🇳</span><div><div class="vh-title">VAHAN CITIZEN SERVICES</div><div class="vh-sub">Ministry of Road Transport &amp; Highways</div></div></div></div>
+    <div class="scroll-area" style="background:#EEF2F7;">
+      <div class="vahan-card">
+        <div class="vh-row"><span class="vh-lbl">Vehicle Registration No.</span><span class="vh-val">RJ 45 CP 6052</span></div>
+        <div class="vh-divider"></div>
+        <div class="vh-field-label">RMN / Registered mobile number of vehicle owner</div>
+        <input class="field-input" value="+91 XXXXXX4521" readonly>
+        <button class="vahan-btn" onclick="genVahanOtp()">Generate OTP</button>
+        <div class="vh-help">An OTP will be sent to the mobile number registered against this vehicle.</div>
+      </div>
+    </div>
+    <div class="cta-bar" style="background:transparent;border:none;"><button class="back-btn-text" onclick="mobStep(1)">‹ Back</button></div>
+  </div>
+  <div class="sub-step" id="mob3">
+    <div class="vahan-header"><div class="vh-top"><span class="vh-emblem">🇮🇳</span><div><div class="vh-title">VAHAN CITIZEN SERVICES</div><div class="vh-sub">OTP verification</div></div></div></div>
+    <div class="scroll-area" style="background:#EEF2F7;">
+      <div class="vahan-card">
+        <div class="vh-alert">OTP has been generated and sent to registered Mobile No. XXXXXXX521 with reference number 788.</div>
+        <div class="vh-field-label">Enter OTP</div>
+        <div class="otp-box" id="vahanOtpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
+        <div class="otp-hint" style="text-align:left;">Didn’t get it? <button onclick="autoVahanOtp()" style="background:none;border:none;color:#0B5FA5;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
+        <button class="vahan-btn" onclick="mobSubmit()">Submit &amp; Verify</button>
+      </div>
+    </div>
+    <div class="cta-bar" style="background:transparent;border:none;"><button class="back-btn-text" onclick="mobStep(2)">‹ Back</button></div>
+  </div>
+  <div class="sub-step" id="mob4">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Mobile Linked &amp; Verified! 🎉</div>
+      <div class="success-sub">+91 XXXXXX4521 is now linked to your RC on Vahan. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Mobile</span><span class="policy-value">+91 XXXXXX4521</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Linked on Vahan</span></div><div class="policy-row"><span class="policy-label">Reference</span><span class="policy-value">VHN-788-2026</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: HSRP FITMENT ════════ -->
+<div class="screen" id="s-hsrp">
+  <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <div class="sub-step active" id="hsr1">
+    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">HSRP fitment</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
+    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-card">
+        <div class="hyp-financier"><div class="hyp-bank-logo">🔖</div><div><div class="hyp-bank-name">HSRP not fitted</div><div class="hyp-bank-sub">High-Security Registration Plate missing</div></div></div>
+        <div class="hyp-pill open">Fitment pending</div>
+        <div class="hyp-note">An HSRP is mandatory for all vehicles and required for the RC transfer. Book a fitment slot at an approved Cars24 hub and we’ll affix it for you.</div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="hsrStep(2)">Book fitment →</button></div>
+  </div>
+  <div class="sub-step" id="hsr2">
+    <div class="page-header"><button class="back-btn" onclick="hsrStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Book HSRP fitment</div><div class="header-sub">Approved fitment centre</div></div></div>
+    <div class="scroll-area">
+      <div class="card" style="margin:12px 16px 0;"><div class="slot-body" style="padding:14px 16px;"><div class="slot-pick" style="display:flex;align-items:center;gap:12px;"><div class="slot-date" style="text-align:center;"><span class="sd-day" style="font-size:20px;font-weight:800;display:block;">02</span><span class="sd-mon" style="font-size:11px;color:#6B6980;">JUN</span></div><div class="slot-info" style="flex:1;"><div class="slot-when" style="font-size:13px;font-weight:700;">Monday · 10:00 AM – 12:00 PM</div><div class="slot-where" style="font-size:12px;color:#6B6980;">Cars24 Hub, Malviya Nagar, Jaipur</div></div><button class="slot-edit" style="font-size:12px;color:var(--lego-color-text-brand-primary-rest);background:none;border:none;font-weight:700;">Edit</button></div></div></div>
+      <div class="rev-summary" style="margin:12px 16px 0;">
+        <div class="rev-row"><span>HSRP plate (pair)</span><span>₹600</span></div>
+        <div class="rev-row"><span>Fitment + convenience</span><span>₹96</span></div>
+        <div class="rev-total"><span>Total Amount</span><span>₹696</span></div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="hsrPay()">Confirm &amp; pay ₹696 →</button></div>
+  </div>
+  <div class="sub-step" id="hsr3">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">HSRP Fitment Booked! 🎉</div>
+      <div class="success-sub">Your slot is confirmed. Once fitted, Vahan updates automatically. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Slot</span><span class="policy-value">02 Jun · 10–12 PM</span></div><div class="policy-row"><span class="policy-label">Centre</span><span class="policy-value">Malviya Nagar Hub</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value">₹696</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -741,38 +1073,70 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 <script>
 /* ════════════ STATE ════════════ */
-var S = { flow:'pending', echallan:false, insurance:false };
+// Each of the 6 interactive checks is pass/fail. Fitness is always-pass (7th).
+var S = {
+  flow:'pending', failing:null,
+  echallan:false, insurance:false, hypo:true, pucc:true, mobile:true, hsrp:true,
+  hypoLoan:'closed', hypoPAN:true   // hypothecation variant: loan closed/open · PAN uploaded/not
+};
 var subReturn = 'price';
 var happyDismissed = false;
 var selectedPM = 'upi';
 var plan = { name:'Comprehensive', amount:'₹8,490', base:'₹7,200', gst:'₹1,290' };
 
-function doneCount(){ return 5 + (S.echallan?1:0) + (S.insurance?1:0); }
+function doneCount(){
+  // Fitness is always-pass (the +1); the other 6 are dynamic.
+  return 1 + (S.echallan?1:0) + (S.insurance?1:0) + (S.hypo?1:0) + (S.pucc?1:0) + (S.mobile?1:0) + (S.hsrp?1:0);
+}
 
 /* ════════════ FLOW SELECT + LOCK ════════════ */
+// Reset all 6 checks to pass (true) or fail-baseline.
+function setAllChecks(pass){
+  S.echallan=pass; S.insurance=pass; S.hypo=pass; S.pucc=pass; S.mobile=pass; S.hsrp=pass;
+}
+
 function chooseFlow(kind){
-  S.flow = kind;
-  S.echallan = (kind === 'happy');
-  S.insurance = (kind === 'happy');
+  S.flow = kind; S.failing = null;
+  if (kind === 'happy'){ setAllChecks(true); }
+  else { setAllChecks(true); S.echallan = false; S.insurance = false; } // legacy "2 pending"
   happyDismissed = false;
   setLockCopy();
   go('lock');
 }
 
+// One single check failing; everything else passes.
+function chooseSingle(check){
+  S.flow = 'single'; S.failing = check;
+  setAllChecks(true);
+  S[check] = false;
+  happyDismissed = false;
+  setLockCopy();
+  go('lock');
+}
+
+// Hypothecation: loan status + optional bank card are chosen in-flow (see resetHypo/selectLoanStatus).
+function closeHypoPick(){ var p=document.getElementById('hypoPick'); if(p) p.classList.remove('show'); }
+
+var LOCK_COPY = {
+  happy:    ['🎉 You’re all set for Deemed Ownership', 'All checks are verified. Tap to view your live auction and price.'],
+  pending:  ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
+  echallan: ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
+  hypo:     ['⚠️ Active hypothecation on your RC', 'A loan / lien is registered on your RC. Resolve it to proceed with the transfer.'],
+  insurance:['⚠️ Your insurance has expired', 'Renew your car insurance to keep your deemed ownership transfer on track.'],
+  pucc:     ['⚠️ PUCC expired', 'Your pollution certificate has lapsed. Renew it to proceed with the transfer.'],
+  mobile:   ['⚠️ Mobile not linked to Vahan', 'Link your mobile number on Vahan to complete verification.'],
+  hsrp:     ['⚠️ HSRP not fitted', 'High-security plate not detected. Book HSRP fitment to proceed.']
+};
+
 function setLockCopy(){
   var notif = document.getElementById('lockNotif');
-  var title = document.getElementById('lockNotifTitle');
-  var body  = document.getElementById('lockNotifBody');
   var empty = document.getElementById('lockEmpty');
   notif.style.display = '';
   empty.style.display = 'none';
-  if (S.flow === 'happy'){
-    title.textContent = '🎉 You’re all set for Deemed Ownership';
-    body.textContent  = 'All 7 checks are verified. Tap to view your live auction and price.';
-  } else {
-    title.textContent = '⚠️ ₹1,000 e-challan pending';
-    body.textContent  = 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.';
-  }
+  var key = (S.flow === 'happy') ? 'happy' : (S.flow === 'single' ? S.failing : 'pending');
+  var c = LOCK_COPY[key] || LOCK_COPY.pending;
+  document.getElementById('lockNotifTitle').textContent = c[0];
+  document.getElementById('lockNotifBody').textContent  = c[1];
 }
 
 function tapNotif(){ go('price'); }
@@ -815,18 +1179,17 @@ function go(id){
 /* ════════════ CHECKLIST ════════════ */
 var CHECKS = [
   { key:'echallan', name:'E-Challans', good:'All challans cleared · Parivahan', pend:'₹1,000 pending · clear to proceed', action:'challan', cta:'Pay ₹1,000' },
-  { key:'hypo',     name:'No Hypothecation', good:'No active loan / lien on RC' },
+  { key:'hypo',     name:'No Hypothecation', good:'No active loan / lien on RC', pend:'Active hypothecation · clear to proceed', action:'hypo', cta:'Resolve' },
   { key:'insurance',name:'Insurance', good:'Comprehensive · valid till May 2026', pend:'Expired 12 Mar 2025 · renew now', action:'insurance', cta:'Renew' },
-  { key:'pucc',     name:'PUCC', good:'Valid till Sep 2026' },
-  { key:'mobile',   name:'Mobile linked to Vahan', good:'+91 XXXXXX4521' },
+  { key:'pucc',     name:'PUCC', good:'Valid till Sep 2026', pend:'Expired · renew PUCC to proceed', action:'pucc', cta:'Renew' },
+  { key:'mobile',   name:'Mobile linked to Vahan', good:'+91 XXXXXX4521', pend:'Not linked on Vahan · verify now', action:'mobile', cta:'Link' },
   { key:'fitness',  name:'Fitness Certificate', good:'Valid till May 2038' },
-  { key:'hsrp',     name:'HSRP', good:'High-security plate fitted' }
+  { key:'hsrp',     name:'HSRP', good:'High-security plate fitted', pend:'Not fitted · book fitment', action:'hsrp', cta:'Book' }
 ];
 
 function isPass(c){
-  if (c.key === 'echallan') return S.echallan;
-  if (c.key === 'insurance') return S.insurance;
-  return true;
+  if (c.key === 'fitness') return true;          // always-pass
+  return S[c.key] !== false;                       // dynamic checks
 }
 
 var TICK = '<svg width="14" height="11" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#04553A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -884,7 +1247,12 @@ function toggleChecklist(btn){
 function openSub(kind, owner){
   subReturn = owner;
   if (kind === 'challan'){ resetChallan(); go('challan'); }
-  else { resetInsurance(); go('insurance'); }
+  else if (kind === 'insurance'){ resetInsurance(); go('insurance'); }
+  else if (kind === 'hypo'){ resetHypo(); go('hypo'); }
+  else if (kind === 'pucc'){ resetPucc(); go('pucc'); }
+  else if (kind === 'mobile'){ resetMobile(); go('mobile'); }
+  else if (kind === 'hsrp'){ resetHsrp(); go('hsrp'); }
+  else { openGeneric(kind); go('generic'); }   // fallback
 }
 
 function closeSub(){
@@ -928,7 +1296,7 @@ function resetChallan(){
   document.getElementById('successOverlay').classList.remove('show');
   switchTab('pending', document.querySelector('#s-challan .tab'));
   closeSheet();
-  showStep('methods');
+  showStep('review');
 }
 
 function switchTab(which, el){
@@ -940,11 +1308,7 @@ function switchTab(which, el){
 }
 
 function openSheet(){
-  selectedPM = 'upi';
-  showStep('methods');
-  var opts = document.querySelectorAll('#ss-methods .pm-option');
-  for (var i=0;i<opts.length;i++) opts[i].classList.toggle('selected', opts[i].dataset.pm==='upi');
-  document.getElementById('methodCta').textContent = 'Continue with UPI';
+  showStep('review');
   document.getElementById('scrim').classList.add('show');
   document.getElementById('sheet').classList.add('show');
 }
@@ -953,39 +1317,111 @@ function closeSheet(){
   document.getElementById('sheet').classList.remove('show');
 }
 
-function pickPM(el){
-  var opts = document.querySelectorAll('#ss-methods .pm-option');
-  for (var i=0;i<opts.length;i++) opts[i].classList.remove('selected');
-  el.classList.add('selected');
-  selectedPM = el.dataset.pm;
-  var label = { upi:'UPI', card:'Card', netbanking:'Net Banking' }[selectedPM];
-  document.getElementById('methodCta').textContent = 'Continue with ' + label;
-}
-
+// Challan payment: Review summary → Razorpay/Google Pay → success (matches Figma DO Only Flow)
 function showStep(step){
-  var ids = { methods:'ss-methods', card:'ss-card', otp:'ss-otp' };
+  var ids = { review:'ss-review', method:'ss-method' };
   for (var k in ids) document.getElementById(ids[k]).classList.toggle('active', k===step);
-  var titles = { methods:'Choose payment method', card:'Enter card details', otp:'Verify payment' };
+  var titles = { review:'Review details', method:'Payment method' };
   document.getElementById('sheetTitle').textContent = titles[step];
 }
 
-function methodNext(){
-  if (selectedPM === 'card') showStep('card');
-  else showStep('otp');
-}
-function cardNext(){ showStep('otp'); }
+function reviewNext(){ showStep('method'); }
 
-function autoOtp(){
-  var digits = document.querySelectorAll('#otpBox .otp-digit');
-  var code = '482913';
-  for (var i=0;i<digits.length;i++) digits[i].value = code[i];
-}
-
-function submitOtp(){
+function payNow(){
   S.echallan = true;
   closeSheet();
   document.getElementById('successOverlay').classList.add('show');
 }
+
+/* ════════════ HYPOTHECATION ════════════ */
+// Loan status is chosen in-flow (MANDATORY). Bank card upload is OPTIONAL.
+// The 4 variants = {closed, open} loan × {bank card uploaded, not uploaded}.
+function resetHypo(){
+  S.hypoLoan = null; S.hypoBankCard = false;
+  hypStep(1);
+  // clear loan-status selection
+  document.getElementById('loanClosed').classList.remove('selected');
+  document.getElementById('loanOpen').classList.remove('selected');
+  // reset optional PAN-card upload (real file picker)
+  var box = document.getElementById('hypCardBox'); box.classList.remove('attached');
+  document.getElementById('hypCardMain').textContent = 'Tap to upload PAN card';
+  var fi = document.getElementById('hypPanFile'); if (fi) fi.value = '';
+  // CTA locked until a loan status is picked
+  var cta = document.getElementById('hyp1Cta');
+  cta.classList.add('locked'); cta.textContent = 'Select loan status to continue';
+}
+
+function hypStep(n){
+  for (var i=1;i<=3;i++) document.getElementById('hyp'+i).classList.toggle('active', i===n);
+}
+
+// MANDATORY loan-status selection — unlocks Continue.
+function selectLoanStatus(val){
+  S.hypoLoan = val;
+  document.getElementById('loanClosed').classList.toggle('selected', val==='closed');
+  document.getElementById('loanOpen').classList.toggle('selected', val==='open');
+  var cta = document.getElementById('hyp1Cta');
+  cta.classList.remove('locked');
+  cta.textContent = 'Continue →';
+}
+
+// OPTIONAL PAN-card upload — opens the real device file picker; never blocks Continue.
+function hypPanFileChosen(input){
+  if (!input.files || !input.files.length) return;
+  S.hypoBankCard = true;
+  document.getElementById('hypCardBox').classList.add('attached');
+  document.getElementById('hypCardMain').textContent = '✓ ' + input.files[0].name;
+}
+
+function hyp1Next(){
+  if (!S.hypoLoan) return;                 // loan status is mandatory
+  if (S.hypoLoan === 'open') hypStep(2);   // open → close-loan step first
+  else hypFinish();                        // closed → straight to filing
+}
+
+function hypFinish(){
+  S.hypo = true;
+  document.getElementById('hypSumLoan').textContent = (S.hypoLoan === 'open') ? 'Closed (just now)' : 'Closed';
+  document.getElementById('hypSumCard').textContent = S.hypoBankCard ? 'Uploaded' : 'Not uploaded';
+  hypStep(3);
+}
+
+/* ════════════ GENERIC RESOLVE (PUCC / Mobile / HSRP placeholders) ════════════ */
+var GENERIC = {
+  pucc:   { emoji:'🌿', title:'Renew PUCC', head:'Pollution certificate renewal', sub:'The full Figma-matched PUCC renewal journey is being built next. For now, mark it resolved to see the checklist sync.' },
+  mobile: { emoji:'📱', title:'Link mobile to Vahan', head:'Vahan mobile verification', sub:'The full Figma-matched Vahan OTP / mobile-linking journey is being built next. For now, mark it resolved to see the checklist sync.' },
+  hsrp:   { emoji:'🔖', title:'Book HSRP fitment', head:'High-security plate fitment', sub:'The full Figma-matched HSRP booking journey is being built next. For now, mark it resolved to see the checklist sync.' }
+};
+var genKey = null;
+function openGeneric(kind){
+  genKey = kind;
+  var g = GENERIC[kind] || GENERIC.pucc;
+  document.getElementById('genTitle').textContent = g.title;
+  document.getElementById('genEmoji').textContent = g.emoji;
+  document.getElementById('genHead').textContent = g.head;
+  document.getElementById('genSub').textContent = g.sub;
+}
+function genResolve(){
+  if (genKey) S[genKey] = true;
+  closeSub();
+}
+
+/* ════════════ PUCC RENEWAL ════════════ */
+function resetPucc(){ pucStep(1); }
+function pucStep(n){ for (var i=1;i<=3;i++) document.getElementById('puc'+i).classList.toggle('active', i===n); }
+function pucPay(){ S.pucc = true; pucStep(3); }
+
+/* ════════════ MOBILE LINKED TO VAHAN ════════════ */
+function resetMobile(){ mobStep(1); var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); for(var i=0;i<d.length;i++) d[i].value=''; }
+function mobStep(n){ for (var i=1;i<=4;i++) document.getElementById('mob'+i).classList.toggle('active', i===n); }
+function genVahanOtp(){ mobStep(3); }
+function autoVahanOtp(){ var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); var c='312788'; for(var i=0;i<d.length;i++) d[i].value=c[i]; }
+function mobSubmit(){ S.mobile = true; mobStep(4); }
+
+/* ════════════ HSRP FITMENT ════════════ */
+function resetHsrp(){ hsrStep(1); }
+function hsrStep(n){ for (var i=1;i<=3;i++) document.getElementById('hsr'+i).classList.toggle('active', i===n); }
+function hsrPay(){ S.hsrp = true; hsrStep(3); }
 
 /* ════════════ INSURANCE ════════════ */
 function resetInsurance(){
@@ -1186,7 +1622,7 @@ function setTheme(name, btn){
 
 /* ════════════ RESTART ════════════ */
 function restart(){
-  S = { flow:'pending', echallan:false, insurance:false };
+  S = { flow:'pending', failing:null, echallan:false, insurance:false, hypo:true, pucc:true, mobile:true, hsrp:true, hypoLoan:'closed', hypoPAN:true };
   subReturn = 'price';
   happyDismissed = false;
   selectedPM = 'upi';
@@ -1197,6 +1633,7 @@ function restart(){
   document.getElementById('do-explainer').classList.remove('show');
   document.getElementById('do-happy-pop').classList.remove('show');
   document.getElementById('celebrationScreen').classList.remove('show');
+  closeHypoPick();
   go('flow');
 }
 
