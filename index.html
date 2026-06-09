@@ -947,17 +947,25 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <div class="screen" id="s-pucc">
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
   <div class="sub-step active" id="puc1">
-    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">PUCC renewal</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">PUCC</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
     <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
     <div class="scroll-area">
       <div class="hyp-card">
         <div class="hyp-financier"><div class="hyp-bank-logo">🌿</div><div><div class="hyp-bank-name">Pollution Certificate</div><div class="hyp-bank-sub">PUCC No. RJ45/PUC/2024/8841</div></div></div>
         <div class="hyp-pill open">Expired: 14 Mar 2026</div>
-        <div class="hyp-note">A valid PUCC is mandatory at all times under the Motor Vehicles Act and is required for the deemed ownership RC transfer. Renew it online in under a minute.</div>
+        <div class="hyp-note">A valid PUCC is mandatory under the Motor Vehicles Act and required for the deemed ownership RC transfer. Upload a valid PUCC, or renew online in under a minute.</div>
       </div>
+      <div class="hyp-section-label">Upload valid PUCC <span class="req">required</span></div>
+      <input type="file" id="pucFile" accept="image/*,application/pdf" style="display:none" onchange="pucFileChosen(this)">
+      <div class="upload-box" id="pucBox" onclick="document.getElementById('pucFile').click()">
+        <div class="up-ic">🌿</div>
+        <div class="up-main" id="pucMain">Tap to upload your PUCC</div>
+        <div class="up-sub">PDF or JPG · choose from your device</div>
+      </div>
+      <button class="link-more" onclick="pucStep(2)" style="margin-top:14px;">Don’t have a valid PUCC? Renew online →</button>
       <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar"><button class="cta-btn" onclick="pucStep(2)">Renew PUCC →</button></div>
+    <div class="cta-bar"><button class="cta-btn locked" id="pucSubmitCta" onclick="pucSubmit()">Submit PUCC</button></div>
   </div>
   <div class="sub-step" id="puc2">
     <div class="page-header"><button class="back-btn" onclick="pucStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Renew PUCC</div><div class="header-sub">Petrol · BS6 emission test</div></div></div>
@@ -978,9 +986,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="sub-step" id="puc3">
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="success-title">PUCC Renewed! 🎉</div>
-      <div class="success-sub">Your pollution certificate is renewed and synced to Vahan. The Deemed Ownership checklist is updated.</div>
-      <div class="policy-card"><div class="policy-row"><span class="policy-label">PUCC No.</span><span class="policy-value">RJ45/PUC/2026/2207</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">07 Jun 2027</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value">₹120</span></div></div>
+      <div class="success-title">PUCC Updated! 🎉</div>
+      <div class="success-sub">Your pollution certificate is on file and synced to Vahan. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">PUCC No.</span><span class="policy-value">RJ45/PUC/2026/2207</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">07 Jun 2027</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value" id="pucStatusVal">Verified &amp; on file</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -1579,9 +1587,35 @@ function genResolve(){
 }
 
 /* ════════════ PUCC RENEWAL ════════════ */
-function resetPucc(){ pucStep(1); }
+var pucAttached = false;
+function resetPucc(){
+  pucStep(1);
+  pucAttached = false;
+  var box=document.getElementById('pucBox'); if(box) box.classList.remove('attached');
+  var m=document.getElementById('pucMain'); if(m) m.textContent='Tap to upload your PUCC';
+  var fi=document.getElementById('pucFile'); if(fi) fi.value='';
+  var cta=document.getElementById('pucSubmitCta'); if(cta){ cta.classList.add('locked'); cta.textContent='Submit PUCC'; }
+}
 function pucStep(n){ for (var i=1;i<=3;i++) document.getElementById('puc'+i).classList.toggle('active', i===n); }
-function pucPay(){ S.pucc = true; pucStep(3); }
+// PUCC upload — opens the device file picker (browse to Downloads); gates Submit.
+function pucFileChosen(input){
+  if(!input.files || !input.files.length) return;
+  pucAttached = true;
+  document.getElementById('pucBox').classList.add('attached');
+  document.getElementById('pucMain').textContent = '✓ ' + input.files[0].name;
+  var cta=document.getElementById('pucSubmitCta'); cta.classList.remove('locked'); cta.textContent='Submit PUCC →';
+}
+function pucSubmit(){
+  if(!pucAttached) return;   // upload required
+  S.pucc = true;
+  var st=document.getElementById('pucStatusVal'); if(st) st.textContent='Verified & on file';
+  pucStep(3);
+}
+function pucPay(){
+  S.pucc = true;
+  var st=document.getElementById('pucStatusVal'); if(st) st.textContent='Renewed online';
+  pucStep(3);
+}
 
 /* ════════════ MOBILE LINKED TO VAHAN ════════════ */
 function resetMobile(){ mobStep(1); var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); for(var i=0;i<d.length;i++) d[i].value=''; }
