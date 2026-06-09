@@ -962,26 +962,29 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="up-main" id="pucMain">Tap to upload your PUCC</div>
         <div class="up-sub">PDF or JPG · choose from your device</div>
       </div>
-      <button class="link-more" onclick="pucStep(2)" style="margin-top:14px;">Don’t have a valid PUCC? Renew online →</button>
+      <button class="link-more" onclick="pucStep(2)" style="margin-top:14px;">Don’t have a valid PUCC? Here’s how to get one →</button>
       <div style="height:8px;"></div>
     </div>
     <div class="cta-bar"><button class="cta-btn locked" id="pucSubmitCta" onclick="pucSubmit()">Submit PUCC</button></div>
   </div>
   <div class="sub-step" id="puc2">
-    <div class="page-header"><button class="back-btn" onclick="pucStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Renew PUCC</div><div class="header-sub">Petrol · BS6 emission test</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="pucStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Get your PUCC offline</div><div class="header-sub">At any nearby petrol pump</div></div></div>
     <div class="scroll-area">
-      <div class="rev-summary" style="margin:14px 16px 0;">
-        <div class="rev-row"><span>PUCC test fee</span><span>₹100</span></div>
-        <div class="rev-row"><span>Convenience fee</span><span>₹20</span></div>
-        <div class="rev-total"><span>Total Amount</span><span>₹120</span></div>
+      <div class="hyp-card">
+        <div class="hyp-financier"><div class="hyp-bank-logo">⛽</div><div><div class="hyp-bank-name">Nearby petrol pumps</div><div class="hyp-bank-sub">Authorised PUC vendors · on-the-spot</div></div></div>
+        <div class="hyp-note">Most petrol pumps have an <b>authorised PUC vendor</b> on-site who issues your Pollution Under Control Certificate in a couple of minutes — no appointment needed.</div>
       </div>
-      <div style="padding:14px 16px 0;"><div class="pm-title" style="font-size:13px;font-weight:700;color:#6B6980;margin-bottom:8px;">Payment Method</div>
-        <div class="pm-option selected" onclick="selectPM(this)"><div class="pm-icon">📲</div><div><div class="pm-name">UPI</div><div class="pm-sub">GPay, PhonePe, Paytm</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
-        <div class="pm-option" onclick="selectPM(this)"><div class="pm-icon">💳</div><div><div class="pm-name">Debit/Credit Card</div><div class="pm-sub">Visa, Mastercard, RuPay</div></div><div class="pm-radio"></div></div>
+      <div class="hyp-steps-box">
+        <div class="hyp-sb-title">How to get it</div>
+        <div class="ho-step"><div class="ho-num">1</div><div class="ho-txt">Drive to any nearby <b>petrol pump</b> or authorised emission-testing centre — look for the green <b>“Pollution Check / PUC”</b> board.</div></div>
+        <div class="ho-step"><div class="ho-num">2</div><div class="ho-txt">Keep your <b>RC handy</b> and take the vehicle — the tailpipe emission test is done on the spot.</div></div>
+        <div class="ho-step"><div class="ho-num">3</div><div class="ho-txt">The vendor runs the test (~2–3 min) and prints your <b>PUCC immediately</b>.</div></div>
+        <div class="ho-step"><div class="ho-num">4</div><div class="ho-txt">Pay the nominal fee — usually <b>₹60–₹110</b> (varies by fuel type &amp; state).</div></div>
       </div>
+      <div class="hpt-note">✅ Your PUCC <b>auto-syncs to Vahan</b>. Once you have it, come back and upload it here. PUC counters are usually open <b>8 AM – 10 PM</b>.</div>
       <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar"><button class="cta-btn" onclick="pucPay()">Pay ₹120 &amp; renew →</button></div>
+    <div class="cta-bar"><button class="cta-btn" onclick="pucStep(1)">Got it — I’ll upload it →</button></div>
   </div>
   <div class="sub-step" id="puc3">
     <div class="ins-success">
@@ -1608,12 +1611,6 @@ function pucFileChosen(input){
 function pucSubmit(){
   if(!pucAttached) return;   // upload required
   S.pucc = true;
-  var st=document.getElementById('pucStatusVal'); if(st) st.textContent='Verified & on file';
-  pucStep(3);
-}
-function pucPay(){
-  S.pucc = true;
-  var st=document.getElementById('pucStatusVal'); if(st) st.textContent='Renewed online';
   pucStep(3);
 }
 
