@@ -446,6 +446,16 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .kyc-doc b{ color:var(--lego-color-text-brand-primary-rest); }
 .kyc-otp-note{ font-size:12px; color:#6B6980; padding:16px 16px 0; line-height:1.4; }
 .kyc-verified-pill{ font-size:11px; font-weight:800; color:#04553A; background:#DEFFEE; padding:3px 9px; border-radius:100px; }
+/* ── Mobile-to-Vahan flow ── */
+.num-card{ background:#fff; border:1px solid #ECECF1; border-radius:14px; margin:12px 16px 0; padding:14px 16px; box-shadow:0 1px 2px rgba(10,10,10,.04); }
+.num-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.num-lbl{ font-size:11.5px; color:#6B6980; max-width:55%; }
+.num-val{ font-size:15px; font-weight:800; color:#0A0A0A; white-space:nowrap; }
+.num-val.hi{ color:#C2410C; }
+.num-divider{ height:1px; background:#F3F3F7; margin:10px 0; }
+.mob-q{ font-size:14px; font-weight:700; color:#0A0A0A; padding:18px 16px 12px; line-height:1.4; }
+.choice-btn{ width:100%; padding:14px; border-radius:13px; border:none; background:var(--lego-color-surface-brand-primary-rest); color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:var(--lego-font); margin-bottom:10px; }
+.choice-btn.ghost{ background:#fff; color:#0A0A0A; border:1.5px solid #ECECF1; }
 .warning-header{ background:linear-gradient(135deg,#FF7A33 0%,#E8530A 100%); padding:18px 16px 22px; flex-shrink:0; }
 .warning-header-top{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
 .warning-title{ font-size:20px; font-weight:800; color:#fff; }
@@ -770,9 +780,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="ins-addons">Add-ons: <b>PA Cover</b> · <b>Zero Dep</b> · <b>More Covers</b></div>
     <div class="scroll-area">
       <div class="insurer-card reco" onclick="selectInsurer('HDFC ERGO','₹4,384')"><div class="reco-tag">Recommended</div><div class="insurer-top"><div class="insurer-logo" style="color:#E4002B;">HDFC ERGO</div><div class="insurer-buy"><span class="ib-amt">₹4,384</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Own damage + third party · Zero Dep available</div><button class="buy-btn">Buy Now</button></div>
-      <div class="insurer-card" onclick="selectInsurer('IndusInd General','₹4,021')"><div class="insurer-top"><div class="insurer-logo" style="color:#9B1B30;">IndusInd General</div><div class="insurer-buy"><span class="ib-amt">₹4,021</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Pay as you drive · Inspection required</div><button class="buy-btn ghost">Buy Now</button></div>
-      <div class="insurer-card" onclick="selectInsurer('United India','₹4,108')"><div class="insurer-top"><div class="insurer-logo" style="color:#0B5FA5;">United India</div><div class="insurer-buy"><span class="ib-amt">₹4,108</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Comprehensive cover</div><button class="buy-btn ghost">Buy Now</button></div>
-      <div class="insurer-card" onclick="selectInsurer('Kotak General','₹4,455')"><div class="insurer-top"><div class="insurer-logo" style="color:#C4161C;">Kotak General</div><div class="insurer-buy"><span class="ib-amt">₹4,455</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Comprehensive cover</div><button class="buy-btn ghost">Buy Now</button></div>
+      <div class="insurer-card" onclick="selectInsurer('IndusInd General','₹4,384')"><div class="insurer-top"><div class="insurer-logo" style="color:#9B1B30;">IndusInd General</div><div class="insurer-buy"><span class="ib-amt">₹4,384</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Pay as you drive · Inspection required</div><button class="buy-btn ghost">Buy Now</button></div>
+      <div class="insurer-card" onclick="selectInsurer('United India','₹4,384')"><div class="insurer-top"><div class="insurer-logo" style="color:#0B5FA5;">United India</div><div class="insurer-buy"><span class="ib-amt">₹4,384</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Comprehensive cover</div><button class="buy-btn ghost">Buy Now</button></div>
+      <div class="insurer-card" onclick="selectInsurer('Kotak General','₹4,384')"><div class="insurer-top"><div class="insurer-logo" style="color:#C4161C;">Kotak General</div><div class="insurer-buy"><span class="ib-amt">₹4,384</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Comprehensive cover</div><button class="buy-btn ghost">Buy Now</button></div>
       <div style="height:8px;"></div>
     </div>
   </div>
@@ -1000,52 +1010,98 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <!-- ════════ SCREEN: MOBILE LINKED TO VAHAN ════════ -->
 <div class="screen" id="s-mobile">
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+  <!-- mob1 — number mismatch + possession check -->
   <div class="sub-step active" id="mob1">
-    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Link mobile to Vahan</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Mobile linked to Vahan</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
     <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
     <div class="scroll-area">
-      <div class="hyp-card">
-        <div class="hyp-financier"><div class="hyp-bank-logo">📱</div><div><div class="hyp-bank-name">Mobile not linked</div><div class="hyp-bank-sub">No mobile mapped to this RC on Vahan</div></div></div>
-        <div class="hyp-pill open">Verification pending</div>
-        <div class="hyp-note">Your mobile number must be linked to the RC on the Vahan portal so the RTO can send transfer OTPs. We’ll verify it instantly via Vahan.</div>
+      <div class="num-card">
+        <div class="num-row"><span class="num-lbl">Number on Vahan records</span><span class="num-val hi">+91 XXXXX X457</span></div>
+        <div class="num-divider"></div>
+        <div class="num-row"><span class="num-lbl">Number used to book this appointment</span><span class="num-val">+91 XXXXX 4521</span></div>
+      </div>
+      <div class="hyp-note" style="padding:0 16px;margin-top:12px;">The mobile number on your RC’s Vahan record is <b>different</b> from the number you booked this appointment with. We need a number you can receive an OTP on to verify ownership.</div>
+      <div class="mob-q">Do you have the Vahan number <b>(ending X457)</b> in your possession?</div>
+      <div style="padding:0 16px;">
+        <button class="choice-btn" onclick="mobStep(2)">Yes, I have it</button>
+        <button class="choice-btn ghost" onclick="mobStep(4)">No, I don’t have it</button>
       </div>
       <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar"><button class="cta-btn" onclick="mobStep(2)">Verify on Vahan →</button></div>
   </div>
+
+  <!-- mob2 — OTP on the Vahan number (Yes path) -->
   <div class="sub-step" id="mob2">
-    <div class="vahan-header"><div class="vh-top"><span class="vh-emblem">🇮🇳</span><div><div class="vh-title">VAHAN CITIZEN SERVICES</div><div class="vh-sub">Ministry of Road Transport &amp; Highways</div></div></div></div>
-    <div class="scroll-area" style="background:#EEF2F7;">
-      <div class="vahan-card">
-        <div class="vh-row"><span class="vh-lbl">Vehicle Registration No.</span><span class="vh-val">RJ 45 CP 6052</span></div>
-        <div class="vh-divider"></div>
-        <div class="vh-field-label">RMN / Registered mobile number of vehicle owner</div>
-        <input class="field-input" value="+91 XXXXXX4521" readonly>
-        <button class="vahan-btn" onclick="genVahanOtp()">Generate OTP</button>
-        <div class="vh-help">An OTP will be sent to the mobile number registered against this vehicle.</div>
-      </div>
+    <div class="page-header"><button class="back-btn" onclick="mobStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Verify the number</div><div class="header-sub">Instant deal transfer</div></div></div>
+    <div class="scroll-area">
+      <div class="hpt-note" style="background:#EFFAF3;border-color:#A9F5CF;color:#04553A;">✅ We’ll send an OTP to <b>+91 XXXXX X457</b> for instant deal transfer. Enter it below to mark this as <b>interim clean</b>.</div>
+      <div class="kyc-otp-note">OTP sent to <b>+91 XXXXX X457</b></div>
+      <div class="otp-box" id="vahanOtpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
+      <div class="otp-hint" style="text-align:left;padding:0 16px;">Didn’t get it? <button onclick="autoVahanOtp()" style="background:none;border:none;color:#4736FE;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
+      <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar" style="background:transparent;border:none;"><button class="back-btn-text" onclick="mobStep(1)">‹ Back</button></div>
+    <div class="cta-bar"><button class="cta-btn" onclick="mobInterim()">Verify →</button></div>
   </div>
+
+  <!-- mob3 — interim clean success (Yes path) -->
   <div class="sub-step" id="mob3">
-    <div class="vahan-header"><div class="vh-top"><span class="vh-emblem">🇮🇳</span><div><div class="vh-title">VAHAN CITIZEN SERVICES</div><div class="vh-sub">OTP verification</div></div></div></div>
-    <div class="scroll-area" style="background:#EEF2F7;">
-      <div class="vahan-card">
-        <div class="vh-alert">OTP has been generated and sent to registered Mobile No. XXXXXXX521 with reference number 788.</div>
-        <div class="vh-field-label">Enter OTP</div>
-        <div class="otp-box" id="vahanOtpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
-        <div class="otp-hint" style="text-align:left;">Didn’t get it? <button onclick="autoVahanOtp()" style="background:none;border:none;color:#0B5FA5;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
-        <button class="vahan-btn" onclick="mobSubmit()">Submit &amp; Verify</button>
-      </div>
-    </div>
-    <div class="cta-bar" style="background:transparent;border:none;"><button class="back-btn-text" onclick="mobStep(2)">‹ Back</button></div>
-  </div>
-  <div class="sub-step" id="mob4">
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="success-title">Mobile Linked &amp; Verified! 🎉</div>
-      <div class="success-sub">+91 XXXXXX4521 is now linked to your RC on Vahan. The Deemed Ownership checklist is updated.</div>
-      <div class="policy-card"><div class="policy-row"><span class="policy-label">Mobile</span><span class="policy-value">+91 XXXXXX4521</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Linked on Vahan</span></div><div class="policy-row"><span class="policy-label">Reference</span><span class="policy-value">VHN-788-2026</span></div></div>
+      <div class="success-title">Verified · Interim clean ✅</div>
+      <div class="success-sub">OTP confirmed on +91 XXXXX X457. Your deal can proceed on an <b>interim clean</b> status. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Vahan number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Interim clean</span></div><div class="policy-row"><span class="policy-label">Reference</span><span class="policy-value">VHN-788-2026</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+
+  <!-- mob4 — Aadhaar possession (No path) -->
+  <div class="sub-step" id="mob4">
+    <div class="page-header"><button class="back-btn" onclick="mobStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Link via Aadhaar</div><div class="header-sub">Update your Vahan mobile number</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-note" style="padding:14px 16px 0;">Since you don’t have the Vahan number, you can update your Vahan mobile number using your <b>Aadhaar</b> (Aadhaar-OTP based, on the Vahan portal).</div>
+      <div class="mob-q">Do you have your <b>Aadhaar number</b> in your possession?</div>
+      <div style="padding:0 16px;">
+        <button class="choice-btn" onclick="mobStep(5)">Yes, I have my Aadhaar</button>
+        <button class="choice-btn ghost" onclick="mobStep(7)">No, I don’t have it</button>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+
+  <!-- mob5 — link Aadhaar to Vahan (redirect to Vahan website) -->
+  <div class="sub-step" id="mob5">
+    <div class="page-header"><button class="back-btn" onclick="mobStep(4)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Link Aadhaar on Vahan</div><div class="header-sub">vahan.parivahan.gov.in</div></div></div>
+    <div class="scroll-area">
+      <div class="hyp-steps-box" style="margin-top:14px;">
+        <div class="hyp-sb-title">On the Vahan portal you’ll</div>
+        <div class="ho-step"><div class="ho-num">1</div><div class="ho-txt">Enter your <b>vehicle &amp; Aadhaar</b> details on the “Update Mobile Number” page.</div></div>
+        <div class="ho-step"><div class="ho-num">2</div><div class="ho-txt">Verify with the <b>Aadhaar-linked OTP</b>.</div></div>
+        <div class="ho-step"><div class="ho-num">3</div><div class="ho-txt">Submit — Vahan updates the mobile number on your RC.</div></div>
+      </div>
+      <div class="hpt-note">🔗 Tapping below opens the official <b>Vahan</b> website in a new tab. Complete the steps there, then return here.</div>
+      <a class="cta-btn" href="https://vahan.parivahan.gov.in/mobileupdate/vahan/ut/statevalidation/editMobileNumber.xhtml" target="_blank" rel="noopener" style="margin:14px 16px 0;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;text-decoration:none;">Yes, link my Aadhaar to Vahan ↗</a>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="mobAadhaarLinked()">I’ve completed it on Vahan →</button></div>
+  </div>
+
+  <!-- mob6 — Aadhaar linked success (number updated) -->
+  <div class="sub-step" id="mob6">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Aadhaar Linked! 🎉</div>
+      <div class="success-sub">Your Vahan mobile number has been updated. We’ll send an OTP to your new number — the registered number now ends with <b>5678</b>. The Deemed Ownership checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Old number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">Updated number</span><span class="policy-value">+91 XXXXX 5678</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Linked via Aadhaar</span></div></div>
+      <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
+    </div>
+  </div>
+
+  <!-- mob7 — not clean (no Aadhaar) -->
+  <div class="sub-step" id="mob7">
+    <div class="ins-success">
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;background:#FFE0D6;"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 12V25" stroke="#C2410C" stroke-width="4" stroke-linecap="round"/><circle cx="22" cy="32" r="2.4" fill="#C2410C"/></svg></div>
+      <div class="success-title">Status: Not clean</div>
+      <div class="success-sub">We can’t verify the Vahan number right now. <b>ℹ️ Kindly link your phone number to your Aadhaar first</b> (at any Aadhaar centre or the mAadhaar app), then come back to link it to Vahan.</div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -1317,9 +1373,15 @@ function renderChecklist(containerId, owner){
     ? '<div class="do-subline good">✅ Great news — we’ve received all your documents!</div>'
     : '<div class="do-subline">' + (TOTAL-done) + ' of ' + TOTAL + ' checks need action before your RC transfer.</div>';
 
+  // Pending/failing checks float to the top so they're visible in the collapsed 3-item view; HSRP (info) stays last.
+  var ordered = CHECKS.slice().sort(function(a,b){
+    if (a.info) return 1; if (b.info) return -1;
+    return (isPass(a)?1:0) - (isPass(b)?1:0);
+  });
+
   var items = '';
-  for (var i=0;i<CHECKS.length;i++){
-    var c = CHECKS[i];
+  for (var i=0;i<ordered.length;i++){
+    var c = ordered[i];
     if (c.info){
       // Non-actionable info row (HSRP) — Cars24 handles it; no tick, no CTA, not counted
       items += '<div class="do-item">'+
@@ -1615,11 +1677,15 @@ function pucSubmit(){
 }
 
 /* ════════════ MOBILE LINKED TO VAHAN ════════════ */
-function resetMobile(){ mobStep(1); var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); for(var i=0;i<d.length;i++) d[i].value=''; }
-function mobStep(n){ for (var i=1;i<=4;i++) document.getElementById('mob'+i).classList.toggle('active', i===n); }
-function genVahanOtp(){ mobStep(3); }
+// Vahan number (ends X457) ≠ booking number (4521). Yes→OTP/interim. No→Aadhaar→link on Vahan / not-clean.
+function resetMobile(){
+  mobStep(1);
+  var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); for(var i=0;i<d.length;i++) d[i].value='';
+}
+function mobStep(n){ for (var i=1;i<=7;i++) document.getElementById('mob'+i).classList.toggle('active', i===n); }
 function autoVahanOtp(){ var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); var c='312788'; for(var i=0;i<d.length;i++) d[i].value=c[i]; }
-function mobSubmit(){ S.mobile = true; mobStep(4); }
+function mobInterim(){ S.mobile = true; mobStep(3); }          // Yes → OTP verified → interim clean (done)
+function mobAadhaarLinked(){ S.mobile = true; mobStep(6); }    // Aadhaar linked on Vahan → number updated (done)
 
 /* ════════════ HSRP FITMENT ════════════ */
 function resetHsrp(){ hsrStep(1); }
