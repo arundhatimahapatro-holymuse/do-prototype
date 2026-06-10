@@ -711,6 +711,26 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .si-field{ flex:1; border:1px solid #D1D1D6; border-radius:20px; padding:9px 15px; font-size:13px; color:#A0A0A5; }
 .si-send{ width:32px; height:32px; border-radius:50%; background:#E5E5EA; color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
 @media (max-width:1180px){ .comms-col{ flex-direction:column; } .dphone{ transform:scale(.9); transform-origin:top center; } }
+.lsp{ width:300px; height:844px; background:#0E1117; color:#E6E8EE; border-radius:30px; box-shadow:0 24px 80px rgba(10,10,10,.22),0 0 0 1px rgba(10,10,10,.06); display:flex; flex-direction:column; overflow:hidden; font-family:var(--lego-font); }
+.lsp-head{ padding:16px; background:#151A23; border-bottom:1px solid #232A36; }
+.lsp-title{ font-size:14px; font-weight:800; }
+.lsp-sub{ font-size:10.5px; color:#8A93A6; margin-top:5px; line-height:1.5; }
+.lsp-track{ flex:1; overflow-y:auto; padding:12px 14px; }
+.ls-stage{ display:flex; align-items:center; gap:9px; margin-top:12px; }
+.ls-num{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; background:#232A36; color:#8A93A6; }
+.ls-nm{ font-size:13px; font-weight:800; color:#CDD3DF; }
+.ls-stage.done .ls-num{ background:#34D399; color:#0E1117; } .ls-stage.done .ls-nm{ color:#9FB0C3; }
+.ls-stage.cur .ls-num{ background:#4736FE; color:#fff; box-shadow:0 0 0 4px rgba(71,54,254,.22); } .ls-stage.cur .ls-nm{ color:#fff; }
+.ls-subs{ margin:5px 0 2px 31px; display:flex; flex-direction:column; gap:4px; }
+.ls-sub{ font-size:11px; color:#6B7587; line-height:1.4; }
+.ls-sub.done{ color:#5FB98C; }
+.ls-sub.next{ color:#fff; background:#1B2230; border:1px solid #2E3850; border-radius:8px; padding:6px 8px; }
+.ls-sub b{ color:#7FA0FF; font-weight:800; }
+.lsp-act{ padding:12px 14px 16px; background:#0E1117; border-top:1px solid #232A36; }
+.ls-btn{ width:100%; background:#4736FE; color:#fff; border:none; border-radius:12px; padding:12px; font-size:12.5px; font-weight:800; cursor:pointer; font-family:var(--lego-font); }
+.ls-otp{ display:flex; flex-direction:column; gap:8px; }
+.ls-btn.ok{ background:#1DA851; } .ls-btn.no{ background:#2A3140; }
+.ls-done{ font-size:13px; font-weight:800; color:#34D399; text-align:center; line-height:1.5; }
 .theme-switcher{ background:#0A0A0A; border-radius:100px; padding:6px 8px; display:flex; gap:4px; }
 .theme-btn{ padding:6px 14px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:transparent; color:#9E9CB0; font-family:'Geist',sans-serif; transition:all .2s; }
 .theme-btn.active{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
@@ -720,6 +740,11 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <body>
 
 <div class="phone-wrap">
+<aside class="lsp" id="leadPanel">
+  <div class="lsp-head"><div class="lsp-title">📊 Lead Stage Journey</div><div class="lsp-sub">Advance the lead. Comms up to T19 fire from the app; T20–T22 fire only here (Stock-In → RCT).</div></div>
+  <div class="lsp-track" id="leadTrack"></div>
+  <div class="lsp-act" id="leadAction"></div>
+</aside>
 <div class="phone" id="app" data-theme="cars24">
 <div class="push-stack" id="pushStack"></div>
 <!-- ════════ SCREEN: FLOW SELECT ════════ -->
@@ -2441,6 +2466,22 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 var CRM_NAME = 'Arundhati';
 var CRM_TRIGGERS = {
+  T3:{label:'T3', title:'Initial offer unlocked · price received',
+    push:'Offer received: ₹8,08,000 for your car! Complete the checklist to improve your sale price.',
+    wa:'Hi [Name]! 🎉 Great progress — you have an offer! 💰 ₹8,08,000. Complete the remaining items on your ownership transfer checklist to improve your sale price potential. You’re so close! 🚀',
+    sms:'Cars24: Offer received — Rs.8,08,000. Complete your checklist to improve sale price: [URL]'},
+  T4:{label:'T4', title:'Revised offer unlocked · new price received',
+    push:'🎉 New offer: ₹8,32,000 for your car! Complete the remaining tasks to push it higher.',
+    wa:'Hi [Name]! 🎉 Your updated offer is now ₹8,32,000 (up from ₹8,08,000). Complete the remaining items on your ownership transfer checklist to improve sale price potential. You’re so close! 🚀',
+    sms:'Cars24: Updated offer Rs.8,32,000 (up from Rs.8,08,000): [URL]'},
+  T17:{label:'T17', title:'RA WhatsApp · deeplinks to pending tasks',
+    push:'',
+    wa:'Hi [Name]! This is your Cars24 advisor 🙏 Complete your pending step(s) to unlock your best price — direct links: 📋 Upload PUCC → [Deeplink]  🔒 Link Mobile on VAHAN → [Deeplink]  📄 Upload Bank NOC → [Deeplink]. Reply here or call me if you need help.',
+    sms:''},
+  T21:{label:'T21', title:'OTP call · missed / not connected',
+    push:'Missed our ownership transfer call 📞 This is the final step — schedule a callback at your convenience.',
+    wa:'Hi [Name] 📞 We tried calling to complete your ownership transfer — couldn’t reach you. This is the final step — just a quick call and you’re done! Please call back or schedule a time. [Schedule Callback →]',
+    sms:'Cars24: Missed your DO transfer call. Final step! Call 1800-XXX-XXXX or schedule: [URL]'},
   T1:{label:'T1', title:'Inspection complete · checklist shown',
     push:'Inspection done! Want to get the best price? Click here.',
     wa:'Hi [Name] 🎉 Your car has been inspected! Complete your ownership transfer checklist to unlock your best price — the more you complete, the higher the chance of a better offer. [Check Eligibility & Get My Price →]',
@@ -2449,15 +2490,15 @@ var CRM_TRIGGERS = {
     push:'Your price is one step away 💰',
     wa:'Hi [Name] 👋 Complete your ownership transfer checklist to unlock your best offer. You’re one step away from getting your price! Pending on your checklist: E-Challan, Insurance, PUCC…',
     sms:'Cars24: Complete your ownership transfer checklist to unlock your best price offer: [URL]'},
-  TC_FOUND:{label:'T6', title:'E-Challan · pending challans found',
+  T5:{label:'T5', title:'E-Challan · pending challans found (before token)',
     push:'⚠ [N] pending challan(s) on your car. ₹[Amount] in challans is stopping your Instant Ownership Transfer! Click here to resolve.',
     wa:'Hi [Name]! ⚠ We found pending traffic challan(s) on your car totalling ₹[Amount]. If you don’t clear them, you won’t be eligible for Instant Ownership Transfer. We’ll verify clearance with VAHAN within 24 hrs. [Pay ₹[Amount] Now →]',
     sms:'Cars24: challan(s) of Rs.[Amount] is stopping your Instant Ownership Transfer!'},
-  T7:{label:'T7', title:'E-Challan · payment successful',
+  T8:{label:'T8', title:'E-Challan · payment successful',
     push:'Challan payment received ✅ Verifying with Vahan. ₹[Amount] paid — clearance update within 24 hours.',
     wa:'Hi [Name]! ✅ Your challan payment of ₹[Amount] was successful. No holdbacks — you receive your full sale price! We’re verifying clearance with VAHAN (up to 24 hours).',
     sms:'Cars24: Rs.[Amount] challan paid. Verifying with VAHAN (up to 24 hrs). No holdbacks applied.'},
-  T8:{label:'T8', title:'Mobile not linked to Vahan',
+  T9:{label:'T9', title:'Mobile not linked to Vahan',
     push:'⚠ We found a different mobile linked to your car on VAHAN. Click here to link your phone number to VAHAN.',
     wa:'Hi [Name] Looks like a different mobile number is linked to your car on VAHAN. The OTP for ownership transfer will be sent to that number. Click here to help us link your phone number to Vahan.',
     sms:'Cars24: Different mobile linked on VAHAN. Fix it to enable Instant Ownership Transfer: [URL]'},
@@ -2485,27 +2526,27 @@ var CRM_TRIGGERS = {
     push:'',
     wa:'Hi [Name] ✅ Your vehicle insurance has been renewed successfully! Your ownership checklist has been updated.',
     sms:'Cars24: Insurance renewed. Ownership checklist updated.'},
-  T16:{label:'T16', title:'Hypothecation active',
+  T15:{label:'T15', title:'Hypothecation active',
     push:'Hypothecation detected on your car — a valid bank NOC is needed to proceed. Click here to update your hypothecation details.',
     wa:'Hi [Name] We’ve detected hypothecation with [Bank] linked to your car. To enable Instant Ownership Transfer we need a valid NOC (issued within 90 days). Please share your loan status (closed/active) and documents: PAN card, Bank NOC/LFC. [Hypothecation details →]',
     sms:'Cars24: Hypothecation detected on your car. Upload NOC from [Bank] (issued within 90 days): [URL]'},
-  T17:{label:'T17', title:'NOC / LFC uploaded · under verification',
+  T16:{label:'T16', title:'NOC / LFC uploaded · under verification',
     push:'Bank NOC/LFC received. Our team is validating it — keep the original ready for pickup. Update within 24 hours.',
     wa:'Hi [Name]! We’ve received the bank NOC/LFC for your car. Our team is verifying the information (up to 24 hours). Please keep the original ready for vehicle pickup.',
     sms:'Cars24: NOC/LFC received. Team verifying (up to 24 hrs). Keep original ready for pickup.'},
-  T19:{label:'T19', title:'Checklist incomplete · Instant DO nudge',
+  T18:{label:'T18', title:'Checklist incomplete · Instant DO scare',
     push:'⚡ Instant Ownership Transfer is almost yours — [N] item(s) left. Complete to become legal-liability free in ~48 hours.',
     wa:'Hi [Name] ⚡ You’re just [N] step(s) away from Instant Ownership Transfer. Complete it and we’ll initiate your transfer — clearing your legal liability in <48 hours.',
     sms:'Cars24: You’re [N] step(s) from Instant Ownership Transfer. Complete now to eliminate legal liability fast: [URL]'},
-  T20:{label:'T20', title:'All items complete · Instant DO eligible',
+  T19:{label:'T19', title:'All items complete · Instant DO eligible',
     push:'🎊 Instant Ownership Transfer unlocked! All steps complete — our team will initiate your transfer within 48 hours.',
     wa:'Congratulations [Name]! 🎊 You’ve completed all ownership transfer requirements! 1️⃣ Our team will call within 48 hrs of handover for a quick OTP verification 2️⃣ We’ll share Form 29C issued by VAHAN clearing your legal liability 3️⃣ Cars24 becomes the deemed owner and completes post-sale formalities on your behalf.',
     sms:'Cars24: All steps done 🎊 Instant Transfer within 48hrs. Expect our call. Track: [URL]'},
-  T22:{label:'T22', title:'OTP verification call · upcoming',
+  T20:{label:'T20', title:'OTP verification call · upcoming',
     push:'📞 Transfer call in a few minutes — please pick up! Keep your OTP ready.',
     wa:'Hi [Name] 📞 We’re ready to complete your Ownership Transfer! Our executive will call shortly. You’ll receive an OTP on your VAHAN-linked number — share it on the call and the transfer is done! 🎉',
     sms:'Cars24: OTP verification call coming for your transfer. Have your VAHAN-linked mobile ready.'},
-  T24:{label:'T24', title:'Form 29C submitted · transfer complete',
+  T22:{label:'T22', title:'Form 29C submitted · transfer complete',
     push:'Form 29C submitted — ownership transfer complete. You’re legally clear!',
     wa:'Great news, [Name]! Your Ownership Transfer is complete! ✅ Form 29C generated and submitted to the RTO ✅ Cars24 is now the deemed owner ✅ From today, you are no longer liable for your car. Thank you for selling with Cars24! [View Form 29C →]',
     sms:'Cars24: Form 29C submitted. Transfer completed — you’re legally clear. Thank you!'}
@@ -2552,7 +2593,7 @@ function crmOnPrice(){
     setTimeout(function(){ crmConsolidated(keys); }, 800);
   } else if(keys.length === 1){
     // exactly 1 pending → that check's individual "found" trigger
-    var m = { echallan:'TC_FOUND', insurance:'T13', pucc:'T12', mobile:'T8', hypo:'T16' };
+    var m = { echallan:'T5', insurance:'T13', pucc:'T12', mobile:'T9', hypo:'T15' };
     setTimeout(function(){ crmFire(m[keys[0]]); }, 800);
   }
 }
@@ -2564,27 +2605,77 @@ function crmConsolidated(keys){
   waAppend('Hi '+CRM_NAME+' 👋 Complete your ownership transfer checklist to unlock your best offer.\n\nPending on your checklist: '+list+'\n\nThe more you complete, the better your offer! 💰 [Complete My Checklist →]', ts);
   smsAppend('Cars24: Complete your ownership transfer checklist ('+list+') to unlock your best price: cars24.com/do', ts);
 }
-function crmReadySeq(){ crmFire('T20'); setTimeout(function(){ crmFire('T22'); },3500); setTimeout(function(){ crmFire('T24'); },7000); }
-function crmDeal(){ if(doneCount()<TOTAL) crmFire('T19'); }
+function crmReadySeq(){ crmFire('T19'); }   // all-clear = Instant DO eligible ONLY (T20–T22 fire from the Lead Stage panel)
+function crmDeal(){ if(doneCount()<TOTAL) crmFire('T18'); }
 function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41];
   var w=document.getElementById('waBody'); if(w) w.innerHTML='<div class="wa-enc">🔒 Messages and calls are end-to-end encrypted. Tap to learn more.</div><div class="wa-day">TODAY</div>';
   var s=document.getElementById('smsBody'); if(s) s.innerHTML='<div class="sms-ts"><b>Today</b> 9:41 AM</div><div class="sms-sender">Text Message · SMS</div>';
   var st=document.getElementById('pushStack'); if(st) st.innerHTML=''; }
 function toggleComms(){ var c=document.getElementById('commsCol'); if(c) c.classList.toggle('hidden'); }
 
+/* ════════ LEAD STAGE JOURNEY (stage-gated comms) ════════ */
+function crmFireNow(id){ var t=CRM_TRIGGERS[id]; if(!t) return;
+  var push=crmSub(t.push), wa=crmSub(t.wa), sms=crmSub(t.sms), ts=crmStamp();
+  if(push) showPush('Cars24', push); if(wa) waAppend(wa, ts); if(sms) smsAppend(sms, ts); }
+var LEAD_MAIN = ['Inspection Done','Token','Stock In','Stock Out','RCT — RC Transfer'];
+var LEAD_STEPS = [
+  {m:0,label:'Inspection complete',fire:'T1'},
+  {m:0,label:'Price received',fire:'T3'},
+  {m:0,label:'New price received',fire:'T4'},
+  {m:1,label:'Token done',fire:'TOKEN'},
+  {m:1,label:'Driver pickup + Ops calling to clear pending docs',fire:'OPSCALL'},
+  {m:2,label:'Stock-In · car arrives at yard',fire:null},
+  {m:2,label:'Ops calling — OTP verification',fire:'OTP'},
+  {m:2,label:'Ops completes Deemed Ownership requirement on Vahan',fire:'T22'},
+  {m:3,label:'Stock-Out · car dispatched to dealer',fire:null},
+  {m:3,label:'Dealer finds a buyer',fire:null},
+  {m:4,label:'RC Transfer · ownership transferred — legally clear',fire:'RCT'}
+];
+var leadIdx = -1;
+function leadFire(code){ if(!code) return;
+  if(code==='TOKEN'){ if(doneCount()===TOTAL) crmFire('T19'); else crmFireNow('T18'); return; }
+  if(code==='OPSCALL'){ if(doneCount()<TOTAL) crmFireNow('T17'); return; }
+  if(code==='RCT'){ return; }
+  if(code==='T1'){ crmFire('T1'); return; }
+  crmFireNow(code); }
+function advanceLead(){ var n=leadIdx+1; if(n>=LEAD_STEPS.length) return;
+  if(LEAD_STEPS[n].fire==='OTP') return; leadIdx=n; leadFire(LEAD_STEPS[n].fire); renderLead(); }
+function otpPick(ok){ var b=leadIdx+1; if(!LEAD_STEPS[b]||LEAD_STEPS[b].fire!=='OTP') return;
+  if(ok){ crmFireNow('T20'); leadIdx=b; } else { crmFireNow('T21'); } renderLead(); }
+function leadReset(){ leadIdx=-1; renderLead(); }
+function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) return;
+  var curMain = leadIdx>=0 ? LEAD_STEPS[leadIdx].m : 0;
+  var html='';
+  for(var i=0;i<LEAD_MAIN.length;i++){
+    var cls = i<curMain?'done':(i===curMain?'cur':'todo');
+    html+='<div class="ls-stage '+cls+'"><span class="ls-num">'+(i<curMain?'✓':(i+1))+'</span><span class="ls-nm">'+LEAD_MAIN[i]+'</span></div><div class="ls-subs">';
+    for(var j=0;j<LEAD_STEPS.length;j++){ if(LEAD_STEPS[j].m!==i) continue;
+      var done=j<=leadIdx, isNext=(j===leadIdx+1);
+      var badge = /^T\d/.test(LEAD_STEPS[j].fire||'') ? ' <b>'+LEAD_STEPS[j].fire+'</b>' : '';
+      html+='<div class="ls-sub'+(done?' done':'')+(isNext?' next':'')+'">'+(done?'● ':'○ ')+crmEsc(LEAD_STEPS[j].label)+badge+'</div>'; }
+    html+='</div>'; }
+  trk.innerHTML=html;
+  var act=document.getElementById('leadAction'); if(!act) return;
+  var n=leadIdx+1;
+  if(n>=LEAD_STEPS.length){ act.innerHTML='<div class="ls-done">✅ Journey complete — RC transferred.</div>'; }
+  else if(LEAD_STEPS[n].fire==='OTP'){ act.innerHTML='<div class="ls-otp"><button class="ls-btn ok" onclick="otpPick(true)">Customer picks up · OTP shared → T20</button><button class="ls-btn no" onclick="otpPick(false)">Customer didn’t pick up → T21</button></div>'; }
+  else { act.innerHTML='<button class="ls-btn" onclick="advanceLead()">Advance: '+crmEsc(LEAD_STEPS[n].label)+' →</button>'; }
+}
+
 // Hook the CRM engine into the prototype's existing actions (wrap the globals).
 (function(){
   function wrap(name, after){ var orig=window[name]; if(typeof orig!=='function') return;
     window[name]=function(){ var before={mobile:S.mobile, hypo:S.hypo, pucc:S.pucc}; var r=orig.apply(this,arguments); try{ after.call(this, before, arguments); }catch(e){} return r; }; }
   wrap('go', function(b,a){ var id=a[0]; if(id==='price') crmOnPrice(); else if(id==='ready') crmReadySeq(); else if(id==='deal') crmDeal(); });
-  wrap('payNow', function(){ crmFire('T7'); crmOffer(); });
+  wrap('payNow', function(){ crmFire('T8'); crmOffer(); });
   wrap('insPay', function(){ crmFire('T14'); crmOffer(); });
   wrap('pucSubmit', function(){ if(S.pucc===true){ crmFire('TP_DONE'); crmOffer(); } });
-  wrap('hyp3Next', function(){ if(S.hypo==='verifying') crmFire('T17'); });
+  wrap('hyp3Next', function(){ if(S.hypo==='verifying') crmFire('T16'); });
   wrap('mobInterim', function(b){ if(S.mobile===true && b.mobile!==true){ crmFire('TM_CLEAN'); crmOffer(); } });
   wrap('mobAadhaarLinked', function(){ if(S.mobile==='verifying') crmFire('TM_PEND'); });
-  wrap('restart', function(){ crmReset(); });
+  wrap('restart', function(){ crmReset(); leadReset(); });
 })();
+leadReset();
 </script>
 </body>
 </html>
