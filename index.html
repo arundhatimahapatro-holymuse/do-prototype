@@ -664,7 +664,53 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .crm-ch.sms{ background:#241F12; color:#F4DEB2; } .crm-ch.sms .chh{ color:#E0B25A; }
 .crm-muted{ opacity:.5; font-style:italic; }
 .crm-toggle{ position:fixed; top:16px; right:16px; z-index:1000; background:#0E1117; color:#fff; border:none; border-radius:100px; padding:9px 15px; font-size:12px; font-weight:800; cursor:pointer; font-family:var(--lego-font); box-shadow:0 6px 20px rgba(0,0,0,.22); }
-@media (max-width:880px){ .crm{ display:none; } }
+
+/* ── Comms device screens (WhatsApp chat + iPhone SMS) ── */
+.comms-col{ display:flex; gap:22px; }
+.comms-col.hidden{ display:none; }
+.dphone{ width:380px; height:844px; border-radius:44px; overflow:hidden; position:relative; display:flex; flex-direction:column; box-shadow:0 24px 80px rgba(10,10,10,0.22),0 0 0 1px rgba(10,10,10,0.06); background:#fff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',var(--lego-font); }
+.dsb{ height:36px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; font-size:13px; font-weight:700; flex-shrink:0; }
+.dsb .dsb-r{ letter-spacing:1px; font-size:12px; }
+
+/* WhatsApp */
+.wa-phone{ background:#ECE5DD; }
+.wa-top{ background:#008069; flex-shrink:0; }
+.wa-top .dsb{ color:#fff; }
+.wa-head{ display:flex; align-items:center; gap:10px; padding:6px 12px 12px; color:#fff; }
+.wa-back{ font-size:24px; line-height:1; margin-right:-2px; }
+.wa-av{ width:38px; height:38px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; color:#008069; font-size:12px; flex-shrink:0; }
+.wa-name{ font-size:16px; font-weight:700; line-height:1.15; }
+.wa-status{ font-size:11px; opacity:.9; }
+.wa-icons{ margin-left:auto; display:flex; gap:18px; font-size:17px; }
+.wa-body{ flex:1; overflow-y:auto; padding:12px 10px 16px; background:#ECE5DD; display:flex; flex-direction:column; gap:8px; }
+.wa-enc{ align-self:center; background:#FCF4CB; color:#7A6A2F; font-size:10.5px; padding:6px 14px; border-radius:8px; text-align:center; max-width:90%; line-height:1.45; box-shadow:0 1px 1px rgba(0,0,0,.05); }
+.wa-day{ align-self:center; background:rgba(255,255,255,.92); color:#54656F; font-size:10.5px; font-weight:700; letter-spacing:.04em; padding:5px 13px; border-radius:8px; box-shadow:0 1px 1px rgba(0,0,0,.05); }
+.wa-bub{ align-self:flex-start; max-width:84%; background:#fff; border-radius:9px; border-top-left-radius:1px; padding:7px 9px 5px; box-shadow:0 1px 1px rgba(0,0,0,.13); animation:bubIn .3s ease; }
+@keyframes bubIn{ from{ opacity:0; transform:translateY(7px) scale(.98); } to{ opacity:1; transform:none; } }
+.wa-biz{ font-size:11.5px; font-weight:700; color:#1DA851; margin-bottom:2px; }
+.wa-txt{ font-size:13.5px; color:#111B21; line-height:1.42; white-space:pre-wrap; word-break:break-word; }
+.wa-time{ font-size:9.5px; color:#667781; text-align:right; margin-top:2px; }
+.wa-input{ flex-shrink:0; background:#F0F2F5; padding:8px 10px; display:flex; align-items:center; gap:8px; }
+.wi-field{ flex:1; background:#fff; border-radius:22px; padding:10px 16px; font-size:13px; color:#8696A0; }
+.wi-mic{ width:42px; height:42px; border-radius:50%; background:#008069; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+
+/* iPhone SMS / Messages */
+.sms-phone{ background:#fff; }
+.sms-top{ background:rgba(250,250,250,.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid #E5E5EA; flex-shrink:0; }
+.sms-top .dsb{ color:#000; }
+.sms-head{ display:flex; flex-direction:column; align-items:center; padding:0 0 9px; gap:4px; position:relative; }
+.sms-back{ position:absolute; left:14px; top:-2px; color:#007AFF; font-size:26px; line-height:1; }
+.sms-av{ width:46px; height:46px; border-radius:50%; background:#34C759; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; }
+.sms-name{ font-size:12px; font-weight:600; color:#000; display:flex; align-items:center; gap:3px; }
+.sms-body{ flex:1; overflow-y:auto; padding:12px 14px 16px; display:flex; flex-direction:column; gap:4px; background:#fff; }
+.sms-ts{ align-self:center; font-size:11px; color:#8E8E93; margin:8px 0 2px; }
+.sms-ts b{ color:#3C3C43; font-weight:700; }
+.sms-sender{ align-self:center; font-size:11px; color:#8E8E93; margin-bottom:8px; }
+.sms-bub{ align-self:flex-start; max-width:80%; background:#E9E9EB; color:#000; border-radius:18px; padding:9px 14px; font-size:14px; line-height:1.42; white-space:pre-wrap; word-break:break-word; animation:bubIn .3s ease; }
+.sms-input{ flex-shrink:0; padding:8px 12px 16px; display:flex; align-items:center; gap:9px; }
+.si-field{ flex:1; border:1px solid #D1D1D6; border-radius:20px; padding:9px 15px; font-size:13px; color:#A0A0A5; }
+.si-send{ width:32px; height:32px; border-radius:50%; background:#E5E5EA; color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+@media (max-width:1180px){ .comms-col{ flex-direction:column; } .dphone{ transform:scale(.9); transform-origin:top center; } }
 .theme-switcher{ background:#0A0A0A; border-radius:100px; padding:6px 8px; display:flex; gap:4px; }
 .theme-btn{ padding:6px 14px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:transparent; color:#9E9CB0; font-family:'Geist',sans-serif; transition:all .2s; }
 .theme-btn.active{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
@@ -1385,17 +1431,43 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="do-pop-card"><button class="do-pop-close" onclick="dismissHappyPopup()">×</button><div class="do-pop-emoji">🎉</div><div class="do-pop-title">All your documents are in place!</div><div class="do-pop-text">Every requirement for your ownership transfer is verified. Let’s get you a great price!</div><button class="do-pop-btn" onclick="dismissHappyPopup()">Awesome, let’s go</button></div>
 </div>
 </div>
-<aside class="crm" id="crmPanel">
-  <div class="crm-head">
-    <div class="crm-title"><span class="crm-dot"></span>CRM · Comms Console</div>
-    <div class="crm-sub">LMS / Ops live view — Push · WhatsApp · SMS fire as the customer acts on the phone</div>
+<div class="comms-col" id="commsCol">
+  <!-- WhatsApp chat -->
+  <div class="dphone wa-phone" id="waPhone">
+    <div class="wa-top">
+      <div class="dsb"><span>9:41</span><span class="dsb-r">▬▬▬ ▮▮ 🔋</span></div>
+      <div class="wa-head">
+        <span class="wa-back">‹</span>
+        <div class="wa-av">C24</div>
+        <div><div class="wa-name">Cars24</div><div class="wa-status">business account</div></div>
+        <div class="wa-icons"><span>📹</span><span>📞</span><span>⋮</span></div>
+      </div>
+    </div>
+    <div class="wa-body" id="waBody">
+      <div class="wa-enc">🔒 Messages and calls are end-to-end encrypted. Tap to learn more.</div>
+      <div class="wa-day">TODAY</div>
+    </div>
+    <div class="wa-input"><div class="wi-field">Message</div><div class="wi-mic">🎤</div></div>
   </div>
-  <div class="crm-feed" id="crmFeed">
-    <div class="crm-empty" id="crmEmpty">No communications yet.<br>Pick a scenario and open the app — CRM triggers fire here in real time, mirroring the phone.</div>
+  <!-- iPhone SMS -->
+  <div class="dphone sms-phone" id="smsPhone">
+    <div class="sms-top">
+      <div class="dsb"><span>9:41</span><span class="dsb-r">▬▬▬ ▮▮ 🔋</span></div>
+      <div class="sms-head">
+        <span class="sms-back">‹</span>
+        <div class="sms-av">C24</div>
+        <div class="sms-name">Cars24 ›</div>
+      </div>
+    </div>
+    <div class="sms-body" id="smsBody">
+      <div class="sms-ts"><b>Today</b> 9:41 AM</div>
+      <div class="sms-sender">Text Message · SMS</div>
+    </div>
+    <div class="sms-input"><div class="si-field">Text Message</div><div class="si-send">↑</div></div>
   </div>
-</aside>
 </div>
-<button class="crm-toggle" id="crmToggle" onclick="toggleCrm()">⟷ CRM panel</button>
+</div>
+<button class="crm-toggle" id="crmToggle" onclick="toggleComms()">⟷ Comms (WhatsApp · SMS)</button>
 
 <div class="controls">
   <button class="restart-btn" onclick="restart()">⟲ Restart</button>
@@ -2451,34 +2523,32 @@ function showPush(title,text){ var st=document.getElementById('pushStack'); if(!
   el.innerHTML='<div class="push-ic">C</div><div class="push-body"><div class="push-top"><span>CARS24</span><span>now</span></div><div class="push-title">'+crmEsc(title)+'</div><div class="push-text">'+crmEsc(text)+'</div></div>';
   st.appendChild(el); requestAnimationFrame(function(){ el.classList.add('show'); });
   setTimeout(function(){ el.classList.remove('show'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },460); }, 5400); }
-function crmAppend(label,title,push,wa,sms){ var feed=document.getElementById('crmFeed'); if(!feed) return;
-  var e=document.getElementById('crmEmpty'); if(e) e.style.display='none';
-  var chs='<div class="crm-ch push"><div class="chh">📱 Push Notification</div>'+(push?crmEsc(push):'<span class="crm-muted">No push for this trigger</span>')+'</div>';
-  if(wa) chs+='<div class="crm-ch wa"><div class="chh">💬 WhatsApp · ✓✓ delivered</div>'+crmEsc(wa)+'</div>';
-  if(sms) chs+='<div class="crm-ch sms"><div class="chh">🔤 SMS</div>'+crmEsc(sms)+'</div>';
-  var card=document.createElement('div'); card.className='crm-card';
-  card.innerHTML='<div class="crm-card-head"><span class="crm-tid">'+crmEsc(label)+'</span><span class="crm-tname">'+crmEsc(title)+'</span><span class="crm-time">'+crmStamp()+'</span></div><div class="crm-chs">'+chs+'</div>';
-  feed.appendChild(card); feed.scrollTop=feed.scrollHeight; }
+function waAppend(text, ts){ if(!text) return; var b=document.getElementById('waBody'); if(!b) return;
+  var d=document.createElement('div'); d.className='wa-bub';
+  d.innerHTML='<div class="wa-biz">Cars24</div><div class="wa-txt">'+crmEsc(text)+'</div><div class="wa-time">'+ts+'  ✓✓</div>';
+  b.appendChild(d); b.scrollTop=b.scrollHeight; }
+function smsAppend(text, ts){ if(!text) return; var b=document.getElementById('smsBody'); if(!b) return;
+  var d=document.createElement('div'); d.className='sms-bub'; d.textContent=text;
+  b.appendChild(d); b.scrollTop=b.scrollHeight; }
 function crmFire(id){ var t=CRM_TRIGGERS[id]; if(!t || crmFired[id]) return; crmFired[id]=true;
-  var push=crmSub(t.push), wa=crmSub(t.wa), sms=crmSub(t.sms);
-  if(push) showPush('Cars24', push); crmAppend(t.label, t.title, push, wa, sms); }
+  var push=crmSub(t.push), wa=crmSub(t.wa), sms=crmSub(t.sms), ts=crmStamp();
+  if(push) showPush('Cars24', push); waAppend(wa, ts); smsAppend(sms, ts); }
 function crmOffer(){ if(doneCount()>=TOTAL) return; var amt=CRM_OFFERS[Math.min(crmOfferIdx,CRM_OFFERS.length-1)]; crmOfferIdx++;
-  var pend=Math.max(0,TOTAL-doneCount());
-  var push='🎉 New offer: ₹'+amt+' for your car! Complete '+pend+' more task(s) to improve sale price.';
-  showPush('Cars24', push);
-  crmAppend('T4','Revised offer unlocked', push,
-    'Hi '+CRM_NAME+'! 🎉 Great progress! Your updated offer is now ₹'+amt+'. Complete '+pend+' more item(s) on your ownership transfer checklist to improve sale price potential. You’re so close! 🚀',
-    'Cars24: Updated offer Rs.'+amt+'. Complete '+pend+' more item(s): cars24.com/do'); }
-function crmOnPrice(){ var q=['T1','T2'];
+  var pend=Math.max(0,TOTAL-doneCount()), ts=crmStamp();
+  showPush('Cars24', '🎉 New offer: ₹'+amt+' for your car! Complete '+pend+' more task(s) to improve sale price.');
+  waAppend('Hi '+CRM_NAME+'! 🎉 Great progress! Your updated offer is now ₹'+amt+'. Complete '+pend+' more item(s) on your ownership transfer checklist to improve sale price potential. You’re so close! 🚀', ts);
+  smsAppend('Cars24: Updated offer Rs.'+amt+'. Complete '+pend+' more item(s): cars24.com/do', ts); }
+function crmOnPrice(){ var q=['T1'];
   if(S.echallan===false) q.push('TC_FOUND'); if(S.insurance===false) q.push('T13');
   if(S.pucc===false) q.push('T12'); if(S.mobile===false) q.push('T8'); if(S.hypo===false) q.push('T16');
   q.forEach(function(id,i){ setTimeout(function(){ crmFire(id); }, i*750); }); }
 function crmReadySeq(){ crmFire('T20'); setTimeout(function(){ crmFire('T22'); },3500); setTimeout(function(){ crmFire('T24'); },7000); }
 function crmDeal(){ if(doneCount()<TOTAL) crmFire('T19'); }
 function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41];
-  var f=document.getElementById('crmFeed'); if(f) f.innerHTML='<div class="crm-empty" id="crmEmpty">No communications yet.<br>Pick a scenario and open the app — CRM triggers fire here in real time, mirroring the phone.</div>';
+  var w=document.getElementById('waBody'); if(w) w.innerHTML='<div class="wa-enc">🔒 Messages and calls are end-to-end encrypted. Tap to learn more.</div><div class="wa-day">TODAY</div>';
+  var s=document.getElementById('smsBody'); if(s) s.innerHTML='<div class="sms-ts"><b>Today</b> 9:41 AM</div><div class="sms-sender">Text Message · SMS</div>';
   var st=document.getElementById('pushStack'); if(st) st.innerHTML=''; }
-function toggleCrm(){ var p=document.getElementById('crmPanel'); if(p) p.classList.toggle('hidden'); }
+function toggleComms(){ var c=document.getElementById('commsCol'); if(c) c.classList.toggle('hidden'); }
 
 // Hook the CRM engine into the prototype's existing actions (wrap the globals).
 (function(){
