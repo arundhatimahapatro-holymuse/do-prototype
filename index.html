@@ -629,6 +629,42 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 /* ── CONTROLS OUTSIDE PHONE ── */
 .controls{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:999; align-items:center; }
+
+/* ── Phone push-notification toasts ── */
+.push-stack{ position:absolute; top:10px; left:9px; right:9px; z-index:4200; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+.push-toast{ background:rgba(247,247,250,.9); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(0,0,0,.05); border-radius:18px; padding:10px 12px; box-shadow:0 12px 34px rgba(0,0,0,.22); display:flex; gap:10px; align-items:flex-start; transform:translateY(-130%); opacity:0; transition:transform .45s cubic-bezier(.2,.85,.3,1.2), opacity .3s; }
+.push-toast.show{ transform:none; opacity:1; }
+.push-ic{ width:30px; height:30px; border-radius:9px; background:var(--do-primary); color:#fff; font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.push-body{ flex:1; min-width:0; }
+.push-top{ display:flex; justify-content:space-between; font-size:9.5px; color:#6B6980; font-weight:700; letter-spacing:.05em; margin-bottom:1px; }
+.push-title{ font-size:12.5px; font-weight:800; color:#0A0A0A; line-height:1.25; }
+.push-text{ font-size:11.5px; color:#1A1A1A; line-height:1.35; margin-top:1px; }
+
+/* ── CRM / Comms console (side-by-side) ── */
+.phone-wrap{ display:flex; gap:22px; align-items:flex-start; justify-content:center; }
+.crm{ width:392px; max-width:42vw; height:844px; background:#0E1117; border-radius:28px; box-shadow:0 24px 80px rgba(10,10,10,.22); display:flex; flex-direction:column; overflow:hidden; color:#E6E8EE; }
+.crm.hidden{ display:none; }
+.crm-head{ padding:15px 17px; background:#151A23; border-bottom:1px solid #232A36; flex-shrink:0; }
+.crm-title{ font-size:14px; font-weight:800; display:flex; align-items:center; gap:8px; }
+.crm-dot{ width:8px; height:8px; border-radius:50%; background:#34D399; box-shadow:0 0 0 3px rgba(52,211,153,.18); }
+.crm-sub{ font-size:11px; color:#8A93A6; margin-top:4px; line-height:1.4; }
+.crm-feed{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
+.crm-empty{ color:#5C6678; font-size:12px; text-align:center; margin:48px 16px 0; line-height:1.7; }
+.crm-card{ background:#161B24; border:1px solid #232A36; border-radius:14px; overflow:hidden; animation:crmIn .4s ease; }
+@keyframes crmIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.crm-card-head{ padding:9px 12px; background:#1B2230; display:flex; align-items:center; gap:8px; }
+.crm-tid{ font-size:10px; font-weight:800; color:#0E1117; background:#34D399; border-radius:6px; padding:2px 7px; flex-shrink:0; }
+.crm-tname{ font-size:11.5px; font-weight:700; color:#CDD3DF; flex:1; line-height:1.25; }
+.crm-time{ font-size:10px; color:#6B7587; flex-shrink:0; }
+.crm-chs{ padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
+.crm-ch{ border-radius:10px; padding:8px 10px; font-size:11.5px; line-height:1.45; }
+.crm-ch .chh{ font-size:9.5px; font-weight:800; letter-spacing:.05em; margin-bottom:3px; }
+.crm-ch.push{ background:#1E2633; color:#C3D2FF; } .crm-ch.push .chh{ color:#7FA0FF; }
+.crm-ch.wa{ background:#10241C; color:#BFF6D6; } .crm-ch.wa .chh{ color:#34D399; }
+.crm-ch.sms{ background:#241F12; color:#F4DEB2; } .crm-ch.sms .chh{ color:#E0B25A; }
+.crm-muted{ opacity:.5; font-style:italic; }
+.crm-toggle{ position:fixed; top:16px; right:16px; z-index:1000; background:#0E1117; color:#fff; border:none; border-radius:100px; padding:9px 15px; font-size:12px; font-weight:800; cursor:pointer; font-family:var(--lego-font); box-shadow:0 6px 20px rgba(0,0,0,.22); }
+@media (max-width:880px){ .crm{ display:none; } }
 .theme-switcher{ background:#0A0A0A; border-radius:100px; padding:6px 8px; display:flex; gap:4px; }
 .theme-btn{ padding:6px 14px; border-radius:100px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:transparent; color:#9E9CB0; font-family:'Geist',sans-serif; transition:all .2s; }
 .theme-btn.active{ background:var(--lego-color-surface-brand-primary-rest); color:#fff; }
@@ -639,6 +675,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 <div class="phone-wrap">
 <div class="phone" id="app" data-theme="cars24">
+<div class="push-stack" id="pushStack"></div>
 <!-- ════════ SCREEN: FLOW SELECT ════════ -->
 <div class="screen active" id="s-flow">
   <div class="fs-wrap">
@@ -1348,7 +1385,17 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="do-pop-card"><button class="do-pop-close" onclick="dismissHappyPopup()">×</button><div class="do-pop-emoji">🎉</div><div class="do-pop-title">All your documents are in place!</div><div class="do-pop-text">Every requirement for your ownership transfer is verified. Let’s get you a great price!</div><button class="do-pop-btn" onclick="dismissHappyPopup()">Awesome, let’s go</button></div>
 </div>
 </div>
+<aside class="crm" id="crmPanel">
+  <div class="crm-head">
+    <div class="crm-title"><span class="crm-dot"></span>CRM · Comms Console</div>
+    <div class="crm-sub">LMS / Ops live view — Push · WhatsApp · SMS fire as the customer acts on the phone</div>
+  </div>
+  <div class="crm-feed" id="crmFeed">
+    <div class="crm-empty" id="crmEmpty">No communications yet.<br>Pick a scenario and open the app — CRM triggers fire here in real time, mirroring the phone.</div>
+  </div>
+</aside>
 </div>
+<button class="crm-toggle" id="crmToggle" onclick="toggleCrm()">⟷ CRM panel</button>
 
 <div class="controls">
   <button class="restart-btn" onclick="restart()">⟲ Restart</button>
@@ -2316,6 +2363,136 @@ document.addEventListener('DOMContentLoaded', function(){
     })(i);
   }
 });
+</script>
+
+<!-- ════════════ CRM / COMMS CONSOLE + PUSH NOTIFICATIONS (from DO_CRM_Communications playbook) ════════════ -->
+<script>
+var CRM_NAME = 'Arundhati';
+var CRM_TRIGGERS = {
+  T1:{label:'T1', title:'Inspection complete · checklist shown',
+    push:'Inspection done! Want to get the best price? Click here.',
+    wa:'Hi [Name] 🎉 Your car has been inspected! Complete your ownership transfer checklist to unlock your best price — the more you complete, the higher the chance of a better offer. [Check Eligibility & Get My Price →]',
+    sms:'Cars24: Inspection done. Complete your ownership transfer checklist now to unlock your best price: [URL]'},
+  T2:{label:'T2', title:'Price Discovery · checklist reminder',
+    push:'Your price is one step away 💰',
+    wa:'Hi [Name] 👋 Complete your ownership transfer checklist to unlock your best offer. You’re one step away from getting your price! Pending on your checklist: E-Challan, Insurance, PUCC…',
+    sms:'Cars24: Complete your ownership transfer checklist to unlock your best price offer: [URL]'},
+  TC_FOUND:{label:'T6', title:'E-Challan · pending challans found',
+    push:'⚠ [N] pending challan(s) on your car. ₹[Amount] in challans is stopping your Instant Ownership Transfer! Click here to resolve.',
+    wa:'Hi [Name]! ⚠ We found pending traffic challan(s) on your car totalling ₹[Amount]. If you don’t clear them, you won’t be eligible for Instant Ownership Transfer. We’ll verify clearance with VAHAN within 24 hrs. [Pay ₹[Amount] Now →]',
+    sms:'Cars24: challan(s) of Rs.[Amount] is stopping your Instant Ownership Transfer!'},
+  T7:{label:'T7', title:'E-Challan · payment successful',
+    push:'Challan payment received ✅ Verifying with Vahan. ₹[Amount] paid — clearance update within 24 hours.',
+    wa:'Hi [Name]! ✅ Your challan payment of ₹[Amount] was successful. No holdbacks — you receive your full sale price! We’re verifying clearance with VAHAN (up to 24 hours).',
+    sms:'Cars24: Rs.[Amount] challan paid. Verifying with VAHAN (up to 24 hrs). No holdbacks applied.'},
+  T8:{label:'T8', title:'Mobile not linked to Vahan',
+    push:'⚠ We found a different mobile linked to your car on VAHAN. Click here to link your phone number to VAHAN.',
+    wa:'Hi [Name] Looks like a different mobile number is linked to your car on VAHAN. The OTP for ownership transfer will be sent to that number. Click here to help us link your phone number to Vahan.',
+    sms:'Cars24: Different mobile linked on VAHAN. Fix it to enable Instant Ownership Transfer: [URL]'},
+  TM_CLEAN:{label:'—', title:'Mobile verified · clean',
+    push:'Mobile verified ✅ Your number is clean for the ownership transfer.',
+    wa:'Hi [Name] ✅ Your mobile number is verified on Vahan — this is a clean case. Your ownership transfer can proceed.',
+    sms:'Cars24: Mobile verified on VAHAN. Clean case — ownership transfer can proceed.'},
+  TM_PEND:{label:'—', title:'Mobile update · verification pending',
+    push:'Mobile update submitted ⏳ We’ll confirm the new number on Vahan.',
+    wa:'Hi [Name] We’ve received your Aadhaar-based mobile update. We’ll check the Vahan website to confirm it — this stays under verification until Vahan reflects the new number.',
+    sms:'Cars24: Mobile update submitted. Verifying on VAHAN — we’ll keep you posted.'},
+  T12:{label:'T12', title:'PUCC · expired or missing',
+    push:'⚠ Pollution certificate needed. Your PUCC has expired — this may delay your Instant Ownership Transfer. Click here to resolve.',
+    wa:'Hi [Name] The Pollution Under Control Certificate (PUCC) for your car has expired. Please upload a valid certificate to avail Instant Ownership Transfer. You can get a fresh PUCC at any authorised PUC centre (~15 min, ₹60–100). [Upload PUCC →]',
+    sms:'Cars24: PUCC expired on your car. Upload a valid certificate to unlock Instant Ownership Transfer: [URL]'},
+  TP_DONE:{label:'—', title:'PUCC · uploaded, verifying',
+    push:'PUCC received ✅ Verifying with Vahan.',
+    wa:'Hi [Name] ✅ We’ve received your PUCC. It’s being verified and synced with Vahan — your checklist has been updated.',
+    sms:'Cars24: PUCC received and being verified with VAHAN.'},
+  T13:{label:'T13', title:'Insurance · expired / expiring',
+    push:'🚗 Insurance expired — renew in 2 minutes. Renew with Insure24 to unlock your best price and avail Instant Ownership Transfer.',
+    wa:'Hi [Name] 🚗 Your vehicle insurance has expired (or expires on [Date]). Renew now to unlock a better offer and avail Instant Ownership Transfer. Partnered with Insure24 — renew in under 2 minutes. [Renew Insurance Now →]',
+    sms:'Cars24: Insurance expired (or expires on [Date]). Renew in 2 min: [URL]'},
+  T14:{label:'T14', title:'Insurance · renewed successfully',
+    push:'',
+    wa:'Hi [Name] ✅ Your vehicle insurance has been renewed successfully! Your ownership checklist has been updated.',
+    sms:'Cars24: Insurance renewed. Ownership checklist updated.'},
+  T16:{label:'T16', title:'Hypothecation active',
+    push:'Hypothecation detected on your car — a valid bank NOC is needed to proceed. Click here to update your hypothecation details.',
+    wa:'Hi [Name] We’ve detected hypothecation with [Bank] linked to your car. To enable Instant Ownership Transfer we need a valid NOC (issued within 90 days). Please share your loan status (closed/active) and documents: PAN card, Bank NOC/LFC. [Hypothecation details →]',
+    sms:'Cars24: Hypothecation detected on your car. Upload NOC from [Bank] (issued within 90 days): [URL]'},
+  T17:{label:'T17', title:'NOC / LFC uploaded · under verification',
+    push:'Bank NOC/LFC received. Our team is validating it — keep the original ready for pickup. Update within 24 hours.',
+    wa:'Hi [Name]! We’ve received the bank NOC/LFC for your car. Our team is verifying the information (up to 24 hours). Please keep the original ready for vehicle pickup.',
+    sms:'Cars24: NOC/LFC received. Team verifying (up to 24 hrs). Keep original ready for pickup.'},
+  T19:{label:'T19', title:'Checklist incomplete · Instant DO nudge',
+    push:'⚡ Instant Ownership Transfer is almost yours — [N] item(s) left. Complete to become legal-liability free in ~48 hours.',
+    wa:'Hi [Name] ⚡ You’re just [N] step(s) away from Instant Ownership Transfer. Complete it and we’ll initiate your transfer — clearing your legal liability in <48 hours.',
+    sms:'Cars24: You’re [N] step(s) from Instant Ownership Transfer. Complete now to eliminate legal liability fast: [URL]'},
+  T20:{label:'T20', title:'All items complete · Instant DO eligible',
+    push:'🎊 Instant Ownership Transfer unlocked! All steps complete — our team will initiate your transfer within 48 hours.',
+    wa:'Congratulations [Name]! 🎊 You’ve completed all ownership transfer requirements! 1️⃣ Our team will call within 48 hrs of handover for a quick OTP verification 2️⃣ We’ll share Form 29C issued by VAHAN clearing your legal liability 3️⃣ Cars24 becomes the deemed owner and completes post-sale formalities on your behalf.',
+    sms:'Cars24: All steps done 🎊 Instant Transfer within 48hrs. Expect our call. Track: [URL]'},
+  T22:{label:'T22', title:'OTP verification call · upcoming',
+    push:'📞 Transfer call in a few minutes — please pick up! Keep your OTP ready.',
+    wa:'Hi [Name] 📞 We’re ready to complete your Ownership Transfer! Our executive will call shortly. You’ll receive an OTP on your VAHAN-linked number — share it on the call and the transfer is done! 🎉',
+    sms:'Cars24: OTP verification call coming for your transfer. Have your VAHAN-linked mobile ready.'},
+  T24:{label:'T24', title:'Form 29C submitted · transfer complete',
+    push:'Form 29C submitted — ownership transfer complete. You’re legally clear!',
+    wa:'Great news, [Name]! Your Ownership Transfer is complete! ✅ Form 29C generated and submitted to the RTO ✅ Cars24 is now the deemed owner ✅ From today, you are no longer liable for your car. Thank you for selling with Cars24! [View Form 29C →]',
+    sms:'Cars24: Form 29C submitted. Transfer completed — you’re legally clear. Thank you!'}
+};
+var crmFired = {}, crmOfferIdx = 0, crmClock = [9,41];
+var CRM_OFFERS = ['8,08,000','8,16,000','8,24,000','8,32,000'];
+function crmStamp(){ var m=crmClock[1]+1, h=crmClock[0]; if(m>59){m=0;h++;} crmClock=[h,m]; return ('0'+h).slice(-2)+':'+('0'+m).slice(-2); }
+function crmEsc(s){ return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function crmSub(s){ if(!s) return s; var pend=Math.max(0,TOTAL-doneCount());
+  return s.replace(/\[Name\]/g,CRM_NAME).replace(/\[Amount\]/g,'1,000').replace(/\[N\]/g,pend)
+          .replace(/\[Bank\]|\[Bank Name\]/g,'HDFC Bank').replace(/\[Date\]/g,'12 Mar 2025')
+          .replace(/\[URL\]|\[Deeplink\]/g,'cars24.com/do'); }
+function showPush(title,text){ var st=document.getElementById('pushStack'); if(!st) return;
+  var el=document.createElement('div'); el.className='push-toast';
+  el.innerHTML='<div class="push-ic">C</div><div class="push-body"><div class="push-top"><span>CARS24</span><span>now</span></div><div class="push-title">'+crmEsc(title)+'</div><div class="push-text">'+crmEsc(text)+'</div></div>';
+  st.appendChild(el); requestAnimationFrame(function(){ el.classList.add('show'); });
+  setTimeout(function(){ el.classList.remove('show'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },460); }, 5400); }
+function crmAppend(label,title,push,wa,sms){ var feed=document.getElementById('crmFeed'); if(!feed) return;
+  var e=document.getElementById('crmEmpty'); if(e) e.style.display='none';
+  var chs='<div class="crm-ch push"><div class="chh">📱 Push Notification</div>'+(push?crmEsc(push):'<span class="crm-muted">No push for this trigger</span>')+'</div>';
+  if(wa) chs+='<div class="crm-ch wa"><div class="chh">💬 WhatsApp · ✓✓ delivered</div>'+crmEsc(wa)+'</div>';
+  if(sms) chs+='<div class="crm-ch sms"><div class="chh">🔤 SMS</div>'+crmEsc(sms)+'</div>';
+  var card=document.createElement('div'); card.className='crm-card';
+  card.innerHTML='<div class="crm-card-head"><span class="crm-tid">'+crmEsc(label)+'</span><span class="crm-tname">'+crmEsc(title)+'</span><span class="crm-time">'+crmStamp()+'</span></div><div class="crm-chs">'+chs+'</div>';
+  feed.appendChild(card); feed.scrollTop=feed.scrollHeight; }
+function crmFire(id){ var t=CRM_TRIGGERS[id]; if(!t || crmFired[id]) return; crmFired[id]=true;
+  var push=crmSub(t.push), wa=crmSub(t.wa), sms=crmSub(t.sms);
+  if(push) showPush('Cars24', push); crmAppend(t.label, t.title, push, wa, sms); }
+function crmOffer(){ if(doneCount()>=TOTAL) return; var amt=CRM_OFFERS[Math.min(crmOfferIdx,CRM_OFFERS.length-1)]; crmOfferIdx++;
+  var pend=Math.max(0,TOTAL-doneCount());
+  var push='🎉 New offer: ₹'+amt+' for your car! Complete '+pend+' more task(s) to improve sale price.';
+  showPush('Cars24', push);
+  crmAppend('T4','Revised offer unlocked', push,
+    'Hi '+CRM_NAME+'! 🎉 Great progress! Your updated offer is now ₹'+amt+'. Complete '+pend+' more item(s) on your ownership transfer checklist to improve sale price potential. You’re so close! 🚀',
+    'Cars24: Updated offer Rs.'+amt+'. Complete '+pend+' more item(s): cars24.com/do'); }
+function crmOnPrice(){ var q=['T1','T2'];
+  if(S.echallan===false) q.push('TC_FOUND'); if(S.insurance===false) q.push('T13');
+  if(S.pucc===false) q.push('T12'); if(S.mobile===false) q.push('T8'); if(S.hypo===false) q.push('T16');
+  q.forEach(function(id,i){ setTimeout(function(){ crmFire(id); }, i*750); }); }
+function crmReadySeq(){ crmFire('T20'); setTimeout(function(){ crmFire('T22'); },3500); setTimeout(function(){ crmFire('T24'); },7000); }
+function crmDeal(){ if(doneCount()<TOTAL) crmFire('T19'); }
+function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41];
+  var f=document.getElementById('crmFeed'); if(f) f.innerHTML='<div class="crm-empty" id="crmEmpty">No communications yet.<br>Pick a scenario and open the app — CRM triggers fire here in real time, mirroring the phone.</div>';
+  var st=document.getElementById('pushStack'); if(st) st.innerHTML=''; }
+function toggleCrm(){ var p=document.getElementById('crmPanel'); if(p) p.classList.toggle('hidden'); }
+
+// Hook the CRM engine into the prototype's existing actions (wrap the globals).
+(function(){
+  function wrap(name, after){ var orig=window[name]; if(typeof orig!=='function') return;
+    window[name]=function(){ var before={mobile:S.mobile, hypo:S.hypo, pucc:S.pucc}; var r=orig.apply(this,arguments); try{ after.call(this, before, arguments); }catch(e){} return r; }; }
+  wrap('go', function(b,a){ var id=a[0]; if(id==='price') crmOnPrice(); else if(id==='ready') crmReadySeq(); else if(id==='deal') crmDeal(); });
+  wrap('payNow', function(){ crmFire('T7'); crmOffer(); });
+  wrap('insPay', function(){ crmFire('T14'); crmOffer(); });
+  wrap('pucSubmit', function(){ if(S.pucc===true){ crmFire('TP_DONE'); crmOffer(); } });
+  wrap('hyp3Next', function(){ if(S.hypo==='verifying') crmFire('T17'); });
+  wrap('mobInterim', function(b){ if(S.mobile===true && b.mobile!==true){ crmFire('TM_CLEAN'); crmOffer(); } });
+  wrap('mobAadhaarLinked', function(){ if(S.mobile==='verifying') crmFire('TM_PEND'); });
+  wrap('restart', function(){ crmReset(); });
+})();
 </script>
 </body>
 </html>
