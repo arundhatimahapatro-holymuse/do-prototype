@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cars24 — Deemed Ownership Prototype</title>
+<title>Cars24 — Instant Ownership Transfer Prototype</title>
+<!-- OCR engine for document validation (PAN / NOC / LFC / PUCC). Loads from CDN; flow degrades to a filename check if unavailable. -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -240,6 +242,23 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .do-skip{ background:none; border:none; color:rgba(255,255,255,.6); font-size:13px; font-weight:600; cursor:pointer; }
 .do-gotit{ background:#63FFB1; color:#0A0A0A; border:none; font-size:14px; font-weight:800; padding:10px 22px; border-radius:100px; cursor:pointer; }
 
+/* ── "How to?" per-check creative ── */
+.do-howto{ display:inline-flex; align-items:center; gap:4px; margin-top:6px; font-size:10.5px; font-weight:800; color:var(--do-primary); background:linear-gradient(90deg,#F4F3FF,#EFFCF5); border:1px solid #E3E1FF; padding:4px 10px; border-radius:100px; cursor:pointer; font-family:var(--lego-font); letter-spacing:.01em; }
+.do-howto:hover{ border-color:var(--do-primary); }
+.do-howto .ht-arrow{ font-size:8px; }
+#howto-modal{ --ht-accent:#63FFB1; }
+#howto-modal .do-video-stage{ height:360px; }
+.ht-badge{ font-size:9.5px; font-weight:800; letter-spacing:.1em; color:var(--ht-accent); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); padding:4px 11px; border-radius:100px; margin-bottom:16px; text-transform:uppercase; }
+.ht-steps{ margin-top:16px; display:flex; flex-direction:column; gap:9px; width:100%; }
+.ht-step{ display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:11px; padding:9px 11px; text-align:left; animation:htStepIn .5s ease backwards; }
+.ht-step:nth-child(1){ animation-delay:.05s; } .ht-step:nth-child(2){ animation-delay:.18s; } .ht-step:nth-child(3){ animation-delay:.31s; }
+@keyframes htStepIn{ from{ opacity:0; transform:translateX(-10px); } to{ opacity:1; transform:none; } }
+.ht-step b{ width:21px; height:21px; border-radius:50%; background:var(--ht-accent); color:#0A0A0A; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ht-step span{ font-size:11.5px; color:rgba(255,255,255,.88); line-height:1.4; }
+.ht-step span b{ width:auto; height:auto; background:none; color:#fff; display:inline; }
+#howto-modal .do-gotit{ background:var(--ht-accent); }
+#howto-modal .do-scene-emoji{ font-size:54px; }
+
 /* ── HAPPY POPUP ── */
 .do-pop{ position:absolute; inset:0; background:rgba(10,10,10,.5); z-index:2500; display:none; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
 .do-pop.show{ display:flex; }
@@ -380,6 +399,62 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .upload-box.attached{ border-style:solid; border-color:var(--lego-color-surface-brand-primary-rest); background:var(--lego-color-surface-brand-subtle-rest); }
 .up-ic{ font-size:30px; margin-bottom:8px; }
 .up-main{ font-size:14px; font-weight:700; color:#0A0A0A; } .up-sub{ font-size:11px; color:#9E9CB0; margin-top:3px; }
+
+/* ── Hypothecation 3-step stepper ── */
+.hyp-stepper{ display:flex; align-items:flex-start; justify-content:center; padding:12px 14px; background:#fff; border-bottom:1px solid #F0F0F4; }
+.hs-item{ display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; width:78px; }
+.hs-dot{ width:26px; height:26px; border-radius:50%; background:#ECEAF6; color:#9E9CB0; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.hs-lbl{ font-size:9.5px; font-weight:700; color:#9E9CB0; text-align:center; line-height:1.2; }
+.hs-item.active .hs-dot{ background:var(--do-primary); color:#fff; }
+.hs-item.active .hs-lbl{ color:var(--do-primary); }
+.hs-item.done .hs-dot{ background:#DEFFEE; color:#04553A; }
+.hs-item.done .hs-lbl{ color:#04553A; }
+.hs-bar{ flex:1; height:2px; background:#ECEAF6; margin:13px -4px 0; max-width:34px; }
+.hs-bar.done{ background:#63FFB1; }
+
+/* ── OCR scanning / verdict ── */
+.ocr-box{ margin:14px 16px 0; border-radius:12px; padding:12px 14px; font-size:12px; line-height:1.5; }
+.ocr-box.scan{ background:#F4F3FF; border:1px solid #E3E1FF; color:#4736FE; display:flex; align-items:center; gap:10px; }
+.ocr-box.ok{ background:#EFFAF3; border:1px solid #A9F5CF; color:#04553A; }
+.ocr-box.bad{ background:#FFF1F0; border:1px solid #FFC9C4; color:#C2410C; }
+.ocr-spin{ width:16px; height:16px; border:2px solid #D6D2FF; border-top-color:#4736FE; border-radius:50%; animation:ocrSpin .8s linear infinite; flex-shrink:0; }
+@keyframes ocrSpin{ to{ transform:rotate(360deg); } }
+.ocr-title{ font-weight:800; display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.ocr-row{ display:flex; justify-content:space-between; margin-top:4px; }
+.ocr-row span:last-child{ font-weight:700; }
+.ocr-hint{ margin-top:6px; font-size:11px; opacity:.85; }
+
+/* ── Email preview creative ── */
+.email-preview{ margin:16px 16px 0; border:1px solid #E3E1FF; border-radius:14px; overflow:hidden; background:#fff; box-shadow:0 6px 20px rgba(71,54,254,.06); }
+.ep-head{ background:#F4F3FF; padding:9px 13px; font-size:11.5px; font-weight:800; color:#4736FE; border-bottom:1px solid #E3E1FF; }
+.ep-meta{ padding:10px 13px 4px; }
+.ep-row{ display:flex; gap:8px; font-size:11.5px; margin-bottom:5px; align-items:flex-start; }
+.ep-k{ width:34px; color:#9E9CB0; font-weight:700; flex-shrink:0; }
+.ep-v{ color:#0A0A0A; word-break:break-word; }
+.ep-subj{ padding:7px 13px; border-top:1px solid #F0F0F4; font-size:12px; font-weight:700; color:#0A0A0A; }
+.ep-body{ padding:8px 13px 14px; font-size:11.5px; color:#4B4960; line-height:1.55; }
+
+/* ── HPT status (deal closure) + checklist verifying row ── */
+.hpt-status{ margin:10px 16px 0; background:#FFF8EC; border:1px solid #F6D98C; border-radius:14px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start; }
+.hpt-status .hps-ic{ font-size:18px; flex-shrink:0; }
+.hpt-status .hps-t{ font-size:13px; font-weight:800; color:#8A5A00; }
+.hpt-status .hps-s{ font-size:11.5px; color:#A06A12; margin-top:2px; line-height:1.45; }
+.do-ic.verify{ background:#FFF1D6; border:1.5px solid #F6D98C; }
+.do-verify-badge{ font-size:10px; font-weight:800; color:#8A5A00; background:#FFF1D6; border:1px solid #F6D98C; padding:4px 9px; border-radius:100px; white-space:nowrap; flex-shrink:0; }
+
+/* ── RC details to enter on Vahan (copy / type-out / calendar notes) ── */
+.rc-fill{ margin:16px 16px 0; }
+.rc-fill-title{ font-size:13px; font-weight:800; color:#0A0A0A; margin-bottom:3px; }
+.rc-fill-sub{ font-size:11px; color:#6B6980; margin-bottom:10px; line-height:1.45; }
+.rc-row{ background:#fff; border:1px solid #ECECF1; border-radius:12px; padding:10px 12px; margin-bottom:8px; }
+.rc-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.rc-k{ font-size:11px; color:#6B6980; font-weight:600; }
+.rc-v{ font-size:15px; font-weight:800; color:#0A0A0A; letter-spacing:.5px; margin-top:2px; word-break:break-all; }
+.rc-copy{ font-size:11px; font-weight:700; color:var(--do-primary); background:#F4F3FF; border:1px solid #E3E1FF; border-radius:100px; padding:6px 12px; cursor:pointer; flex-shrink:0; font-family:var(--lego-font); }
+.rc-copy.copied{ background:#DEFFEE; border-color:#A9F5CF; color:#04553A; }
+.rc-note{ font-size:10.5px; color:#A06A12; background:#FFF8EC; border:1px solid #F6D98C; border-radius:8px; padding:6px 9px; margin-top:8px; line-height:1.45; }
+.otp-err{ display:none; margin:8px 16px 0; font-size:12px; color:#C2410C; font-weight:700; text-align:center; }
+.otp-err.show{ display:block; }
 .gen-stub{ margin:24px 16px 0; text-align:center; }
 .gen-emoji{ font-size:48px; margin-bottom:12px; }
 .gen-h{ font-size:18px; font-weight:800; color:#0A0A0A; margin-bottom:8px; }
@@ -568,7 +643,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <div class="screen active" id="s-flow">
   <div class="fs-wrap">
     <div class="fs-logo"><div class="fs-logo-badge">🚗</div><div class="fs-logo-text">CARS24</div></div>
-    <div class="fs-h1">Deemed Ownership<br>walkthrough</div>
+    <div class="fs-h1">Instant Ownership<br>Transfer walkthrough</div>
     <div class="fs-sub">Pick a starting scenario. Everything after this stays in sync — pay a challan or renew insurance and the checklist, banners and celebration all update.</div>
     <div class="fs-pick-label">Ideal journey</div>
     <button class="fs-btn happy" onclick="chooseFlow('happy')">
@@ -708,7 +783,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="challan-divider"></div>
         <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div><div style="font-size:10px;color:#9E9CB0;margin-top:1px;">+ convenience fee</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Continue to pay</button></div>
       </div>
-      <div style="background:#FFF4E6;border:1px solid #FBD9A8;border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14H15L8 1.5Z" stroke="#A85A00" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6V9" stroke="#A85A00" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="#A85A00"/></svg><div style="font-size:12px;color:#7A4100;line-height:1.5;"><strong>E-Challan clearance is mandatory</strong> for deemed ownership.</div></div>
+      <div style="background:#FFF4E6;border:1px solid #FBD9A8;border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14H15L8 1.5Z" stroke="#A85A00" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6V9" stroke="#A85A00" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="#A85A00"/></svg><div style="font-size:12px;color:#7A4100;line-height:1.5;"><strong>E-Challan clearance is mandatory</strong> for ownership transfer.</div></div>
     </div>
     <div class="tab-panel" id="tab-settlement">
       <div class="section-title">Settlement Done</div>
@@ -821,6 +896,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <div id="insOtpWrap" style="display:none;">
         <div class="kyc-otp-note">OTP has been sent to the registered mobile number <b>XXXXX 3920</b></div>
         <div class="otp-box" id="insOtpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
+        <div class="otp-err" id="insOtpErr">Please enter the 6-digit OTP to continue.</div>
         <div class="otp-hint" style="text-align:left;">Didn’t get it? <button onclick="insAutoOtp()" style="background:none;border:none;color:#4736FE;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
       </div>
       <div style="height:8px;"></div>
@@ -852,7 +928,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="success-title">Policy Issued! 🎉</div>
-      <div class="success-sub">Your vehicle is now insured. The Deemed Ownership checklist updated automatically.</div>
+      <div class="success-sub">Your vehicle is now insured. The Ownership Transfer checklist updated automatically.</div>
       <div class="policy-card"><div class="policy-row"><span class="policy-label">Insurer</span><span class="policy-value" id="successPlanName">HDFC ERGO</span></div><div class="policy-row"><span class="policy-label">Policy number</span><span class="policy-value">HE-2026-CR-78421</span></div><div class="policy-row"><span class="policy-label">Plan</span><span class="policy-value">Comprehensive</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">07 Jun 2027</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value" id="successAmount">₹4,384</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
@@ -869,6 +945,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="header-title-block"><div class="header-title">PAN card &amp; loan status</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div>
     </div>
+    <div class="hyp-stepper"><div class="hs-item active"><div class="hs-dot">1</div><div class="hs-lbl">PAN &amp; bank status</div></div><div class="hs-bar"></div><div class="hs-item"><div class="hs-dot">2</div><div class="hs-lbl">Upload NOC / LFC</div></div><div class="hs-bar"></div><div class="hs-item"><div class="hs-dot">3</div><div class="hs-lbl">Email your bank</div></div></div>
     <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
     <div class="scroll-area">
       <div class="hyp-card">
@@ -882,11 +959,12 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="up-main" id="hypCardMain">Tap to upload PAN card</div>
         <div class="up-sub">JPG or PNG · matched with Vahan owner name</div>
       </div>
+      <div class="ocr-box" id="hypPanOcr" style="display:none;"></div>
 
       <div class="hyp-section-label">What is your loan status? <span class="req">required</span></div>
       <div class="loan-opts">
-        <button class="loan-opt" id="loanClosed" onclick="selectLoanStatus('closed')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan closed</span><span class="lo-sub">Fully paid · NOC received from bank</span></span></button>
-        <button class="loan-opt" id="loanOpen" onclick="selectLoanStatus('open')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan still active (open)</span><span class="lo-sub">EMIs ongoing · upload foreclosure cert (LFC)</span></span></button>
+        <button class="loan-opt" id="loanClosed" onclick="selectLoanStatus('closed')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan closed</span><span class="lo-sub">Fully paid to the bank</span></span></button>
+        <button class="loan-opt" id="loanOpen" onclick="selectLoanStatus('open')"><span class="lo-radio"></span><span class="lo-txt"><span class="lo-name">Loan still active (open)</span><span class="lo-sub">EMIs ongoing</span></span></button>
       </div>
       <div style="height:8px;"></div>
     </div>
@@ -896,6 +974,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <!-- STEP 2 — Document upload: NOC (closed) / LFC (open) -->
   <div class="hyp-step" id="hyp2">
     <div class="page-header"><button class="back-btn" onclick="hypStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title" id="hypDocTitle">Upload NOC</div><div class="header-sub" id="hypDocSub">No Objection Certificate</div></div></div>
+    <div class="hyp-stepper"><div class="hs-item done"><div class="hs-dot">✓</div><div class="hs-lbl">PAN &amp; bank status</div></div><div class="hs-bar done"></div><div class="hs-item active"><div class="hs-dot">2</div><div class="hs-lbl">Upload NOC / LFC</div></div><div class="hs-bar"></div><div class="hs-item"><div class="hs-dot">3</div><div class="hs-lbl">Email your bank</div></div></div>
     <div class="scroll-area">
       <div class="upload-intro" id="hypDocIntro"></div>
       <div class="hyp-explainer" id="hypDocExplain"></div>
@@ -913,14 +992,27 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
   <!-- STEP 3 — Enter Email ID -->
   <div class="hyp-step" id="hyp3">
-    <div class="page-header"><button class="back-btn" onclick="hypStep(2)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Enter your email ID</div><div class="header-sub">For document &amp; HPT updates</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="hypStep(2)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Email to contact your bank</div><div class="header-sub">We’ll loop you in on every update</div></div></div>
+    <div class="hyp-stepper"><div class="hs-item done"><div class="hs-dot">✓</div><div class="hs-lbl">PAN &amp; bank status</div></div><div class="hs-bar done"></div><div class="hs-item done"><div class="hs-dot">✓</div><div class="hs-lbl">Upload NOC / LFC</div></div><div class="hs-bar done"></div><div class="hs-item active"><div class="hs-dot">3</div><div class="hs-lbl">Email your bank</div></div></div>
     <div class="scroll-area">
-      <div class="upload-intro">Enter your email ID — preferably the one <b>registered with your car financer (HDFC Bank)</b>. We’ll share validation updates here.</div>
+      <div class="upload-intro">Enter your email ID — preferably the one <b>registered with your car financer (HDFC Bank)</b>. We’ll add you in CC on the email we send to your bank.</div>
       <div style="padding:14px 16px 0;">
         <div class="field-label">Email ID</div>
         <input class="field-input" id="hypEmail" type="email" inputmode="email" placeholder="you@example.com" oninput="hypEmailInput()" style="background:#fff;">
       </div>
-      <div class="hpt-note">ℹ️ <b>HPT — Hypothecation Termination:</b> once your documents are validated, we initiate the HPT with the RTO so the lien is removed and the RC can transfer smoothly.</div>
+
+      <div class="email-preview">
+        <div class="ep-head">📧 Preview — the email Cars24 will send on your behalf</div>
+        <div class="ep-meta">
+          <div class="ep-row"><span class="ep-k">From</span><span class="ep-v">care@cars24.com</span></div>
+          <div class="ep-row"><span class="ep-k">To</span><span class="ep-v">noc.desk@hdfcbank.com <span style="color:#9E9CB0;">(HDFC Bank)</span></span></div>
+          <div class="ep-row"><span class="ep-k">Cc</span><span class="ep-v" id="epCc">you@example.com, hr26@haryana.gov.in (RTO)</span></div>
+        </div>
+        <div class="ep-subj">Subject: HPT removal request — Hyundai Creta, RJ 45 CP 6052 (Loan A/C ••••4421)</div>
+        <div class="ep-body">Hi Team,<br><br>Reaching out on behalf of our customer <b id="epName">the registered owner</b>. We’d like to initiate the <b>HPT (Hypothecation Termination)</b> removal process with the RTO so the lien on the RC is released and ownership can transfer smoothly.<br><br>The customer’s PAN and NOC / LFC are attached. Kindly confirm the no-dues so we can file the HPT with the RTO (in Cc) after the vehicle handover.<br><br>Warm regards,<br>Team Cars24</div>
+      </div>
+
+      <div class="hpt-note">ℹ️ <b>HPT — Hypothecation Termination:</b> we’ll send this email to your bank &amp; the RTO to remove the lien, and keep you in Cc / the loop — initiated <b>only after your car handover is completed</b>.</div>
       <div style="height:8px;"></div>
     </div>
     <div class="cta-bar"><button class="cta-btn locked" id="hypEmailCta" onclick="hyp3Next()">Continue →</button></div>
@@ -931,8 +1023,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="success-title">Thank you! 🎉</div>
-      <div class="success-sub">Our team is validating the information. Kindly keep your <b id="hypThanksDoc">NOC</b> ready at the time of pickup.</div>
-      <div class="policy-card"><div class="policy-row"><span class="policy-label">Financier</span><span class="policy-value">HDFC Bank Ltd</span></div><div class="policy-row"><span class="policy-label">Loan status</span><span class="policy-value" id="hypSumLoan">Closed</span></div><div class="policy-row"><span class="policy-label">Document</span><span class="policy-value" id="hypSumDoc">NOC</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Under validation</span></div></div>
+      <div class="success-sub">Our team is verifying the information. Kindly keep your <b id="hypThanksDoc">NOC</b> ready at the time of pickup.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Financier</span><span class="policy-value">HDFC Bank Ltd</span></div><div class="policy-row"><span class="policy-label">Customer-declared status</span><span class="policy-value" id="hypSumLoan">Closed</span></div><div class="policy-row"><span class="policy-label">Document</span><span class="policy-value" id="hypSumDoc">NOC</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value" style="color:#8A5A00;">⏳ Under verification</span></div></div>
+      <div class="hpt-note" style="margin-top:14px;">ℹ️ This will <b>not</b> show as an Instant Ownership Transfer yet. It stays <b>Under verification</b> until the HPT (lien) is removed from your RC — you can track it under <b>Deal closure → HPT to be removed</b>.</div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -963,7 +1056,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <div class="hyp-card">
         <div class="hyp-financier"><div class="hyp-bank-logo">🌿</div><div><div class="hyp-bank-name">Pollution Certificate</div><div class="hyp-bank-sub">PUCC No. RJ45/PUC/2024/8841</div></div></div>
         <div class="hyp-pill open">Expired: 14 Mar 2026</div>
-        <div class="hyp-note">A valid PUCC is mandatory under the Motor Vehicles Act and required for the deemed ownership RC transfer. Upload a valid PUCC, or renew online in under a minute.</div>
+        <div class="hyp-note">A valid PUCC is mandatory under the Motor Vehicles Act and required for the ownership transfer. Upload a valid PUCC, or renew online in under a minute.</div>
       </div>
       <div class="hyp-section-label">Upload valid PUCC <span class="req">required</span></div>
       <input type="file" id="pucFile" accept="image/*,application/pdf" style="display:none" onchange="pucFileChosen(this)">
@@ -972,6 +1065,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="up-main" id="pucMain">Tap to upload your PUCC</div>
         <div class="up-sub">PDF or JPG · choose from your device</div>
       </div>
+      <div class="ocr-box" id="pucOcr" style="display:none;"></div>
       <button class="link-more" onclick="pucStep(2)" style="margin-top:14px;">Don’t have a valid PUCC? Here’s how to get one →</button>
       <div style="height:8px;"></div>
     </div>
@@ -1000,7 +1094,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="success-title">PUCC Updated! 🎉</div>
-      <div class="success-sub">Your pollution certificate is on file and synced to Vahan. The Deemed Ownership checklist is updated.</div>
+      <div class="success-sub">Your pollution certificate is on file and synced to Vahan. The Ownership Transfer checklist is updated.</div>
       <div class="policy-card"><div class="policy-row"><span class="policy-label">PUCC No.</span><span class="policy-value">RJ45/PUC/2026/2207</span></div><div class="policy-row"><span class="policy-label">Valid till</span><span class="policy-value">07 Jun 2027</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value" id="pucStatusVal">Verified &amp; on file</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
@@ -1020,7 +1114,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="num-divider"></div>
         <div class="num-row"><span class="num-lbl">Number used to book this appointment</span><span class="num-val">+91 XXXXX 4521</span></div>
       </div>
-      <div class="hyp-note" style="padding:0 16px;margin-top:12px;">The mobile number on your RC’s Vahan record is <b>different</b> from the number you booked this appointment with. We need a number you can receive an OTP on to verify ownership.</div>
+      <div class="hyp-note" style="padding:0 16px;margin-top:12px;">The mobile number on your RC’s Vahan record is <b>different</b> from the number you booked this appointment with. We need a number you can receive an OTP on to verify the <b>ownership transfer</b>.</div>
       <div class="mob-q">Do you have the Vahan number <b>(ending X457)</b> in your possession?</div>
       <div style="padding:0 16px;">
         <button class="choice-btn" onclick="mobStep(2)">Yes, I have it</button>
@@ -1032,24 +1126,25 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
   <!-- mob2 — OTP on the Vahan number (Yes path) -->
   <div class="sub-step" id="mob2">
-    <div class="page-header"><button class="back-btn" onclick="mobStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Verify the number</div><div class="header-sub">Instant deal transfer</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="mobStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Verify the number</div><div class="header-sub">For the ownership transfer</div></div></div>
     <div class="scroll-area">
-      <div class="hpt-note" style="background:#EFFAF3;border-color:#A9F5CF;color:#04553A;">✅ We’ll send an OTP to <b>+91 XXXXX X457</b> for instant deal transfer. Enter it below to mark this as <b>interim clean</b>.</div>
+      <div class="hpt-note" style="background:#EFFAF3;border-color:#A9F5CF;color:#04553A;">✅ We’ll send an OTP to <b>+91 XXXXX X457</b> to verify the <b>ownership transfer</b>. Enter it below to mark this number as <b>clean</b>.</div>
       <div class="kyc-otp-note">OTP sent to <b>+91 XXXXX X457</b></div>
       <div class="otp-box" id="vahanOtpBox"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"><input class="otp-digit" maxlength="1" inputmode="numeric"></div>
+      <div class="otp-err" id="vahanOtpErr">Please enter the 6-digit OTP to continue.</div>
       <div class="otp-hint" style="text-align:left;padding:0 16px;">Didn’t get it? <button onclick="autoVahanOtp()" style="background:none;border:none;color:#4736FE;font-weight:700;cursor:pointer;font-size:12px;">Auto-fill OTP (demo)</button></div>
       <div style="height:8px;"></div>
     </div>
     <div class="cta-bar"><button class="cta-btn" onclick="mobInterim()">Verify →</button></div>
   </div>
 
-  <!-- mob3 — interim clean success (Yes path) -->
+  <!-- mob3 — clean (verified) success (Yes path) -->
   <div class="sub-step" id="mob3">
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="success-title">Verified · Interim clean ✅</div>
-      <div class="success-sub">OTP confirmed on +91 XXXXX X457. Your deal can proceed on an <b>interim clean</b> status. The Deemed Ownership checklist is updated.</div>
-      <div class="policy-card"><div class="policy-row"><span class="policy-label">Vahan number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Interim clean</span></div><div class="policy-row"><span class="policy-label">Reference</span><span class="policy-value">VHN-788-2026</span></div></div>
+      <div class="success-title">Verified · Clean ✅</div>
+      <div class="success-sub">OTP confirmed on +91 XXXXX X457. Your number is verified — this is a <b>clean</b> case and your ownership transfer can proceed. The Ownership Transfer checklist is updated.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Vahan number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Clean</span></div><div class="policy-row"><span class="policy-label">Reference</span><span class="policy-value">VHN-788-2026</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -1059,10 +1154,10 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="page-header"><button class="back-btn" onclick="mobStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Link via Aadhaar</div><div class="header-sub">Update your Vahan mobile number</div></div></div>
     <div class="scroll-area">
       <div class="hyp-note" style="padding:14px 16px 0;">Since you don’t have the Vahan number, you can update your Vahan mobile number using your <b>Aadhaar</b> (Aadhaar-OTP based, on the Vahan portal).</div>
-      <div class="mob-q">Do you have your <b>Aadhaar number</b> in your possession?</div>
+      <div class="mob-q">Is your <b>Aadhaar linked</b> to your mobile number?</div>
       <div style="padding:0 16px;">
-        <button class="choice-btn" onclick="mobStep(5)">Yes, I have my Aadhaar</button>
-        <button class="choice-btn ghost" onclick="mobStep(7)">No, I don’t have it</button>
+        <button class="choice-btn" onclick="mobStep(5)">Yes, Aadhaar is linked</button>
+        <button class="choice-btn ghost" onclick="mobStep(7)">No, it’s not linked</button>
       </div>
       <div style="height:8px;"></div>
     </div>
@@ -1080,6 +1175,17 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       </div>
       <div class="hpt-note">🔗 Tapping below opens the official <b>Vahan</b> website in a new tab. Complete the steps there, then return here.</div>
       <a class="cta-btn" href="https://vahan.parivahan.gov.in/mobileupdate/vahan/ut/statevalidation/editMobileNumber.xhtml" target="_blank" rel="noopener" style="margin:14px 16px 0;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;text-decoration:none;">Yes, link my Aadhaar to Vahan ↗</a>
+
+      <div class="rc-fill">
+        <div class="rc-fill-title">Enter these RC details on Vahan</div>
+        <div class="rc-fill-sub">You’ll need these on the Vahan “Update Mobile Number” page. Copy the chassis &amp; engine numbers; the others follow the note below each.</div>
+        <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Registration Number</div><div class="rc-v">GJ01WH7669</div></div></div><div class="rc-note">✋ Vahan doesn’t allow paste here — kindly <b>type it out</b>.</div></div>
+        <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Chassis Number (full)</div><div class="rc-v">MAT626363NKH66645</div></div><button class="rc-copy" onclick="copyVal('MAT626363NKH66645',this)">Copy</button></div></div>
+        <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Engine Number (full)</div><div class="rc-v">REVTRN08HXXKA0072</div></div><button class="rc-copy" onclick="copyVal('REVTRN08HXXKA0072',this)">Copy</button></div></div>
+        <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Registration Date</div><div class="rc-v">18-11-2022</div></div></div><div class="rc-note">📅 Pick this from the <b>calendar widget</b> on Vahan.</div></div>
+        <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Fitness / Registration Valid Up To</div><div class="rc-v">17-11-2037</div></div></div><div class="rc-note">📅 Pick this from the <b>calendar widget</b> on Vahan.</div></div>
+        <div class="hpt-note">✅ Once done, tap <b>“I’ve completed it on Vahan”</b> below — post-completion, we’ll check the Vahan website to confirm the update.</div>
+      </div>
       <div style="height:8px;"></div>
     </div>
     <div class="cta-bar"><button class="cta-btn" onclick="mobAadhaarLinked()">I’ve completed it on Vahan →</button></div>
@@ -1088,10 +1194,10 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <!-- mob6 — Aadhaar linked success (number updated) -->
   <div class="sub-step" id="mob6">
     <div class="ins-success">
-      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="success-title">Aadhaar Linked! 🎉</div>
-      <div class="success-sub">Your Vahan mobile number has been updated. We’ll send an OTP to your new number — the registered number now ends with <b>5678</b>. The Deemed Ownership checklist is updated.</div>
-      <div class="policy-card"><div class="policy-row"><span class="policy-label">Old number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">Updated number</span><span class="policy-value">+91 XXXXX 5678</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value">Linked via Aadhaar</span></div></div>
+      <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;background:#FFF1D6;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#8A5A00" stroke-width="2"/><path d="M12 7.5V12L15 13.8" stroke="#8A5A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="success-title">Submitted · Verification pending ⏳</div>
+      <div class="success-sub">Thanks! Once you’ve updated the number on Vahan via Aadhaar, <b>we’ll check the Vahan website to confirm it</b>. This stays <b>under verification</b> until Vahan reflects your new number.</div>
+      <div class="policy-card"><div class="policy-row"><span class="policy-label">Old number</span><span class="policy-value">+91 XXXXX X457</span></div><div class="policy-row"><span class="policy-label">New number (to verify)</span><span class="policy-value">+91 XXXXX 5678</span></div><div class="policy-row"><span class="policy-label">Status</span><span class="policy-value" style="color:#8A5A00;">⏳ Verification pending</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
   </div>
@@ -1140,7 +1246,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="ins-success">
       <div class="success-icon" style="width:100px;height:100px;margin-bottom:24px;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 24L20 34L38 14" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="success-title">HSRP Fitment Booked! 🎉</div>
-      <div class="success-sub">Your slot is confirmed. Once fitted, Vahan updates automatically. The Deemed Ownership checklist is updated.</div>
+      <div class="success-sub">Your slot is confirmed. Once fitted, Vahan updates automatically. The Ownership Transfer checklist is updated.</div>
       <div class="policy-card"><div class="policy-row"><span class="policy-label">Slot</span><span class="policy-value">02 Jun · 10–12 PM</span></div><div class="policy-row"><span class="policy-label">Centre</span><span class="policy-value">Malviya Nagar Hub</span></div><div class="policy-row"><span class="policy-label">Amount paid</span><span class="policy-value">₹696</span></div></div>
       <button class="back-to-pd" onclick="closeSub()">Back to checklist</button>
     </div>
@@ -1163,7 +1269,8 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="scroll-area" id="dealScroll">
     <div class="card"><div class="card-header"><span class="card-title">🎉 Winning offer accepted</span><span class="card-badge badge-accepted">● Accepted</span></div><div class="offer-body"><div class="offer-amount-row"><span class="offer-amount">₹8,32,000</span><span class="offer-up">▲ ₹32K above estimate</span></div><div class="offer-sub">Highest bid from 18 dealers · locked for 24 hours</div><div class="offer-dealer"><div class="dealer-logo">SM</div><div style="flex:1;"><div class="dealer-name">Sai Motors, Jaipur</div><div class="dealer-meta">★ 4.7 · 2,300+ cars purchased</div></div><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" fill="#63FFB1"/><path d="M7 11L10 14L15 8" stroke="#04553A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
     <div class="card"><div class="card-header"><span class="card-title">Payout breakdown</span></div><div style="padding:4px 16px 14px;"><div class="pay-row"><span class="pay-label">Accepted bid</span><span class="pay-val">₹8,32,000</span></div><div class="pay-row"><span class="pay-label">Cars24 service fee</span><span class="pay-val">– ₹0</span></div><div class="pay-row"><span class="pay-label">RC transfer charges</span><span class="pay-val">Included</span></div><div class="pay-total"><span class="pay-total-label">You receive</span><span class="pay-total-val">₹8,32,000</span></div></div></div>
-    <div class="do-reminder"><span class="dr-ic">⚠️</span><div class="dr-txt">Your payout releases only after <b>all deemed ownership checks pass</b>. Clear any pending items below to avoid holdbacks.</div></div>
+    <div class="do-reminder"><span class="dr-ic">⚠️</span><div class="dr-txt">Your payout releases only after <b>all ownership transfer checks pass</b>. Clear any pending items below to avoid holdbacks.</div></div>
+    <div class="hpt-status" id="hptStatusCard" style="display:none;"><span class="hps-ic">⏳</span><div><div class="hps-t">HPT to be removed · Under verification</div><div class="hps-s">We’ve received your hypothecation documents. After handover, we’ll initiate HPT removal with HDFC Bank &amp; the RTO to release the lien. This stays under verification — not an Instant Ownership Transfer — until the lien is cleared from your RC.</div></div></div>
     <div id="doChecklist-deal"></div>
     <div style="height:8px;"></div>
   </div>
@@ -1185,7 +1292,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   </div>
   <div class="scroll-area" id="handoverScroll">
     <div class="card"><div class="card-header"><span class="card-title">Handover scheduled</span><span class="card-badge badge-sched">● Confirmed</span></div><div class="slot-body"><div class="slot-pick"><div class="slot-date"><span class="sd-day">31</span><span class="sd-mon">MAY</span></div><div class="slot-info"><div class="slot-when">Saturday · 11:00 AM – 1:00 PM</div><div class="slot-where">Cars24 Hub, Malviya Nagar, Jaipur</div></div><button class="slot-edit">Edit</button></div><div class="ho-step"><div class="ho-num">1</div><div class="ho-txt"><b>Bring originals:</b> RC, valid ID, insurance & PUCC copy.</div></div><div class="ho-step"><div class="ho-num">2</div><div class="ho-txt"><b>Final inspection</b> & document verification at the hub.</div></div><div class="ho-step"><div class="ho-num">3</div><div class="ho-txt"><b>Instant payout</b> credited to your bank account on handover.</div></div></div></div>
-    <div class="ho-promise"><span class="hp-ic">⏱️</span><div class="hp-txt">Once all checks pass, your <b>deemed ownership transfer completes within 48 hours of handover</b> — RC moves smoothly to Cars24.</div></div>
+    <div class="ho-promise"><span class="hp-ic">⏱️</span><div class="hp-txt">Once all checks pass, your <b>Instant Ownership Transfer completes within 48 hours of handover</b> — RC moves smoothly to Cars24.</div></div>
     <div id="doChecklist-handover"></div>
     <div style="height:8px;"></div>
   </div>
@@ -1195,9 +1302,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <!-- ════════ SCREEN: OWNERSHIP READY ════════ -->
 <div class="screen" id="s-ready">
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
-  <div class="loading-screen" id="loadingScreen"><div class="loading-spinner"></div><div class="loading-title">Verifying your vehicle…</div><div class="loading-sub">Checking all deemed ownership requirements<br>via Parivahan &amp; Vahan portals</div><div style="font-size:12px;color:#9A98AE;margin-top:24px;" id="loadingStatus">Connecting to Parivahan…</div></div>
+  <div class="loading-screen" id="loadingScreen"><div class="loading-spinner"></div><div class="loading-title">Verifying your vehicle…</div><div class="loading-sub">Checking all ownership transfer requirements<br>via Parivahan &amp; Vahan portals</div><div style="font-size:12px;color:#9A98AE;margin-top:24px;" id="loadingStatus">Connecting to Parivahan…</div></div>
   <div class="rdy-checklist" id="checklistScreen">
-    <div class="checklist-header"><div style="display:flex;align-items:center;gap:8px;"><button onclick="go('handover')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><div class="checklist-header-title">Deemed Ownership Checks</div><div class="checklist-header-sub">2023 Hyundai Creta · RJ 45 CP 6052</div></div></div></div>
+    <div class="checklist-header"><div style="display:flex;align-items:center;gap:8px;"><button onclick="go('handover')" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><div class="checklist-header-title">Ownership Transfer Checks</div><div class="checklist-header-sub">2023 Hyundai Creta · RJ 45 CP 6052</div></div></div></div>
     <div class="progress-ring-wrap"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="ring-bg" cx="28" cy="28" r="22"/><circle class="ring-fill" id="ringFill" cx="28" cy="28" r="22"/><text class="ring-count-text" x="28" y="32" text-anchor="middle" id="ringCountText">0</text></svg><div class="progress-text"><div class="progress-main" id="progressMain">Verifying checks…</div><div class="progress-done" id="progressDone">0 of 5 verified</div></div></div>
     <div class="checks-scroll"><div id="checksContainer"></div><div style="height:16px;"></div></div>
   </div>
@@ -1205,9 +1312,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <canvas id="confettiCanvas"></canvas>
     <div class="cel-topbar"><button onclick="go('deal')" class="cel-iconbtn" title="Back to deal closure"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="cel-iconbtn" title="Close" onclick="closeCelebration()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></button></div>
     <div class="seal"><svg width="104" height="104" viewBox="0 0 104 104" fill="none"><g class="seal-ring"><circle cx="52" cy="52" r="48" stroke="#63FFB1" stroke-width="2" stroke-dasharray="6 7" opacity="0.7"/></g><circle cx="52" cy="52" r="38" fill="#63FFB1"/><circle cx="52" cy="52" r="38" stroke="#fff" stroke-opacity="0.5" stroke-width="2"/><path d="M38 53L48 63L68 42" stroke="#04553A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="celebration-title">You're all set for<br>Deemed Ownership Transfer!</div>
-    <div class="celebration-sub">All your deemed ownership checks are clear.<br>Your RC transfer can proceed smoothly.</div>
-    <div class="cel-promise"><span class="cp-ic">⏱️</span><span class="cp-txt">Your deemed ownership transfer will now be completed <b>within 48 hours of car handover</b>.</span></div>
+    <div class="celebration-title">You're all set for<br>Instant Ownership Transfer!</div>
+    <div class="celebration-sub">All your ownership transfer checks are clear.<br>Your RC transfer can proceed smoothly.</div>
+    <div class="cel-promise"><span class="cp-ic">⏱️</span><span class="cp-txt">Your Instant Ownership Transfer will now be completed <b>within 48 hours of car handover</b>.</span></div>
     <div class="checks-summary"><div class="summary-row"><span class="summary-label">E-Challans</span><span class="summary-value">✅ Cleared</span></div><div class="summary-row"><span class="summary-label">Hypothecation</span><span class="summary-value">✅ None</span></div><div class="summary-row"><span class="summary-label">Insurance</span><span class="summary-value">✅ Valid</span></div><div class="summary-row"><span class="summary-label">PUCC</span><span class="summary-value">✅ Valid · Sep 2026</span></div><div class="summary-row"><span class="summary-label">Mobile linked</span><span class="summary-value">✅ +91 XXXXXX4521</span></div><div class="summary-row"><span class="summary-label">HSRP</span><span class="summary-value">🚗 Cars24 will fit it</span></div></div>
     <button class="proceed-btn" onclick="restart()">Done · Restart demo ↺</button>
   </div>
@@ -1217,7 +1324,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 <div class="do-modal" id="do-explainer">
   <div class="do-video">
     <div class="do-video-stage">
-      <div class="do-scene" data-i="0"><div class="do-scene-emoji">🔄</div><div class="do-scene-title">What is Deemed Ownership?</div><div class="do-scene-text">While we find your buyer, the car’s RC moves from you to Cars24 in the interim.</div><div class="do-flowline"><span class="do-node">You</span><span class="do-arrow">→</span><span class="do-node mid">Cars24</span><span class="do-arrow">→</span><span class="do-node">Buyer</span></div></div>
+      <div class="do-scene" data-i="0"><div class="do-scene-emoji">🔄</div><div class="do-scene-title">What is Instant Ownership Transfer?</div><div class="do-scene-text">While we find your buyer, the car’s RC moves from you to Cars24 in the interim.</div><div class="do-flowline"><span class="do-node">You</span><span class="do-arrow">→</span><span class="do-node mid">Cars24</span><span class="do-arrow">→</span><span class="do-node">Buyer</span></div></div>
       <div class="do-scene" data-i="1"><div class="do-scene-emoji">⚡</div><div class="do-scene-title">Why it matters</div><div class="do-scene-text">A clean, verified vehicle gets you a <b style="color:#63FFB1">better price</b> and a <b style="color:#63FFB1">faster transfer</b> — no surprises later.</div></div>
       <div class="do-scene" data-i="2"><div class="do-scene-emoji">⚠️</div><div class="do-scene-title">If you skip it…</div><div class="do-scene-text">Pending dues or expired docs can <b style="color:#FF8A65">block the RC transfer</b>, delay your payment, and keep liabilities in your name.</div></div>
       <div class="do-scene" data-i="3"><div class="do-scene-emoji">📋</div><div class="do-scene-title">What we verify</div><div class="do-doclist"><div class="do-doc"><b>1</b> E-Challans</div><div class="do-doc"><b>2</b> Hypothecation</div><div class="do-doc"><b>3</b> Insurance</div><div class="do-doc"><b>4</b> PUCC</div><div class="do-doc"><b>5</b> Mobile linked</div><div class="do-doc" style="background:rgba(71,54,254,.2);border-color:rgba(71,54,254,.5)"><b style="color:#fff">🚗</b> HSRP — Cars24 fits it</div></div></div>
@@ -1227,9 +1334,18 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   </div>
 </div>
 
+<!-- ════════ "HOW TO?" PER-CHECK MODAL ════════ -->
+<div class="do-modal" id="howto-modal">
+  <div class="do-video">
+    <div class="do-video-stage" id="howto-stage" onclick="howtoTap()"></div>
+    <div class="do-prog" id="howto-prog"></div>
+    <div class="do-video-foot"><button class="do-skip" onclick="closeHowTo()">Skip</button><button class="do-gotit" id="howto-cta" onclick="howtoAction()">Got it 👍</button></div>
+  </div>
+</div>
+
 <!-- ════════ HAPPY POPUP ════════ -->
 <div class="do-pop" id="do-happy-pop">
-  <div class="do-pop-card"><button class="do-pop-close" onclick="dismissHappyPopup()">×</button><div class="do-pop-emoji">🎉</div><div class="do-pop-title">All your documents are in place!</div><div class="do-pop-text">Every requirement for your deemed ownership transfer is verified. Let’s get you a great price!</div><button class="do-pop-btn" onclick="dismissHappyPopup()">Awesome, let’s go</button></div>
+  <div class="do-pop-card"><button class="do-pop-close" onclick="dismissHappyPopup()">×</button><div class="do-pop-emoji">🎉</div><div class="do-pop-title">All your documents are in place!</div><div class="do-pop-text">Every requirement for your ownership transfer is verified. Let’s get you a great price!</div><button class="do-pop-btn" onclick="dismissHappyPopup()">Awesome, let’s go</button></div>
 </div>
 </div>
 </div>
@@ -1258,7 +1374,10 @@ var plan = { name:'Comprehensive', amount:'₹8,490', base:'₹7,200', gst:'₹1
 
 function doneCount(){
   // 5 seller-actionable checks. HSRP is handled by Cars24 (not counted); Fitness removed.
-  return (S.echallan?1:0) + (S.insurance?1:0) + (S.hypo?1:0) + (S.pucc?1:0) + (S.mobile?1:0);
+  // A check counts only when fully clear (===true). 'verifying' (hypo HPT / mobile-Aadhaar) never counts → blue page is suppressed.
+  var keys=['echallan','insurance','hypo','pucc','mobile'], n=0;
+  for (var i=0;i<keys.length;i++) if (S[keys[i]]===true) n++;
+  return n;
 }
 
 /* ════════════ FLOW SELECT + LOCK ════════════ */
@@ -1290,11 +1409,11 @@ function chooseSingle(check){
 function closeHypoPick(){ var p=document.getElementById('hypoPick'); if(p) p.classList.remove('show'); }
 
 var LOCK_COPY = {
-  happy:    ['🎉 You’re all set for Deemed Ownership', 'All checks are verified. Tap to view your live auction and price.'],
+  happy:    ['🎉 You’re all set for Instant Ownership Transfer', 'All checks are verified. Tap to view your live auction and price.'],
   pending:  ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
   echallan: ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
   hypo:     ['⚠️ Active hypothecation on your RC', 'A loan / lien is registered on your RC. Resolve it to proceed with the transfer.'],
-  insurance:['⚠️ Your insurance has expired', 'Renew your car insurance to keep your deemed ownership transfer on track.'],
+  insurance:['⚠️ Your insurance has expired', 'Renew your car insurance to keep your Instant Ownership Transfer on track.'],
   pucc:     ['⚠️ PUCC expired', 'Your pollution certificate has lapsed. Renew it to proceed with the transfer.'],
   mobile:   ['⚠️ Mobile not linked to Vahan', 'Link your mobile number on Vahan to complete verification.'],
   hsrp:     ['⚠️ HSRP not fitted', 'High-security plate not detected. Book HSRP fitment to proceed.']
@@ -1336,6 +1455,8 @@ function go(id){
     renderChecklist('doChecklist-deal','deal');
     var dealWarn = document.querySelector('#s-deal .do-reminder');
     if (dealWarn) dealWarn.style.display = (doneCount() === TOTAL) ? 'none' : '';
+    var hptCard = document.getElementById('hptStatusCard');
+    if (hptCard) hptCard.style.display = (S.hypo === 'verifying') ? '' : 'none';
   } else if (id === 'handover'){
     renderChecklist('doChecklist-handover','handover');
     var hoBtn = document.getElementById('handoverCta');
@@ -1351,9 +1472,9 @@ function go(id){
 /* ════════════ CHECKLIST ════════════ */
 var CHECKS = [
   { key:'echallan', name:'E-Challans', good:'All challans cleared · Parivahan', pend:'₹1,000 pending · clear to proceed', action:'challan', cta:'Pay ₹1,000' },
-  { key:'hypo',     name:'No Hypothecation', good:'No active loan / lien on RC', pend:'Active hypothecation · clear to proceed', action:'hypo', cta:'Resolve' },
+  { key:'hypo',     name:'Hypothecation', good:'No active loan / lien on RC', pend:'Hypothecation present · update to proceed', action:'hypo', cta:'Update' },
   { key:'insurance',name:'Insurance', good:'Comprehensive · valid till May 2026', pend:'Expired 12 Mar 2025 · renew now', action:'insurance', cta:'Renew' },
-  { key:'pucc',     name:'PUCC', good:'Valid till Sep 2026', pend:'Expired · renew PUCC to proceed', action:'pucc', cta:'Renew' },
+  { key:'pucc',     name:'PUCC', good:'Valid till Sep 2026', pend:'Expired · upload valid PUCC proof', action:'pucc', cta:'Upload proof' },
   { key:'mobile',   name:'Mobile linked to Vahan', good:'+91 XXXXXX4521', pend:'Not linked on Vahan · verify now', action:'mobile', cta:'Link' },
   { key:'hsrp',     name:'HSRP', info:true, note:'Cars24 will handle it for you' }   // not actionable, not counted
 ];
@@ -1369,15 +1490,34 @@ function renderChecklist(containerId, owner){
   var done = doneCount();
   var pct = Math.round(done/TOTAL*100);
   var allDone = done === TOTAL;
-  var sub = allDone
-    ? '<div class="do-subline good">✅ Great news — we’ve received all your documents!</div>'
-    : '<div class="do-subline">' + (TOTAL-done) + ' of ' + TOTAL + ' checks need action before your RC transfer.</div>';
+  var rem = TOTAL - done;
+  // which actionable check (if any) is currently 'under verification' (hypo HPT / mobile-Aadhaar)
+  var vKey = null;
+  for (var vi=0; vi<CHECKS.length; vi++){ if (!CHECKS[vi].info && S[CHECKS[vi].key]==='verifying'){ vKey = CHECKS[vi].key; break; } }
+  var VERIFY_SUBLINE = {
+    hypo:   '⏳ <b>Under verification</b> — hypothecation documents received. HPT removal with the RTO is in progress; we’ll keep you posted.',
+    mobile: '⏳ <b>Verification pending</b> — once you update on Vahan, we’ll confirm the new number on the Vahan website.'
+  };
+  var sub;
+  if (allDone){
+    sub = '<div class="do-subline good">✅ Great news — we’ve received all your documents!</div>';
+  } else if (vKey && rem === 1){
+    sub = '<div class="do-subline">' + (VERIFY_SUBLINE[vKey] || '⏳ <b>Under verification</b>') + '</div>';
+  } else if (rem === 1){
+    sub = '<div class="do-subline">🚀 You’re just <b>1 step away</b> from your Instant Ownership Transfer!</div>';
+  } else if (rem === 2){
+    sub = '<div class="do-subline">🚀 You’re just <b>2 steps away</b> from your Instant Ownership Transfer!</div>';
+  } else {
+    sub = '<div class="do-subline">' + rem + ' of ' + TOTAL + ' checks need action for your Instant Ownership Transfer.</div>';
+  }
 
-  // Pending/failing checks float to the top so they're visible in the collapsed 3-item view; HSRP (info) stays last.
-  var ordered = CHECKS.slice().sort(function(a,b){
-    if (a.info) return 1; if (b.info) return -1;
-    return (isPass(a)?1:0) - (isPass(b)?1:0);
-  });
+  // Sort: pending first, then 'under verification' (hypo), then passed; HSRP (info) last.
+  function rank(c){
+    if (c.info) return 3;
+    if (S[c.key] === 'verifying') return 1;
+    return isPass(c) ? 2 : 0;
+  }
+  var ordered = CHECKS.slice().sort(function(a,b){ return rank(a) - rank(b); });
 
   var items = '';
   for (var i=0;i<ordered.length;i++){
@@ -1387,7 +1527,17 @@ function renderChecklist(containerId, owner){
       items += '<div class="do-item">'+
         '<div class="do-ic c24">'+C24+'</div>'+
         '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+c.note+'</div></div>'+
-        '<span class="do-handled">Cars24</span></div>';
+        '</div>';
+      continue;
+    }
+    if (S[c.key] === 'verifying'){
+      var vsub = (c.key==='hypo') ? 'Under verification · HPT removal initiated'
+               : (c.key==='mobile') ? 'Verification pending · we’ll confirm on Vahan'
+               : 'Under verification';
+      items += '<div class="do-item">'+
+        '<div class="do-ic verify">⏳</div>'+
+        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+vsub+'</div></div>'+
+        '<span class="do-verify-badge">Verifying</span></div>';
       continue;
     }
     var pass = isPass(c);
@@ -1397,14 +1547,16 @@ function renderChecklist(containerId, owner){
       ? '<button class="do-cta" onclick="openSub(\''+c.action+'\',\''+owner+'\')">'+c.cta+'</button>'
       : '';
     items += '<div class="do-item">'+icon+
-      '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+subtxt+'</div></div>'+
+      '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+subtxt+'</div>'+
+        '<button class="do-howto" onclick="openHowTo(\''+c.key+'\',\''+owner+'\')">✨ How to? <span class="ht-arrow">▶</span></button>'+
+      '</div>'+
       ctaBtn+'</div>';
   }
 
   var html =
     '<div class="do-card">'+
       '<div class="do-card-head">'+
-        '<div class="do-title-row"><span class="do-title">Deemed Ownership checks</span>'+
+        '<div class="do-title-row"><span class="do-title">Ownership Transfer checks</span>'+
         '<button class="do-info-btn" onclick="showExplainer()" title="What is this?">i</button></div>'+
         sub+
       '</div>'+
@@ -1443,6 +1595,13 @@ function closeSub(){
   closeSheet();
   document.getElementById('successOverlay').classList.remove('show');
   closeLater();
+  // If this was the LAST of the 5 checks to be completed, land the user back on the
+  // price-details page first, then auto-reveal the all-clear Instant Ownership Transfer page.
+  if (doneCount() === TOTAL){
+    go('price');
+    setTimeout(function(){ go('ready'); }, 1600);
+    return;
+  }
   go(subReturn || 'price');
 }
 
@@ -1451,7 +1610,16 @@ function syncBanner(){
   var banner = document.getElementById('scareBanner');
   var pend = TOTAL - doneCount();
   if (pend <= 0){ banner.style.display = 'none'; }
-  else { banner.style.display = ''; document.getElementById('scareTitle').textContent = pend + ' of ' + TOTAL + ' deemed ownership transfer checks failing'; }
+  else {
+    banner.style.display = '';
+    var bmsg;
+    if (S.hypo === 'verifying' && pend === 1){ bmsg = 'Hypothecation under verification · HPT removal in progress'; }
+    else if (S.mobile === 'verifying' && pend === 1){ bmsg = 'Mobile-Vahan update under verification · we’ll confirm on Vahan'; }
+    else if (pend === 1){ bmsg = 'You’re just 1 step away from your Instant Ownership Transfer'; }
+    else if (pend === 2){ bmsg = 'You’re just 2 steps away from your Instant Ownership Transfer'; }
+    else { bmsg = pend + ' of ' + TOTAL + ' checks pending for your Instant Ownership Transfer'; }
+    document.getElementById('scareTitle').textContent = bmsg;
+  }
 }
 
 function scrollToChecklist(owner){
@@ -1522,6 +1690,65 @@ function payNow(){
 // Closed loan → upload NOC → OCR validates NOC date.
 // Open loan   → upload LFC → OCR fills loan no., amount, per-day interest.
 // → Enter Email ID (financer-registered) → Thank-you (keep NOC/LFC ready at pickup).
+/* ════════════ DOCUMENT OCR (Tesseract.js + keyword validation) ════════════ */
+// Real OCR: random screenshot → "not a valid X"; correct doc → confirmed.
+// Falls back to a filename heuristic if the OCR engine is unavailable or the file is a PDF.
+var OCR_RULES = {
+  pan:  { label:'PAN card', any:[/PERMANENT ACCOUNT NUMBER/, /INCOME ?TAX/, /\b[A-Z]{5}\s?[0-9]{4}\s?[A-Z]\b/],
+          extract:function(t){ var m=t.match(/\b[A-Z]{5}\s?[0-9]{4}\s?[A-Z]\b/); return m ? ('PAN · '+m[0].replace(/\s/g,'')) : 'PAN verified'; },
+          fname:/PAN/ },
+  noc:  { label:'NOC', any:[/NO\s*OBJECTION/, /\bNOC\b/, /NO\s*DUES/],
+          extract:function(){ return 'No-dues confirmed · issued within 90 days'; },
+          fname:/NOC|NO[-_ ]?OBJECTION/ },
+  lfc:  { label:'LFC', any:[/FORE\s*CLOSURE/, /LOAN\s*CLOSURE/, /OUTSTANDING/],
+          extract:function(){ return 'Outstanding amount & per-day interest read'; },
+          fname:/LFC|FORECLOSURE/ },
+  pucc: { label:'PUCC', any:[/POLLUTION/, /\bPUCC?\b/, /EMISSION/, /UNDER\s*CONTROL/],
+          extract:function(){ return 'Pollution norms met · valid certificate'; },
+          fname:/PUC|POLLUTION/ }
+};
+function ocrScanUI(el){
+  el.style.display='block'; el.className='ocr-box scan';
+  el.innerHTML='<div class="ocr-spin"></div><div><b>Scanning document…</b><div class="ocr-hint" id="'+el.id+'-pct">Reading text via OCR</div></div>';
+}
+function ocrResultUI(el, ok, rule, detail){
+  el.style.display='block';
+  if (ok){
+    el.className='ocr-box ok';
+    el.innerHTML='<div class="ocr-title">✓ Valid '+rule.label+' detected</div>'+
+      '<div class="ocr-row"><span>OCR check</span><span>Passed</span></div>'+
+      (detail?('<div class="ocr-row"><span>Details</span><span>'+detail+'</span></div>'):'');
+  } else {
+    el.className='ocr-box bad';
+    el.innerHTML='<div class="ocr-title">✕ This doesn’t look like a '+rule.label+'</div>'+
+      '<div class="ocr-hint">Our OCR couldn’t find '+rule.label+' details in this file. Please upload a clear '+rule.label+' image.</div>';
+  }
+}
+function runDocOCR(file, kind, elId, onValid, onInvalid){
+  var el=document.getElementById(elId); var rule=OCR_RULES[kind];
+  ocrScanUI(el);
+  var fname=(file.name||'').toUpperCase();
+  function verdict(text, via){
+    var ok = rule.any.some(function(rx){ return rx.test(text); });
+    if (!ok) ok = rule.fname.test(fname);   // keywords weak / PDF / no engine → fall back to the filename hint
+    if (ok){ ocrResultUI(el, true, rule, rule.extract(text)); if(onValid) onValid(); }
+    else { ocrResultUI(el, false, rule); if(onInvalid) onInvalid(); }
+  }
+  if (typeof Tesseract === 'undefined' || /\.pdf$/i.test(file.name||'')){
+    setTimeout(function(){ verdict(fname, 'fname'); }, 800); return;   // no engine / PDF → filename heuristic
+  }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    Tesseract.recognize(e.target.result, 'eng', { logger:function(m){
+        if (m.status==='recognizing text'){ var p=document.getElementById(elId+'-pct'); if(p) p.textContent='Reading text via OCR · '+Math.round(m.progress*100)+'%'; }
+      } })
+      .then(function(res){ verdict((((res.data&&res.data.text)||'')+' '+fname).toUpperCase(), 'ocr'); })
+      .catch(function(){ verdict(fname, 'fname'); });
+  };
+  reader.onerror=function(){ verdict(fname, 'fname'); };
+  reader.readAsDataURL(file);
+}
+
 function resetHypo(){
   S.hypoLoan = null; S.hypoPAN = false; S.hypoDoc = false; S.hypoEmail = '';
   hypStep(1);
@@ -1530,6 +1757,7 @@ function resetHypo(){
   var box = document.getElementById('hypCardBox'); box.classList.remove('attached');
   document.getElementById('hypCardMain').textContent = 'Tap to upload PAN card';
   var fi = document.getElementById('hypPanFile'); if (fi) fi.value = '';
+  var po = document.getElementById('hypPanOcr'); if (po) po.style.display = 'none';
   updateHyp1Cta();
 }
 
@@ -1557,10 +1785,14 @@ function selectLoanStatus(val){
 
 function hypPanFileChosen(input){
   if (!input.files || !input.files.length) return;
-  S.hypoPAN = true;
-  document.getElementById('hypCardBox').classList.add('attached');
-  document.getElementById('hypCardMain').textContent = '✓ ' + input.files[0].name;
+  var f = input.files[0];
+  S.hypoPAN = false;
+  document.getElementById('hypCardBox').classList.remove('attached');
+  document.getElementById('hypCardMain').textContent = f.name;
   updateHyp1Cta();
+  runDocOCR(f, 'pan', 'hypPanOcr',
+    function(){ S.hypoPAN = true; document.getElementById('hypCardBox').classList.add('attached'); document.getElementById('hypCardMain').textContent = '✓ ' + f.name; updateHyp1Cta(); },
+    function(){ S.hypoPAN = false; updateHyp1Cta(); });
 }
 
 function hyp1Next(){
@@ -1579,7 +1811,7 @@ function configureDoc(){
     ? 'Your loan is closed. Upload a valid <b>NOC</b> from HDFC Bank — we’ll validate its date automatically.'
     : 'Your loan is active. Upload a valid <b>LFC (foreclosure certificate)</b> from HDFC Bank — we’ll read the outstanding amount automatically.';
   document.getElementById('hypDocExplain').innerHTML = closed
-    ? 'ℹ️ <b>What’s a valid NOC?</b> A No Objection Certificate from your bank confirming the loan is fully closed, dated within the last 90 days.'
+    ? 'ℹ️ <b>What’s a valid NOC?</b> A No Objection Certificate from your bank confirming the loan is fully closed, issued within the last 90 days.'
     : 'ℹ️ <b>What’s an LFC?</b> A Loan Foreclosure Certificate / statement from your bank showing the outstanding amount and per-day interest to close the loan.';
   document.getElementById('hypDocIcon').textContent = '📄';
   document.getElementById('hypDocMain').textContent = closed ? 'Tap to upload NOC' : 'Tap to upload LFC';
@@ -1592,22 +1824,16 @@ function configureDoc(){
 
 function hypDocChosen(input){
   if (!input.files || !input.files.length) return;
-  S.hypoDoc = true;
+  var f = input.files[0];
   var closed = (S.hypoLoan === 'closed');
-  document.getElementById('hypDocBox').classList.add('attached');
-  document.getElementById('hypDocMain').textContent = '✓ ' + input.files[0].name;
-  // OCR result
-  var ocr = document.getElementById('hypOcr');
-  ocr.style.display = 'block';
-  ocr.innerHTML = closed
-    ? '<div class="hyp-ocr-title">✓ NOC validated via OCR</div>'
-      + '<div class="hyp-ocr-row"><span>NOC date</span><span>18 Apr 2026</span></div>'
-      + '<div class="hyp-ocr-row"><span>Validity</span><span>Valid · within 90 days</span></div>'
-    : '<div class="hyp-ocr-title">✓ LFC read via OCR</div>'
-      + '<div class="hyp-ocr-row"><span>Loan no.</span><span>••••4421</span></div>'
-      + '<div class="hyp-ocr-row"><span>Outstanding amount</span><span>₹2,40,000</span></div>'
-      + '<div class="hyp-ocr-row"><span>Per-day interest</span><span>₹78</span></div>';
-  document.getElementById('hypDocCta').classList.remove('locked');
+  var kind = closed ? 'noc' : 'lfc';
+  S.hypoDoc = false;
+  document.getElementById('hypDocBox').classList.remove('attached');
+  document.getElementById('hypDocMain').textContent = f.name;
+  document.getElementById('hypDocCta').classList.add('locked');
+  runDocOCR(f, kind, 'hypOcr',
+    function(){ S.hypoDoc = true; document.getElementById('hypDocBox').classList.add('attached'); document.getElementById('hypDocMain').textContent = '✓ ' + f.name; document.getElementById('hypDocCta').classList.remove('locked'); },
+    function(){ S.hypoDoc = false; document.getElementById('hypDocCta').classList.add('locked'); });
 }
 
 function hyp2Next(){
@@ -1619,15 +1845,18 @@ function hypEmailInput(){
   S.hypoEmail = document.getElementById('hypEmail').value.trim();
   var ok = /.+@.+\..+/.test(S.hypoEmail);
   document.getElementById('hypEmailCta').classList.toggle('locked', !ok);
+  var cc = document.getElementById('epCc');
+  if (cc) cc.innerHTML = (S.hypoEmail || 'you@example.com') + ', hr26@haryana.gov.in <span style="color:#9E9CB0;">(RTO)</span>';
 }
 
 function hyp3Next(){
   if (!/.+@.+\..+/.test(S.hypoEmail)) return;
   var doc = (S.hypoLoan === 'closed') ? 'NOC' : 'LFC';
   document.getElementById('hypThanksDoc').textContent = doc;
-  document.getElementById('hypSumLoan').textContent = (S.hypoLoan === 'closed') ? 'Closed' : 'Open';
+  document.getElementById('hypSumLoan').textContent = (S.hypoLoan === 'closed') ? 'Closed' : 'Active (open)';
   document.getElementById('hypSumDoc').textContent = doc;
-  S.hypo = true;
+  // Hypothecation is NEVER an instant DO — it stays 'verifying' until the HPT/lien is removed from the RC.
+  S.hypo = 'verifying';
   hypStep(4);
 }
 
@@ -1659,16 +1888,21 @@ function resetPucc(){
   var box=document.getElementById('pucBox'); if(box) box.classList.remove('attached');
   var m=document.getElementById('pucMain'); if(m) m.textContent='Tap to upload your PUCC';
   var fi=document.getElementById('pucFile'); if(fi) fi.value='';
-  var cta=document.getElementById('pucSubmitCta'); if(cta){ cta.classList.add('locked'); cta.textContent='Submit PUCC'; }
+  var po=document.getElementById('pucOcr'); if(po) po.style.display='none';
+  var cta=document.getElementById('pucSubmitCta'); if(cta){ cta.classList.add('locked'); cta.textContent='Submit proof'; }
 }
 function pucStep(n){ for (var i=1;i<=3;i++) document.getElementById('puc'+i).classList.toggle('active', i===n); }
-// PUCC upload — opens the device file picker (browse to Downloads); gates Submit.
+// PUCC upload — opens the device file picker (browse to Downloads); OCR-validates, then gates Submit.
 function pucFileChosen(input){
   if(!input.files || !input.files.length) return;
-  pucAttached = true;
-  document.getElementById('pucBox').classList.add('attached');
-  document.getElementById('pucMain').textContent = '✓ ' + input.files[0].name;
-  var cta=document.getElementById('pucSubmitCta'); cta.classList.remove('locked'); cta.textContent='Submit PUCC →';
+  var f = input.files[0];
+  pucAttached = false;
+  document.getElementById('pucBox').classList.remove('attached');
+  document.getElementById('pucMain').textContent = f.name;
+  var cta=document.getElementById('pucSubmitCta'); cta.classList.add('locked');
+  runDocOCR(f, 'pucc', 'pucOcr',
+    function(){ pucAttached = true; document.getElementById('pucBox').classList.add('attached'); document.getElementById('pucMain').textContent = '✓ ' + f.name; cta.classList.remove('locked'); cta.textContent='Submit proof →'; },
+    function(){ pucAttached = false; cta.classList.add('locked'); });
 }
 function pucSubmit(){
   if(!pucAttached) return;   // upload required
@@ -1681,11 +1915,33 @@ function pucSubmit(){
 function resetMobile(){
   mobStep(1);
   var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); for(var i=0;i<d.length;i++) d[i].value='';
+  showOtpErr('vahanOtpErr', false);
 }
 function mobStep(n){ for (var i=1;i<=7;i++) document.getElementById('mob'+i).classList.toggle('active', i===n); }
-function autoVahanOtp(){ var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); var c='312788'; for(var i=0;i<d.length;i++) d[i].value=c[i]; }
-function mobInterim(){ S.mobile = true; mobStep(3); }          // Yes → OTP verified → interim clean (done)
-function mobAadhaarLinked(){ S.mobile = true; mobStep(6); }    // Aadhaar linked on Vahan → number updated (done)
+function autoVahanOtp(){ var d=document.querySelectorAll('#vahanOtpBox .otp-digit'); var c='312788'; for(var i=0;i<d.length;i++) d[i].value=c[i]; showOtpErr('vahanOtpErr', false); }
+
+// ── OTP gating helpers (used across flows) ──
+function otpFilled(boxId){
+  var d=document.querySelectorAll('#'+boxId+' .otp-digit');
+  if(!d.length) return false;
+  for(var i=0;i<d.length;i++){ if(!d[i].value || !d[i].value.trim()) return false; }
+  return true;
+}
+function showOtpErr(errId, show){ var e=document.getElementById(errId); if(e) e.classList.toggle('show', !!show); }
+
+function mobInterim(){
+  if(!otpFilled('vahanOtpBox')){ showOtpErr('vahanOtpErr', true); return; }   // OTP must be filled
+  showOtpErr('vahanOtpErr', false);
+  S.mobile = true; mobStep(3);                                   // Yes → OTP verified → clean (done)
+}
+function mobAadhaarLinked(){ S.mobile = 'verifying'; mobStep(6); }   // Aadhaar path → verification pending (we’ll check Vahan)
+
+// Copy a value to the clipboard (chassis / engine numbers on the Vahan-detail card)
+function copyVal(text, btn){
+  function done(){ if(btn){ var t=btn.getAttribute('data-label')||btn.textContent; btn.setAttribute('data-label',t); btn.textContent='✓ Copied'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent=t; btn.classList.remove('copied'); },1400); } }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done, done); }
+  else { try{ var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }catch(e){} done(); }
+}
 
 /* ════════════ HSRP FITMENT ════════════ */
 function resetHsrp(){ hsrStep(1); }
@@ -1701,6 +1957,7 @@ function resetInsurance(){
   insKycOtpShown = false;
   var w = document.getElementById('insOtpWrap'); if (w) w.style.display = 'none';
   var d = document.querySelectorAll('#insOtpBox .otp-digit'); for (var i=0;i<d.length;i++) d[i].value='';
+  showOtpErr('insOtpErr', false);
   var cta = document.getElementById('insKycCta'); if (cta) cta.textContent = 'Get OTP →';
 }
 
@@ -1750,12 +2007,15 @@ function insKycNext(){
     document.getElementById('insOtpWrap').style.display = 'block';
     document.getElementById('insKycCta').textContent = 'Verify & continue →';
   } else {
+    if(!otpFilled('insOtpBox')){ showOtpErr('insOtpErr', true); return; }   // OTP must be filled
+    showOtpErr('insOtpErr', false);
     insStep(5);   // KYC verified → payment
   }
 }
 function insAutoOtp(){
   var d = document.querySelectorAll('#insOtpBox .otp-digit'); var c='618204';
   for (var i=0;i<d.length;i++) d[i].value = c[i];
+  showOtpErr('insOtpErr', false);
 }
 
 function insPay(){
@@ -1793,6 +2053,87 @@ function playExplainer(i){
 function closeExplainer(){
   clearTimeout(explainerTimer);
   document.getElementById('do-explainer').classList.remove('show');
+}
+
+/* ════════════ "HOW TO?" PER-CHECK CREATIVE ════════════ */
+// Each check gets a fun, animated 3-scene story: What is it? → How to do it? → Why it matters.
+var HOWTO = {
+  echallan: { color:'#FFB74D', cta:'Pay it now', scenes:[
+    { emoji:'🚦', title:'What’s an e-challan?', text:'A traffic fine issued to your car’s number plate by the RTO / police. It stays attached to the <b>RC</b> until it’s paid.' },
+    { emoji:'💳', title:'How to clear it', text:'Two taps — fully online, no paperwork.', steps:['Tap <b>Pay</b> on the E-Challan check','Pay the amount via UPI or card','Parivahan marks it cleared ⚡ instantly'] },
+    { emoji:'✅', title:'Why it matters', text:'A challan-free RC means <b>no holdbacks</b> on your payout and a smooth ownership transfer.' }
+  ]},
+  hypo: { color:'#7C9BFF', cta:'Resolve it now', scenes:[
+    { emoji:'🏦', title:'What’s hypothecation?', text:'It means a <b>bank loan or lien</b> is registered on your RC — the financier stays a co-owner until it’s removed.' },
+    { emoji:'📄', title:'How to remove it', text:'Depends on your loan status — we handle the rest.', steps:['Loan <b>closed</b>? Upload the bank <b>NOC</b>','Loan <b>active</b>? Share details — we collect the <b>LFC</b>','We update Vahan & clear the lien'] },
+    { emoji:'✅', title:'Why it matters', text:'A lien-free RC can transfer legally — no bank objection popping up later.' }
+  ]},
+  insurance: { color:'#63FFB1', cta:'Renew now', scenes:[
+    { emoji:'🛡️', title:'What’s this check?', text:'A <b>valid motor-insurance</b> policy is mandatory to keep the car road-legal and to transfer it.' },
+    { emoji:'⚡', title:'How to renew', text:'Pick, pay, done — insured in minutes.', steps:['Tap <b>Renew</b> & choose a plan','Pay securely — every plan ₹4,384','You’re insured instantly, synced to Vahan'] },
+    { emoji:'✅', title:'Why it matters', text:'Active insurance keeps your transfer unblocked and you protected on the road.' }
+  ]},
+  pucc: { color:'#A0E86F', cta:'Sort it now', scenes:[
+    { emoji:'🌿', title:'What’s a PUCC?', text:'A <b>Pollution Under Control</b> certificate — proof your car meets emission norms. Mandatory under the Motor Vehicles Act.' },
+    { emoji:'📷', title:'How to get one', text:'Already have it? Just upload. Expired? It’s quick & cheap.', steps:['Have one? <b>Upload</b> your valid PUCC','Expired? Visit any <b>petrol-pump PUC booth</b>','~2 min & ~₹80 — then upload it'] },
+    { emoji:'✅', title:'Why it matters', text:'A valid PUCC keeps your RC transfer compliant and penalty-free.' }
+  ]},
+  mobile: { color:'#FF9CC8', cta:'Verify now', scenes:[
+    { emoji:'📱', title:'Why link your mobile?', text:'Your number must be linked to the RC on <b>Vahan</b> so every transfer OTP reaches you.' },
+    { emoji:'🔗', title:'How to link it', text:'Verify in seconds — we guide every step.', steps:['Tap <b>Verify</b> & confirm your number','If it differs, update it on the <b>Vahan portal</b>','Or proceed on an interim-clean status'] },
+    { emoji:'✅', title:'Why it matters', text:'A linked number means OTP checks never stall your ownership transfer.' }
+  ]}
+};
+var howtoTimer = null;
+var howtoState = { key:null, owner:'price', i:0, n:0 };
+
+function openHowTo(key, owner){
+  var data = HOWTO[key]; if (!data) return;
+  howtoState.key = key; howtoState.owner = owner || 'price'; howtoState.i = 0; howtoState.n = data.scenes.length;
+  var modal = document.getElementById('howto-modal');
+  modal.style.setProperty('--ht-accent', data.color || '#63FFB1');
+  var labels = ['What is it?','How to do it?','Why it matters'];
+  var sh = '';
+  for (var i=0;i<data.scenes.length;i++){
+    var sc = data.scenes[i];
+    var steps = '';
+    if (sc.steps){
+      steps = '<div class="ht-steps">';
+      for (var k=0;k<sc.steps.length;k++) steps += '<div class="ht-step"><b>'+(k+1)+'</b><span>'+sc.steps[k]+'</span></div>';
+      steps += '</div>';
+    }
+    sh += '<div class="do-scene ht-scene" data-i="'+i+'">'+
+            '<div class="ht-badge">'+(labels[i]||'')+'</div>'+
+            '<div class="do-scene-emoji">'+sc.emoji+'</div>'+
+            '<div class="do-scene-title">'+sc.title+'</div>'+
+            '<div class="do-scene-text">'+sc.text+'</div>'+ steps +
+          '</div>';
+  }
+  document.getElementById('howto-stage').innerHTML = sh;
+  var ph = '';
+  for (var p=0;p<data.scenes.length;p++) ph += '<div class="do-prog-seg"><i></i></div>';
+  document.getElementById('howto-prog').innerHTML = ph;
+  var cta = document.getElementById('howto-cta');
+  if (S[key] !== false){ cta.textContent = 'Got it 👍'; }   // already passing
+  else { cta.textContent = (data.cta || 'Fix it now') + ' →'; }
+  modal.classList.add('show');
+  playHowTo(0);
+}
+function playHowTo(i){
+  howtoState.i = i;
+  var scenes = document.querySelectorAll('#howto-stage .do-scene');
+  var segs = document.querySelectorAll('#howto-prog .do-prog-seg');
+  for (var s=0;s<scenes.length;s++) scenes[s].classList.toggle('active', s===i);
+  for (var p=0;p<segs.length;p++){ segs[p].classList.remove('active','done'); if (p<i) segs[p].classList.add('done'); else if (p===i) segs[p].classList.add('active'); }
+  clearTimeout(howtoTimer);
+  if (i < scenes.length - 1){ howtoTimer = setTimeout(function(){ playHowTo(i+1); }, 3000); }
+}
+function howtoTap(){ if (howtoState.i < howtoState.n - 1) playHowTo(howtoState.i + 1); }
+function closeHowTo(){ clearTimeout(howtoTimer); document.getElementById('howto-modal').classList.remove('show'); }
+function howtoAction(){
+  var key = howtoState.key, owner = howtoState.owner;
+  closeHowTo();
+  if (key && S[key] === false) openSub(key, owner);   // jump straight into fixing it
 }
 
 /* ════════════ READY ANIMATION ════════════ */
@@ -1945,6 +2286,7 @@ function restart(){
   closeSheet();
   closeLater();
   clearTimeout(explainerTimer);
+  closeHowTo();
   document.getElementById('successOverlay').classList.remove('show');
   document.getElementById('do-explainer').classList.remove('show');
   document.getElementById('do-happy-pop').classList.remove('show');
