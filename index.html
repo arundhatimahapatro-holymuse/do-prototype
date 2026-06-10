@@ -2538,10 +2538,32 @@ function crmOffer(){ if(doneCount()>=TOTAL) return; var amt=CRM_OFFERS[Math.min(
   showPush('Cars24', '🎉 New offer: ₹'+amt+' for your car! Complete '+pend+' more task(s) to improve sale price.');
   waAppend('Hi '+CRM_NAME+'! 🎉 Great progress! Your updated offer is now ₹'+amt+'. Complete '+pend+' more item(s) on your ownership transfer checklist to improve sale price potential. You’re so close! 🚀', ts);
   smsAppend('Cars24: Updated offer Rs.'+amt+'. Complete '+pend+' more item(s): cars24.com/do', ts); }
-function crmOnPrice(){ var q=['T1'];
-  if(S.echallan===false) q.push('TC_FOUND'); if(S.insurance===false) q.push('T13');
-  if(S.pucc===false) q.push('T12'); if(S.mobile===false) q.push('T8'); if(S.hypo===false) q.push('T16');
-  q.forEach(function(id,i){ setTimeout(function(){ crmFire(id); }, i*750); }); }
+var CRM_PNAMES = { echallan:'E-Challan', insurance:'Insurance', pucc:'PUCC', mobile:'Mobile number', hypo:'Hypothecation' };
+function crmOnPrice(){
+  crmFire('T1');   // gateway: inspection done
+  var keys = [];
+  if(S.echallan===false) keys.push('echallan');
+  if(S.insurance===false) keys.push('insurance');
+  if(S.pucc===false)     keys.push('pucc');
+  if(S.mobile===false)   keys.push('mobile');
+  if(S.hypo===false)     keys.push('hypo');
+  if(keys.length >= 2){
+    // 2+ pending → ONE consolidated reminder (T2) listing all pending items
+    setTimeout(function(){ crmConsolidated(keys); }, 800);
+  } else if(keys.length === 1){
+    // exactly 1 pending → that check's individual "found" trigger
+    var m = { echallan:'TC_FOUND', insurance:'T13', pucc:'T12', mobile:'T8', hypo:'T16' };
+    setTimeout(function(){ crmFire(m[keys[0]]); }, 800);
+  }
+}
+function crmConsolidated(keys){
+  if(crmFired['T2']) return; crmFired['T2']=true;
+  var list = keys.map(function(k){ return CRM_PNAMES[k]; }).join(', ');
+  var n = keys.length, ts = crmStamp();
+  showPush('Cars24', '⚠ '+n+' checklist items pending — complete them to unlock your best price & Instant Ownership Transfer.');
+  waAppend('Hi '+CRM_NAME+' 👋 Complete your ownership transfer checklist to unlock your best offer.\n\nPending on your checklist: '+list+'\n\nThe more you complete, the better your offer! 💰 [Complete My Checklist →]', ts);
+  smsAppend('Cars24: Complete your ownership transfer checklist ('+list+') to unlock your best price: cars24.com/do', ts);
+}
 function crmReadySeq(){ crmFire('T20'); setTimeout(function(){ crmFire('T22'); },3500); setTimeout(function(){ crmFire('T24'); },7000); }
 function crmDeal(){ if(doneCount()<TOTAL) crmFire('T19'); }
 function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41];
