@@ -1826,14 +1826,17 @@ function hypDocChosen(input){
   if (!input.files || !input.files.length) return;
   var f = input.files[0];
   var closed = (S.hypoLoan === 'closed');
-  var kind = closed ? 'noc' : 'lfc';
-  S.hypoDoc = false;
-  document.getElementById('hypDocBox').classList.remove('attached');
-  document.getElementById('hypDocMain').textContent = f.name;
-  document.getElementById('hypDocCta').classList.add('locked');
-  runDocOCR(f, kind, 'hypOcr',
-    function(){ S.hypoDoc = true; document.getElementById('hypDocBox').classList.add('attached'); document.getElementById('hypDocMain').textContent = '✓ ' + f.name; document.getElementById('hypDocCta').classList.remove('locked'); },
-    function(){ S.hypoDoc = false; document.getElementById('hypDocCta').classList.add('locked'); });
+  // NOC / LFC: no OCR — accept the upload and submit it for verification.
+  S.hypoDoc = true;
+  document.getElementById('hypDocBox').classList.add('attached');
+  document.getElementById('hypDocMain').textContent = '✓ ' + f.name;
+  var ocr = document.getElementById('hypOcr');
+  ocr.style.display = 'block';
+  ocr.className = 'ocr-box ok';
+  ocr.innerHTML = closed
+    ? '<div class="ocr-title">✓ NOC received</div><div class="ocr-row"><span>Document</span><span>NOC</span></div><div class="ocr-row"><span>Status</span><span>Submitted for verification</span></div>'
+    : '<div class="ocr-title">✓ LFC received</div><div class="ocr-row"><span>Loan no.</span><span>••••4421</span></div><div class="ocr-row"><span>Status</span><span>Submitted for verification</span></div>';
+  document.getElementById('hypDocCta').classList.remove('locked');
 }
 
 function hyp2Next(){
@@ -2133,7 +2136,11 @@ function closeHowTo(){ clearTimeout(howtoTimer); document.getElementById('howto-
 function howtoAction(){
   var key = howtoState.key, owner = howtoState.owner;
   closeHowTo();
-  if (key && S[key] === false) openSub(key, owner);   // jump straight into fixing it
+  if (key && S[key] === false){
+    // use the check's ACTION (e.g. echallan → 'challan'), not its key, so openSub routes correctly
+    var c = null; for (var i=0;i<CHECKS.length;i++){ if (CHECKS[i].key === key){ c = CHECKS[i]; break; } }
+    openSub((c && c.action) ? c.action : key, owner);
+  }
 }
 
 /* ════════════ READY ANIMATION ════════════ */
