@@ -724,9 +724,13 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .ls-trans{ font-size:11px; font-weight:800; color:#7FA0FF; text-transform:uppercase; letter-spacing:.04em; margin:18px 0 9px; padding-bottom:6px; border-bottom:1px solid #232A36; }
 .ls-trans:first-child{ margin-top:2px; }
 .ls-sub{ font-size:11.5px; color:#AEB6C4; line-height:1.35; padding:8px 10px; border-radius:9px; margin-bottom:6px; border:1px solid transparent; }
-.ls-sub.click{ cursor:pointer; background:#161B24; border-color:#232A36; }
-.ls-sub.click:hover{ background:#1B2230; border-color:#34406A; }
+.ls-sub.click{ cursor:pointer; background:#161B24; border-color:#2B3650; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.ls-sub.click:hover{ background:#1B2230; border-color:#4736FE; }
+.ls-sub.click:active{ transform:scale(.99); }
 .ls-sub.fired{ background:#10241C; border-color:#1E6F4E; color:#B7F5D2; }
+.ls-lbl{ flex:1; min-width:0; }
+.ls-go{ font-size:9px; font-weight:800; letter-spacing:.03em; color:#9FB3FF; background:rgba(127,160,255,.14); border:1px solid rgba(127,160,255,.32); padding:3px 8px; border-radius:100px; white-space:nowrap; flex-shrink:0; }
+.ls-sub.fired .ls-go{ color:#34D399; background:rgba(52,211,153,.14); border-color:rgba(52,211,153,.4); }
 .ls-sub b{ color:#7FA0FF; font-weight:800; }
 .ls-sub.fired b{ color:#34D399; }
 .ls-hint{ font-size:11px; color:#8A93A6; text-align:center; line-height:1.5; }
@@ -2754,7 +2758,8 @@ function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) re
     for(var j=0;j<LEAD_STEPS.length;j++){ if(LEAD_STEPS[j].m!==m) continue;
       var fired=!!leadFiredSteps[j], clickable=!!LEAD_STEPS[j].fire;
       var badge = LEAD_STEPS[j].badge ? ' <b>'+LEAD_STEPS[j].badge+'</b>' : '';
-      html+='<div class="ls-sub'+(clickable?' click':'')+(fired?' fired':'')+'"'+(clickable?(' onclick="leadClick('+j+')"'):'')+'>'+(fired?'✓ ':'')+crmEsc(LEAD_STEPS[j].label)+badge+'</div>'; }
+      var go = clickable ? '<span class="ls-go">'+(fired?'✓ sent':'tap to send →')+'</span>' : '';
+      html+='<div class="ls-sub'+(clickable?' click':'')+(fired?' fired':'')+'"'+(clickable?(' onclick="leadClick('+j+')"'):'')+'><span class="ls-lbl">'+(fired?'✓ ':'')+crmEsc(LEAD_STEPS[j].label)+badge+'</span>'+go+'</div>'; }
   }
   trk.innerHTML=html;
   var act=document.getElementById('leadAction'); if(act) act.innerHTML='<div class="ls-hint">Tap any sub-stage to fire its CRM (Push · WhatsApp · SMS) →</div>';
