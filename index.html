@@ -721,11 +721,15 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .ls-nm{ font-size:13px; font-weight:800; color:#CDD3DF; }
 .ls-stage.done .ls-num{ background:#34D399; color:#0E1117; } .ls-stage.done .ls-nm{ color:#9FB0C3; }
 .ls-stage.cur .ls-num{ background:#4736FE; color:#fff; box-shadow:0 0 0 4px rgba(71,54,254,.22); } .ls-stage.cur .ls-nm{ color:#fff; }
-.ls-subs{ margin:5px 0 2px 31px; display:flex; flex-direction:column; gap:4px; }
-.ls-sub{ font-size:11px; color:#6B7587; line-height:1.4; }
-.ls-sub.done{ color:#5FB98C; }
-.ls-sub.next{ color:#fff; background:#1B2230; border:1px solid #2E3850; border-radius:8px; padding:6px 8px; }
+.ls-trans{ font-size:11px; font-weight:800; color:#7FA0FF; text-transform:uppercase; letter-spacing:.04em; margin:18px 0 9px; padding-bottom:6px; border-bottom:1px solid #232A36; }
+.ls-trans:first-child{ margin-top:2px; }
+.ls-sub{ font-size:11.5px; color:#AEB6C4; line-height:1.35; padding:8px 10px; border-radius:9px; margin-bottom:6px; border:1px solid transparent; }
+.ls-sub.click{ cursor:pointer; background:#161B24; border-color:#232A36; }
+.ls-sub.click:hover{ background:#1B2230; border-color:#34406A; }
+.ls-sub.fired{ background:#10241C; border-color:#1E6F4E; color:#B7F5D2; }
 .ls-sub b{ color:#7FA0FF; font-weight:800; }
+.ls-sub.fired b{ color:#34D399; }
+.ls-hint{ font-size:11px; color:#8A93A6; text-align:center; line-height:1.5; }
 .lsp-act{ padding:12px 14px 16px; background:#0E1117; border-top:1px solid #232A36; }
 .ls-btn{ width:100%; background:#4736FE; color:#fff; border:none; border-radius:12px; padding:12px; font-size:12.5px; font-weight:800; cursor:pointer; font-family:var(--lego-font); }
 .ls-otp{ display:flex; flex-direction:column; gap:8px; }
@@ -741,7 +745,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 <div class="phone-wrap">
 <aside class="lsp" id="leadPanel">
-  <div class="lsp-head"><div class="lsp-title">📊 Lead Stage Journey</div><div class="lsp-sub">Advance the lead. Comms up to T19 fire from the app; T20–T22 fire only here (Stock-In → RCT).</div></div>
+  <div class="lsp-head"><div class="lsp-title">📊 Lead Stage Journey</div><div class="lsp-sub">Tap any sub-stage to fire its CRM (Push · WhatsApp · SMS). Stages mirror the CRM journey sheet.</div></div>
   <div class="lsp-track" id="leadTrack"></div>
   <div class="lsp-act" id="leadAction"></div>
 </aside>
@@ -952,12 +956,44 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <label class="ins-declare"><input type="checkbox" checked> I declare the vehicle has a Personal Accident (PA) cover of ₹15 lakh, and the details above are correct.</label>
       <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar"><button class="cta-btn" onclick="updateQuotes()">Update quotes →</button></div>
+    <div class="cta-bar"><button class="cta-btn" onclick="insShow('insA')">Continue →</button></div>
+  </div>
+
+  <!-- INS 1a — Additional details (car owner / email) -->
+  <div class="ins-step" id="insA">
+    <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+    <div class="page-header"><button class="back-btn" onclick="insStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Additional details</div><div class="header-sub">Car owner details</div></div></div>
+    <div class="scroll-area">
+      <div class="ins-form-title">Car owner details</div>
+      <div class="ins-field"><div class="ins-flabel">Owner name (as per RC)</div><input class="field-input" value="Arundhati Mahapatro" readonly style="background:#fff;"></div>
+      <div class="ins-field"><div class="ins-flabel">Email ID</div><input class="field-input" type="email" value="arundhati.mahapatro@cars24.com" style="background:#fff;"></div>
+      <div class="ins-field"><div class="ins-flabel">Mobile number</div><input class="field-input" value="+91 XXXXX 4521" readonly style="background:#fff;"></div>
+      <div class="ins-field"><div class="ins-flabel">Address (as per RC)</div><input class="field-input" value="Jaipur, Rajasthan — 302001" readonly style="background:#fff;"></div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="insShow('insB')">Continue →</button></div>
+  </div>
+
+  <!-- INS 1b — Personal details (gender / nominee / DOB) -->
+  <div class="ins-step" id="insB">
+    <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
+    <div class="page-header"><button class="back-btn" onclick="insShow('insA')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Personal details</div><div class="header-sub">Required for your policy</div></div></div>
+    <div class="scroll-area">
+      <div class="ins-form-title">Your details</div>
+      <div class="ins-field"><div class="ins-flabel">Gender</div><div class="seg-toggle"><button class="seg active" onclick="pickYN(this)">Female</button><button class="seg" onclick="pickYN(this)">Male</button><button class="seg" onclick="pickYN(this)">Other</button></div></div>
+      <div class="ins-field"><div class="ins-flabel">Date of birth</div><input class="field-input" value="01 Jan 1990" style="background:#fff;"></div>
+      <div class="ins-form-title">Nominee details</div>
+      <div class="ins-field"><div class="ins-flabel">Nominee name</div><input class="field-input" value="Ranjan Mahapatro" style="background:#fff;"></div>
+      <div class="ins-field"><div class="ins-flabel">Relationship with nominee</div><div class="seg-toggle"><button class="seg active" onclick="pickYN(this)">Parent</button><button class="seg" onclick="pickYN(this)">Spouse</button><button class="seg" onclick="pickYN(this)">Sibling</button><button class="seg" onclick="pickYN(this)">Child</button></div></div>
+      <div class="ins-field"><div class="ins-flabel">Nominee date of birth</div><input class="field-input" value="14 Aug 1962" style="background:#fff;"></div>
+      <div style="height:8px;"></div>
+    </div>
+    <div class="cta-bar"><button class="cta-btn" onclick="updateQuotes()">Continue →</button></div>
   </div>
 
   <!-- INS 2 — Plan listing -->
   <div class="ins-step" id="ins2">
-    <div class="page-header"><button class="back-btn" onclick="insStep(1)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">8 comprehensive plans</div><div class="header-sub">IDV ₹4,44,420 · prices exclusive of GST</div></div></div>
+    <div class="page-header"><button class="back-btn" onclick="insShow('insB')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">8 comprehensive plans</div><div class="header-sub">IDV ₹4,44,420 · prices exclusive of GST</div></div></div>
     <div class="ins-addons">Add-ons: <b>PA Cover</b> · <b>Zero Dep</b> · <b>More Covers</b></div>
     <div class="scroll-area">
       <div class="insurer-card reco" onclick="selectInsurer('HDFC ERGO','₹4,384')"><div class="reco-tag">Recommended</div><div class="insurer-top"><div class="insurer-logo" style="color:#E4002B;">HDFC ERGO</div><div class="insurer-buy"><span class="ib-amt">₹4,384</span><span class="ib-sub">incl. GST</span></div></div><div class="insurer-meta">IDV ₹4,44,420 · Own damage + third party · Zero Dep available</div><button class="buy-btn">Buy Now</button></div>
@@ -2106,9 +2142,9 @@ function resetInsurance(){
   var cta = document.getElementById('insKycCta'); if (cta) cta.textContent = 'Get OTP →';
 }
 
-function insStep(n){
-  for (var i=1;i<=6;i++) document.getElementById('ins'+i).classList.toggle('active', i===n);
-}
+function insClearAll(){ var els=document.querySelectorAll('#s-insurance .ins-step'); for(var i=0;i<els.length;i++) els[i].classList.remove('active'); }
+function insStep(n){ insClearAll(); var el=document.getElementById('ins'+n); if(el) el.classList.add('active'); }
+function insShow(id){ insClearAll(); var el=document.getElementById(id); if(el) el.classList.add('active'); }
 
 // Step 1 form controls
 function setPolicyType(t){
@@ -2691,24 +2727,37 @@ function leadFire(code){ var multi=leadPend()>=2;
     case 'T22': crmFireNow('T22'); break;
   }
 }
-function advanceLead(){ var n=leadIdx+1; if(n>=LEAD_STEPS.length) return; leadIdx=n; if(LEAD_STEPS[n].fire) leadFire(LEAD_STEPS[n].fire); renderLead(); }
-function leadReset(){ leadIdx=-1; renderLead(); }
+// transition headers (the "in-between" segments) + click-to-fire
+var LEAD_TRANS = ['Inspection Done → Token Done','Token Done → Stock in Done','Stock in Done → Stock out Done','Stock out Done'];
+var leadFiredSteps = {};
+function crmConsolidatedForce(keys){ var list=keys.map(function(k){return CRM_PNAMES[k];}).join(', '); var ts=crmStamp();
+  showPush('Cars24','⚠ '+keys.length+' checklist items pending — complete them to unlock your best price & Instant Ownership Transfer.');
+  waAppend('Hi '+CRM_NAME+' 👋 Complete your ownership transfer checklist to unlock your best offer.\n\nPending on your checklist: '+list+'\n\nThe more you complete, the better your offer! 💰 [Complete My Checklist →]', ts);
+  smsAppend('Cars24: Complete your ownership transfer checklist ('+list+') to unlock your best price: cars24.com/do', ts); }
+// Click a sub-stage → fire THAT sub-stage's CRM into the Push / WhatsApp / SMS screens.
+function leadClick(j){ var st=LEAD_STEPS[j]; if(!st) return;
+  var code=st.fire; if(code){
+    var multi=leadPend()>=2;
+    if(code==='INSPECT'){ crmFireNow('T1'); if(S.mobile===false)crmFireNow('T9'); if(S.pucc===false)crmFireNow('T12'); if(S.insurance===false)crmFireNow('T13'); if(S.hypo===false)crmFireNow('T15'); }
+    else if(code==='VAHAN'){ crmFireNow('T5'); }
+    else if(code==='CH4HR'){ crmFireNow(multi?'T5':'T6'); }
+    else if(code==='NOTOPEN'){ var k=leadPendKeys(); if(!k.length)k=['echallan','insurance','pucc']; crmConsolidatedForce(k); }
+    else { crmFireNow(st.badge); }   // badge is the trigger id (T3, T8, T10, …)
+  }
+  leadFiredSteps[j]=true; renderLead();
+}
+function leadReset(){ leadFiredSteps={}; renderLead(); }
 function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) return;
-  var curMain = leadIdx>=0 ? LEAD_STEPS[leadIdx].m : 0;
   var html='';
-  for(var i=0;i<LEAD_MAIN.length;i++){
-    var cls = i<curMain?'done':(i===curMain?'cur':'todo');
-    html+='<div class="ls-stage '+cls+'"><span class="ls-num">'+(i<curMain?'✓':(i+1))+'</span><span class="ls-nm">'+LEAD_MAIN[i]+'</span></div><div class="ls-subs">';
-    for(var j=0;j<LEAD_STEPS.length;j++){ if(LEAD_STEPS[j].m!==i) continue;
-      var done=j<=leadIdx, isNext=(j===leadIdx+1);
+  for(var m=0;m<LEAD_TRANS.length;m++){
+    html+='<div class="ls-trans">'+crmEsc(LEAD_TRANS[m])+'</div>';
+    for(var j=0;j<LEAD_STEPS.length;j++){ if(LEAD_STEPS[j].m!==m) continue;
+      var fired=!!leadFiredSteps[j], clickable=!!LEAD_STEPS[j].fire;
       var badge = LEAD_STEPS[j].badge ? ' <b>'+LEAD_STEPS[j].badge+'</b>' : '';
-      html+='<div class="ls-sub'+(done?' done':'')+(isNext?' next':'')+'">'+(done?'● ':'○ ')+crmEsc(LEAD_STEPS[j].label)+badge+'</div>'; }
-    html+='</div>'; }
+      html+='<div class="ls-sub'+(clickable?' click':'')+(fired?' fired':'')+'"'+(clickable?(' onclick="leadClick('+j+')"'):'')+'>'+(fired?'✓ ':'')+crmEsc(LEAD_STEPS[j].label)+badge+'</div>'; }
+  }
   trk.innerHTML=html;
-  var act=document.getElementById('leadAction'); if(!act) return;
-  var n=leadIdx+1;
-  if(n>=LEAD_STEPS.length){ act.innerHTML='<div class="ls-done">✅ Journey complete — Stock-Out done, RC transferred.</div>'; }
-  else { act.innerHTML='<button class="ls-btn" onclick="advanceLead()">Advance: '+crmEsc(LEAD_STEPS[n].label)+' →</button>'; }
+  var act=document.getElementById('leadAction'); if(act) act.innerHTML='<div class="ls-hint">Tap any sub-stage to fire its CRM (Push · WhatsApp · SMS) →</div>';
 }
 
 // Hook the CRM engine into the prototype's existing actions (wrap the globals).
