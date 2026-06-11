@@ -1611,7 +1611,7 @@ function setLockCopy(){
   var title, body;
   if (S.flow === 'pending' || S.flow === 'insmob'){   // combos → combined "N steps away"
     var n = Math.max(1, TOTAL - doneCount());
-    title = '⚠️ ' + n + ' checks pending for your Instant Ownership Transfer';
+    title = '⚠️ ' + n + ' Instant Ownership Transfer checks pending on your car';
     body  = 'You’re just ' + n + ' step' + (n===1?'':'s') + ' away — tap to view and clear them.';
   } else {
     var key = (S.flow === 'happy') ? 'happy' : S.failing;
