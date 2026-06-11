@@ -1591,7 +1591,7 @@ function chooseSingle(check){
 function closeHypoPick(){ var p=document.getElementById('hypoPick'); if(p) p.classList.remove('show'); }
 
 var LOCK_COPY = {
-  happy:    ['🎉 You’re all set for Instant Ownership Transfer', 'All checks are verified. Tap to view your live auction and price.'],
+  happy:    ['✅ Inspection complete', 'You’re one step away from verifying your Instant Ownership Transfer. Tap to view your price.'],
   pending:  ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
   echallan: ['⚠️ ₹1,000 e-challan pending', 'Clear your ₹1,000 e-challan to avoid holdbacks on your deal. Tap now and proceed.'],
   hypo:     ['⚠️ Active hypothecation on your RC', 'A loan / lien is registered on your RC. Resolve it to proceed with the transfer.'],
@@ -2771,7 +2771,7 @@ function refreshChecklists(){
 function vahanResolve(clean){
   S.echallan = clean ? true : false;
   refreshChecklists();
-  if(clean){ crmFireNow('VCLEAN'); }
+  if(clean){ /* Vahan QC clean → no seller comm */ }
   else { var k=leadPendKeys(); if(k.length>=2){ crmMulti=true; crmConsolidatedForce(k); } else { crmMulti=false; crmFireNow('T5'); } }
 }
 function leadReset(){ leadFiredSteps={}; renderLead(); }
