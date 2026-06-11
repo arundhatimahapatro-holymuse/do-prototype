@@ -1569,7 +1569,8 @@ function setAllChecks(pass){
 function chooseFlow(kind){
   S.flow = kind; S.failing = null;
   if (kind === 'happy'){ setAllChecks(true); }
-  else { setAllChecks(true); S.echallan = false; S.insurance = false; } // legacy "2 pending"
+  else { setAllChecks(true); S.insurance = false; }   // combo: insurance fails; e-challan decided by Vahan QC
+  S.echallan = 'vahanqc';   // Vahan QC not completed yet — resolved via the Lead Stage panel
   happyDismissed = false;
   setLockCopy();
   go('lock');
@@ -1580,6 +1581,7 @@ function chooseSingle(check){
   S.flow = 'single'; S.failing = check;
   setAllChecks(true);
   S[check] = false;
+  S.echallan = 'vahanqc';   // Vahan QC not completed yet — resolved via the Lead Stage panel
   happyDismissed = false;
   setLockCopy();
   go('lock');
@@ -1695,6 +1697,7 @@ function renderChecklist(containerId, owner){
   function rank(c){
     if (c.info) return 3;
     if (S[c.key] === 'verifying') return 1;
+    if (c.key==='echallan' && S.echallan==='vahanqc') return 1;
     return isPass(c) ? 2 : 0;
   }
   var ordered = CHECKS.slice().sort(function(a,b){ return rank(a) - rank(b); });
@@ -1710,11 +1713,11 @@ function renderChecklist(containerId, owner){
         '</div>';
       continue;
     }
-    if (c.key==='echallan' && S.flow==='happy'){
+    if (c.key==='echallan' && S.echallan==='vahanqc'){
       items += '<div class="do-item">'+
         '<div class="do-ic verify">⏳</div>'+
-        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">Under verification · clearing with Vahan</div></div>'+
-        '<span class="do-verify-badge">Verifying</span></div>';
+        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">Vahan QC in progress · checking for challans</div></div>'+
+        '<span class="do-verify-badge">Checking</span></div>';
       continue;
     }
     if (S[c.key] === 'verifying'){
@@ -2517,10 +2520,18 @@ var CRM_TRIGGERS = {
     push:'Mobile no. update still pending ⏰ This may delay your Instant Ownership Transfer. Click here to resolve.',
     wa:'Hi [Name] 📱 Your mobile number is still not linked to your car on Vahan. This may delay your Instant Ownership Transfer. [Get Help Now →]',
     sms:'Cars24: Mobile still unlinked. Click to resolve: [URL]'},
-  T11:{label:'T11', title:'Pickup driver on the way',
+  T11A:{label:'T11a', title:'Ops executive call · mobile linking',
+    push:'📞 Our executive is calling you now — please pick up! We’re calling to help link your mobile number to Vahan (Aadhaar-OTP). A quick 5-minute fix.',
+    wa:'Hi [Name] 📞 Your mobile number isn’t linked to Vahan, so our executive is calling to help you link it (Aadhaar-OTP based). Please pick up — it’s a 5-minute fix.',
+    sms:'Cars24: Our executive is calling to help link your mobile to VAHAN. Please pick up.'},
+  T11B:{label:'T11b', title:'Pickup driver on the way',
     push:'🚗 Our pickup driver is on the way! Please keep your car and documents ready.',
     wa:'Hi [Name] 🚗 Our driver is on the way to pick up your car. Please keep the keys, RC and any pending documents (NOC / PUCC) ready for handover.',
     sms:'Cars24: Our pickup driver is on the way. Keep your car and documents ready.'},
+  VCLEAN:{label:'—', title:'Vahan QC clean · no challans',
+    push:'✅ Vahan QC clean — no pending challans found on your car.',
+    wa:'Hi [Name] ✅ Good news — your Vahan QC is clean. No pending challans on your car; your E-Challan check is cleared.',
+    sms:'Cars24: Vahan QC clean — no pending challans. E-Challan check cleared.'},
   T3:{label:'T3', title:'Initial offer unlocked · price received',
     push:'Offer received: ₹8,08,000 for your car! Complete the checklist to improve your sale price.',
     wa:'Hi [Name]! 🎉 Great progress — you have an offer! 💰 ₹8,08,000. Complete the remaining items on your ownership transfer checklist to improve your sale price potential. You’re so close! 🚀',
@@ -2531,7 +2542,7 @@ var CRM_TRIGGERS = {
     sms:'Cars24: Updated offer Rs.8,32,000 (up from Rs.8,08,000): [URL]'},
   T17:{label:'T17', title:'RA WhatsApp · deeplinks to pending tasks',
     push:'',
-    wa:'Hi [Name]! This is your Cars24 advisor 🙏 Complete your pending step(s) to unlock your best price — direct links: 📋 Upload PUCC → [Deeplink]  🔒 Link Mobile on VAHAN → [Deeplink]  📄 Upload Bank NOC → [Deeplink]. Reply here or call me if you need help.',
+    wa:'Hi [Name]! This is your Cars24 advisor 🙏 Complete your pending step(s) to unlock your best price — here’s your single link to finish them all: cars24.com/do. Reply here or call me if you need help.',
     sms:''},
   T21:{label:'T21', title:'OTP call · missed / not connected',
     push:'Missed our ownership transfer call 📞 This is the final step — schedule a callback at your convenience.',
@@ -2546,7 +2557,7 @@ var CRM_TRIGGERS = {
     wa:'Hi [Name] 👋 Complete your ownership transfer checklist to unlock your best offer. You’re one step away from getting your price! Pending on your checklist: E-Challan, Insurance, PUCC…',
     sms:'Cars24: Complete your ownership transfer checklist to unlock your best price offer: [URL]'},
   T5:{label:'T5', title:'E-Challan · pending challans found (before token)',
-    push:'⚠ [N] pending challan(s) on your car. ₹[Amount] in challans is stopping your Instant Ownership Transfer! Click here to resolve.',
+    push:'⚠ 1 challan pending · ₹[Amount] is stopping your Instant Ownership Transfer. Click here to resolve.',
     wa:'Hi [Name]! ⚠ We found pending traffic challan(s) on your car totalling ₹[Amount]. If you don’t clear them, you won’t be eligible for Instant Ownership Transfer. We’ll verify clearance with VAHAN within 24 hrs. [Pay ₹[Amount] Now →]',
     sms:'Cars24: challan(s) of Rs.[Amount] is stopping your Instant Ownership Transfer!'},
   T7:{label:'T7', title:'E-Challan · pending challans found (after token, before SI)',
@@ -2680,30 +2691,22 @@ function crmFireNow(id){ var t=CRM_TRIGGERS[id]; if(!t) return;
 var LEAD_MAIN = ['Inspection Done','Token Done','Stock in Done','Stock out Done'];
 var LEAD_STEPS = [
   {m:0,label:'Inspection complete',fire:'INSPECT',badge:'T1'},
-  {m:0,label:'Vahan QC complete',fire:'VAHAN',badge:'T5'},
+  {m:0,label:'Vahan QC complete · clean case',fire:'VAHANCLEAN',badge:'T5'},
+  {m:0,label:'Vahan QC complete · not clean case',fire:'VAHANNOTCLEAN',badge:'T5'},
   {m:0,label:'4 hours since Vahan complete',fire:'CH4HR',badge:'T6'},
   {m:0,label:'Price discovery page not opened',fire:'NOTOPEN',badge:'T2'},
   {m:0,label:'Price received',fire:'T3',badge:'T3'},
-  {m:0,label:'Challan payment done',fire:'T8',badge:'T8'},
   {m:0,label:'24h since mobile-link reminder',fire:'MOB24',badge:'T10'},
   {m:0,label:'24h since PUC reminder',fire:'PUC24',badge:'T12'},
   {m:0,label:'24h since insurance reminder',fire:'INS24',badge:'T13'},
-  {m:0,label:'Insurance renewed',fire:'T14',badge:'T14'},
-  {m:0,label:'NOC / LFC uploaded',fire:'T16',badge:'T16'},
   {m:0,label:'RA triggers WhatsApp deeplinks',fire:'T17',badge:'T17'},
-  {m:0,label:'DO items complete',fire:'T19',badge:'T19'},
   {m:1,label:'Challan still pending',fire:'T7',badge:'T7'},
   {m:1,label:'Challan payment done',fire:'T8',badge:'T8'},
-  {m:1,label:'24h since mobile-link reminder',fire:'MOB24',badge:'T10'},
-  {m:1,label:'Driver on his way',fire:'T11',badge:'T11'},
-  {m:1,label:'24h since PUC reminder',fire:'PUC24',badge:'T12'},
-  {m:1,label:'24h since insurance reminder',fire:'INS24',badge:'T13'},
-  {m:1,label:'Insurance renewed',fire:'T14',badge:'T14'},
+  {m:1,label:'Ops executive call · mobile linking',fire:'T11A',badge:'T11a'},
+  {m:1,label:'Driver on his way · pickup',fire:'T11B',badge:'T11b'},
   {m:1,label:'RA triggers WhatsApp deeplinks',fire:'T17',badge:'T17'},
   {m:1,label:'No RC Transfer scare',fire:'T18',badge:'T18'},
   {m:1,label:'DO items complete',fire:'T19',badge:'T19'},
-  {m:1,label:'Ops calls CX for DO completion',fire:'T20',badge:'T20'},
-  {m:1,label:'Ops missed call / RNR',fire:'T21',badge:'T21'},
   {m:2,label:'Ops calls CX for DO completion',fire:'T20',badge:'T20'},
   {m:2,label:'Ops missed call / RNR',fire:'T21',badge:'T21'},
   {m:2,label:'Ops DO completion · Form 29C generated',fire:'T22',badge:'T22'},
@@ -2749,12 +2752,27 @@ function leadClick(j){ var st=LEAD_STEPS[j]; if(!st) return;
   var code=st.fire; if(code){
     var multi=leadPend()>=2;
     if(code==='INSPECT'){ if(S.flow!=='happy') crmFireNow('T1'); if(S.mobile===false)crmFireNow('T9'); if(S.pucc===false)crmFireNow('T12'); if(S.insurance===false)crmFireNow('T13'); if(S.hypo===false)crmFireNow('T15'); }
-    else if(code==='VAHAN'){ crmFireNow('T5'); }
-    else if(code==='CH4HR'){ crmFireNow(multi?'T5':'T6'); }
+    else if(code==='VAHANCLEAN'){ vahanResolve(true); }
+    else if(code==='VAHANNOTCLEAN'){ vahanResolve(false); }
+    else if(code==='CH4HR'){ if(S.echallan===false) crmFireNow(multi?'T5':'T6'); }
     else if(code==='NOTOPEN'){ var k=leadPendKeys(); if(!k.length)k=['echallan','insurance','pucc']; crmConsolidatedForce(k); }
-    else { crmFireNow(st.badge); }   // badge is the trigger id (T3, T8, T10, …)
+    else if(code==='MOB24'){ crmFireNow('T10'); }
+    else if(code==='PUC24'){ crmFireNow('T12'); }
+    else if(code==='INS24'){ crmFireNow('T13'); }
+    else { crmFireNow(code); }   // T3,T7,T8,T11A,T11B,T17,T18,T19,T20,T21,T22
   }
   leadFiredSteps[j]=true; renderLead();
+}
+function refreshChecklists(){
+  ['price','deal','handover'].forEach(function(o){ var el=document.getElementById('doChecklist-'+o); if(el) renderChecklist('doChecklist-'+o, o); });
+  if(typeof syncBanner==='function') syncBanner();
+}
+// Vahan QC resolution from the Lead Stage panel: clean → e-challan cleared; not clean → e-challan pending (combined).
+function vahanResolve(clean){
+  S.echallan = clean ? true : false;
+  refreshChecklists();
+  if(clean){ crmFireNow('VCLEAN'); }
+  else { var k=leadPendKeys(); if(k.length>=2){ crmMulti=true; crmConsolidatedForce(k); } else { crmMulti=false; crmFireNow('T5'); } }
 }
 function leadReset(){ leadFiredSteps={}; renderLead(); }
 function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) return;
