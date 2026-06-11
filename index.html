@@ -426,6 +426,9 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 
 /* ── Email preview creative ── */
 .email-preview{ margin:16px 16px 0; border:1px solid #E3E1FF; border-radius:14px; overflow:hidden; background:#fff; box-shadow:0 6px 20px rgba(71,54,254,.06); }
+.req-ast{ color:#C2410C; font-weight:800; }
+.ep-prev-btn{ margin-top:10px; background:#F4F3FF; color:var(--do-primary); border:1px solid #E3E1FF; border-radius:10px; padding:9px 14px; font-size:13px; font-weight:800; cursor:pointer; font-family:var(--lego-font); }
+.ep-prev-btn:hover{ border-color:var(--do-primary); }
 .ep-head{ background:#F4F3FF; padding:9px 13px; font-size:11.5px; font-weight:800; color:#4736FE; border-bottom:1px solid #E3E1FF; }
 .ep-meta{ padding:10px 13px 4px; }
 .ep-row{ display:flex; gap:8px; font-size:11.5px; margin-bottom:5px; align-items:flex-start; }
@@ -1144,11 +1147,14 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="scroll-area">
       <div class="upload-intro">Enter your email ID — preferably the one <b>registered with your car financer (HDFC Bank)</b>. We’ll add you in CC on the email we send to your bank.</div>
       <div style="padding:14px 16px 0;">
-        <div class="field-label">Email ID</div>
+        <div class="field-label">Please enter your email ID <span class="req-ast">*</span></div>
         <input class="field-input" id="hypEmail" type="email" inputmode="email" placeholder="you@example.com" oninput="hypEmailInput()" style="background:#fff;">
+        <button class="ep-prev-btn" id="hypPreviewBtn" onclick="hypShowPreview()">👁 Preview email →</button>
       </div>
 
-      <div class="email-preview">
+      <div class="hpt-note">ℹ️ <b>HPT — Hypothecation Termination:</b> we’ll send this email to your bank &amp; the RTO to remove the lien, and keep you in Cc / the loop — initiated <b>only after your car handover is completed</b>.</div>
+
+      <div class="email-preview" id="hypEmailPreview" style="display:none;">
         <div class="ep-head">📧 Preview — the email Cars24 will send on your behalf</div>
         <div class="ep-meta">
           <div class="ep-row"><span class="ep-k">From</span><span class="ep-v">care@cars24.com</span></div>
@@ -1158,8 +1164,6 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="ep-subj">Subject: HPT removal request — Hyundai Creta, RJ 45 CP 6052 (Loan A/C ••••4421)</div>
         <div class="ep-body">Hi Team,<br><br>Reaching out on behalf of our customer <b id="epName">the registered owner</b>. We’d like to initiate the <b>HPT (Hypothecation Termination)</b> removal process with the RTO so the lien on the RC is released and ownership can transfer smoothly.<br><br>The customer’s PAN and NOC / LFC are attached. Kindly confirm the no-dues so we can file the HPT with the RTO (in Cc) after the vehicle handover.<br><br>Warm regards,<br>Team Cars24</div>
       </div>
-
-      <div class="hpt-note">ℹ️ <b>HPT — Hypothecation Termination:</b> we’ll send this email to your bank &amp; the RTO to remove the lien, and keep you in Cc / the loop — initiated <b>only after your car handover is completed</b>.</div>
       <div style="height:8px;"></div>
     </div>
     <div class="cta-bar"><button class="cta-btn locked" id="hypEmailCta" onclick="hyp3Next()">Continue →</button></div>
@@ -1958,6 +1962,9 @@ function resetHypo(){
   document.getElementById('hypCardMain').textContent = 'Tap to upload PAN card';
   var fi = document.getElementById('hypPanFile'); if (fi) fi.value = '';
   var po = document.getElementById('hypPanOcr'); if (po) po.style.display = 'none';
+  var pv = document.getElementById('hypEmailPreview'); if (pv) pv.style.display = 'none';
+  var pb = document.getElementById('hypPreviewBtn'); if (pb) pb.textContent = '👁 Preview email →';
+  var em = document.getElementById('hypEmail'); if (em) em.value = '';
   updateHyp1Cta();
 }
 
@@ -2044,6 +2051,13 @@ function hyp2Next(){
   hypStep(3);
 }
 
+function hypShowPreview(){
+  var el=document.getElementById('hypEmail'); var ok=/.+@.+\..+/.test((el.value||'').trim());
+  if(!ok){ el.focus(); return; }
+  hypEmailInput();
+  var pv=document.getElementById('hypEmailPreview'); if(pv){ pv.style.display=''; pv.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  var b=document.getElementById('hypPreviewBtn'); if(b) b.textContent='👁 Preview updated';
+}
 function hypEmailInput(){
   S.hypoEmail = document.getElementById('hypEmail').value.trim();
   var ok = /.+@.+\..+/.test(S.hypoEmail);
