@@ -1583,7 +1583,7 @@ function chooseSingle(check){
   S.flow = 'single'; S.failing = check;
   setAllChecks(true);
   S[check] = false;
-  S.echallan = 'vahanqc';   // Vahan QC not completed yet — resolved via the Lead Stage panel
+  if (check !== 'echallan') S.echallan = 'vahanqc';   // E-Challan flow → challan pending from the start; others wait for Vahan QC
   happyDismissed = false;
   setLockCopy();
   go('lock');
