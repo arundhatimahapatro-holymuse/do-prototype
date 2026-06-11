@@ -1320,8 +1320,6 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="ho-step"><div class="ho-num">3</div><div class="ho-txt">Submit — Vahan updates the mobile number on your RC.</div></div>
       </div>
       <div class="hpt-note">🔗 Tapping below opens the official <b>Vahan</b> website in a new tab. Complete the steps there, then return here.</div>
-      <a class="cta-btn" href="https://vahan.parivahan.gov.in/mobileupdate/vahan/ut/statevalidation/editMobileNumber.xhtml" target="_blank" rel="noopener" style="margin:14px 16px 0;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;text-decoration:none;">Yes, link my Aadhaar to Vahan ↗</a>
-
       <div class="rc-fill">
         <div class="rc-fill-title">Enter these RC details on Vahan</div>
         <div class="rc-fill-sub">You’ll need these on the Vahan “Update Mobile Number” page. Copy the chassis &amp; engine numbers; the others follow the note below each.</div>
@@ -1330,11 +1328,11 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Engine Number (full)</div><div class="rc-v">REVTRN08HXXKA0072</div></div><button class="rc-copy" onclick="copyVal('REVTRN08HXXKA0072',this)">Copy</button></div></div>
         <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Registration Date</div><div class="rc-v">18-11-2022</div></div></div><div class="rc-note">📅 Pick this from the <b>calendar widget</b> on Vahan.</div></div>
         <div class="rc-row"><div class="rc-top"><div><div class="rc-k">Fitness / Registration Valid Up To</div><div class="rc-v">17-11-2037</div></div></div><div class="rc-note">📅 Pick this from the <b>calendar widget</b> on Vahan.</div></div>
-        <div class="hpt-note">✅ Once done, tap <b>“I’ve completed it on Vahan”</b> below — post-completion, we’ll check the Vahan website to confirm the update.</div>
+        <div class="hpt-note">✅ Tapping the button below opens <b>Vahan</b> in a new tab. Once you’ve completed it there, we’ll check the Vahan website to confirm the update.</div>
       </div>
       <div style="height:8px;"></div>
     </div>
-    <div class="cta-bar"><button class="cta-btn" onclick="mobAadhaarLinked()">I’ve completed it on Vahan →</button></div>
+    <div class="cta-bar"><a class="cta-btn" href="https://vahan.parivahan.gov.in/mobileupdate/vahan/ut/statevalidation/editMobileNumber.xhtml" target="_blank" rel="noopener" onclick="mobAadhaarLinked()" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Yes, link my Aadhaar to Vahan ↗</a></div>
   </div>
 
   <!-- mob6 — Aadhaar linked success (number updated) -->
@@ -1461,7 +1459,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="celebration-title">You're all set for<br>Instant Ownership Transfer!</div>
     <div class="celebration-sub">All your ownership transfer checks are clear.<br>Your RC transfer can proceed smoothly.</div>
     <div class="cel-promise"><span class="cp-ic">⏱️</span><span class="cp-txt">Your Instant Ownership Transfer will now be completed <b>within 48 hours of car handover</b>.</span></div>
-    <div class="checks-summary"><div class="summary-row"><span class="summary-label">E-Challans</span><span class="summary-value">✅ Cleared</span></div><div class="summary-row"><span class="summary-label">Hypothecation</span><span class="summary-value">✅ None</span></div><div class="summary-row"><span class="summary-label">Insurance</span><span class="summary-value">✅ Valid</span></div><div class="summary-row"><span class="summary-label">PUCC</span><span class="summary-value">✅ Valid · Sep 2026</span></div><div class="summary-row"><span class="summary-label">Mobile linked</span><span class="summary-value">✅ +91 XXXXXX4521</span></div><div class="summary-row"><span class="summary-label">HSRP</span><span class="summary-value">🚗 Cars24 will fit it</span></div></div>
+    <div class="checks-summary"><div class="summary-row"><span class="summary-label">E-Challans</span><span class="summary-value" style="color:#8A5A00;">⏳ Under verification</span></div><div class="summary-row"><span class="summary-label">Hypothecation</span><span class="summary-value">✅ None</span></div><div class="summary-row"><span class="summary-label">Insurance</span><span class="summary-value">✅ Valid</span></div><div class="summary-row"><span class="summary-label">PUCC</span><span class="summary-value">✅ Valid · Sep 2026</span></div><div class="summary-row"><span class="summary-label">Mobile linked</span><span class="summary-value">✅ +91 XXXXXX4521</span></div><div class="summary-row"><span class="summary-label">HSRP</span><span class="summary-value">🚗 Cars24 will fit it</span></div></div>
     <button class="proceed-btn" onclick="restart()">Done · Restart demo ↺</button>
   </div>
 </div>
@@ -1710,6 +1708,13 @@ function renderChecklist(containerId, owner){
         '<div class="do-ic c24">'+C24+'</div>'+
         '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+c.note+'</div></div>'+
         '</div>';
+      continue;
+    }
+    if (c.key==='echallan' && S.flow==='happy'){
+      items += '<div class="do-item">'+
+        '<div class="do-ic verify">⏳</div>'+
+        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">Under verification · clearing with Vahan</div></div>'+
+        '<span class="do-verify-badge">Verifying</span></div>';
       continue;
     }
     if (S[c.key] === 'verifying'){
@@ -2605,7 +2610,7 @@ var CRM_TRIGGERS = {
     wa:'Great news, [Name]! Your Ownership Transfer is complete! ✅ Form 29C generated and submitted to the RTO ✅ Cars24 is now the deemed owner ✅ From today, you are no longer liable for your car. Thank you for selling with Cars24! [View Form 29C →]',
     sms:'Cars24: Form 29C submitted. Transfer completed — you’re legally clear. Thank you!'}
 };
-var crmFired = {}, crmOfferIdx = 0, crmClock = [9,41];
+var crmFired = {}, crmOfferIdx = 0, crmClock = [9,41], crmMulti = false;
 var CRM_OFFERS = ['8,08,000','8,16,000','8,24,000','8,32,000'];
 function crmStamp(){ var m=crmClock[1]+1, h=crmClock[0]; if(m>59){m=0;h++;} crmClock=[h,m]; return ('0'+h).slice(-2)+':'+('0'+m).slice(-2); }
 function crmEsc(s){ return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2635,13 +2640,14 @@ function crmOffer(){ if(doneCount()>=TOTAL) return; var amt=CRM_OFFERS[Math.min(
   smsAppend('Cars24: Updated offer Rs.'+amt+'. Complete '+pend+' more item(s): cars24.com/do', ts); }
 var CRM_PNAMES = { echallan:'E-Challan', insurance:'Insurance', pucc:'PUCC', mobile:'Mobile number', hypo:'Hypothecation' };
 function crmOnPrice(){
-  crmFire('T1');   // gateway: inspection done
+  if(S.flow!=='happy') crmFire('T1');   // gateway: inspection done (skip in happy — nothing to complete)
   var keys = [];
   if(S.echallan===false) keys.push('echallan');
   if(S.insurance===false) keys.push('insurance');
   if(S.pucc===false)     keys.push('pucc');
   if(S.mobile===false)   keys.push('mobile');
   if(S.hypo===false)     keys.push('hypo');
+  crmMulti = (keys.length >= 2);
   if(keys.length >= 2){
     // 2+ pending → ONE consolidated reminder (T2) listing all pending items
     setTimeout(function(){ crmConsolidated(keys); }, 800);
@@ -2661,7 +2667,7 @@ function crmConsolidated(keys){
 }
 function crmReadySeq(){ crmFire('T19'); }   // all-clear = Instant DO eligible ONLY (T20–T22 fire from the Lead Stage panel)
 function crmDeal(){ if(doneCount()<TOTAL) crmFire('T18'); }
-function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41];
+function crmReset(){ crmFired={}; crmOfferIdx=0; crmClock=[9,41]; crmMulti=false;
   var w=document.getElementById('waBody'); if(w) w.innerHTML='<div class="wa-enc">🔒 Messages and calls are end-to-end encrypted. Tap to learn more.</div><div class="wa-day">TODAY</div>';
   var s=document.getElementById('smsBody'); if(s) s.innerHTML='<div class="sms-ts"><b>Today</b> 9:41 AM</div><div class="sms-sender">Text Message · SMS</div>';
   var st=document.getElementById('pushStack'); if(st) st.innerHTML=''; }
@@ -2708,7 +2714,7 @@ function leadPend(){ var k=['echallan','insurance','hypo','pucc','mobile'],n=0; 
 function leadPendKeys(){ var o=[]; if(S.echallan===false)o.push('echallan'); if(S.insurance===false)o.push('insurance'); if(S.pucc===false)o.push('pucc'); if(S.mobile===false)o.push('mobile'); if(S.hypo===false)o.push('hypo'); return o; }
 function leadFire(code){ var multi=leadPend()>=2;
   switch(code){
-    case 'INSPECT': crmFire('T1');
+    case 'INSPECT': if(S.flow!=='happy') crmFire('T1');
       if(!multi){ if(S.mobile===false)crmFire('T9'); if(S.pucc===false)crmFire('T12'); if(S.insurance===false)crmFire('T13'); if(S.hypo===false)crmFire('T15'); }
       break;
     case 'VAHAN': if(S.echallan===false) crmFire('T5'); break;
@@ -2742,7 +2748,7 @@ function crmConsolidatedForce(keys){ var list=keys.map(function(k){return CRM_PN
 function leadClick(j){ var st=LEAD_STEPS[j]; if(!st) return;
   var code=st.fire; if(code){
     var multi=leadPend()>=2;
-    if(code==='INSPECT'){ crmFireNow('T1'); if(S.mobile===false)crmFireNow('T9'); if(S.pucc===false)crmFireNow('T12'); if(S.insurance===false)crmFireNow('T13'); if(S.hypo===false)crmFireNow('T15'); }
+    if(code==='INSPECT'){ if(S.flow!=='happy') crmFireNow('T1'); if(S.mobile===false)crmFireNow('T9'); if(S.pucc===false)crmFireNow('T12'); if(S.insurance===false)crmFireNow('T13'); if(S.hypo===false)crmFireNow('T15'); }
     else if(code==='VAHAN'){ crmFireNow('T5'); }
     else if(code==='CH4HR'){ crmFireNow(multi?'T5':'T6'); }
     else if(code==='NOTOPEN'){ var k=leadPendKeys(); if(!k.length)k=['echallan','insurance','pucc']; crmConsolidatedForce(k); }
@@ -2765,17 +2771,24 @@ function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) re
   var act=document.getElementById('leadAction'); if(act) act.innerHTML='<div class="ls-hint">Tap any sub-stage to fire its CRM (Push · WhatsApp · SMS) →</div>';
 }
 
+// After a check is resolved: in consolidated (2+) mode, fire the decremented consolidated
+// reminder (N-1 pending) and DO NOT trigger the individual comm; single mode → individual + offer.
+function crmAfterResolve(individualId){
+  if(crmMulti){ var k=leadPendKeys(); if(k.length>=1) crmConsolidatedForce(k); }
+  else { if(individualId) crmFireNow(individualId); crmOffer(); }
+}
+
 // Hook the CRM engine into the prototype's existing actions (wrap the globals).
 (function(){
   function wrap(name, after){ var orig=window[name]; if(typeof orig!=='function') return;
     window[name]=function(){ var before={mobile:S.mobile, hypo:S.hypo, pucc:S.pucc}; var r=orig.apply(this,arguments); try{ after.call(this, before, arguments); }catch(e){} return r; }; }
   wrap('go', function(b,a){ var id=a[0]; if(id==='price') crmOnPrice(); else if(id==='ready') crmReadySeq(); });
-  wrap('payNow', function(){ crmFire('T8'); crmOffer(); });
-  wrap('insPay', function(){ crmFire('T14'); crmOffer(); });
-  wrap('pucSubmit', function(){ if(S.pucc===true){ crmFire('TP_DONE'); crmOffer(); } });
-  wrap('hyp3Next', function(){ if(S.hypo==='verifying') crmFire('T16'); });
-  wrap('mobInterim', function(b){ if(S.mobile===true && b.mobile!==true){ crmFire('TM_CLEAN'); crmOffer(); } });
-  wrap('mobAadhaarLinked', function(){ if(S.mobile==='verifying') crmFire('TM_PEND'); });
+  wrap('payNow', function(){ crmAfterResolve('T8'); });
+  wrap('insPay', function(){ crmAfterResolve('T14'); });
+  wrap('pucSubmit', function(){ if(S.pucc===true) crmAfterResolve('TP_DONE'); });
+  wrap('hyp3Next', function(){ if(S.hypo==='verifying') crmAfterResolve('T16'); });
+  wrap('mobInterim', function(b){ if(S.mobile===true && b.mobile!==true) crmAfterResolve('TM_CLEAN'); });
+  wrap('mobAadhaarLinked', function(){ if(S.mobile==='verifying') crmAfterResolve('TM_PEND'); });
   wrap('restart', function(){ crmReset(); leadReset(); });
 })();
 leadReset();
