@@ -1726,8 +1726,8 @@ function renderChecklist(containerId, owner){
     if (c.key==='echallan' && S.echallan==='vahanqc'){
       items += '<div class="do-item">'+
         '<div class="do-ic verify">⏳</div>'+
-        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">Vahan QC in progress · checking for challans</div></div>'+
-        '<span class="do-verify-badge">Checking</span></div>';
+        '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">Under verification · Vahan QC in progress</div></div>'+
+        '<span class="do-verify-badge">Under verification</span></div>';
       continue;
     }
     if (S[c.key] === 'verifying'){
