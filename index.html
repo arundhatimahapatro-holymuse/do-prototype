@@ -776,6 +776,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <button class="fs-chip" onclick="chooseSingle('mobile')"><span class="fc-ic">📱</span>Mobile · Vahan</button>
     </div>
     <button class="fs-combo" onclick="chooseFlow('pending')">⚠️ Combo: Insurance + E-Challan both failing →</button>
+    <button class="fs-combo" onclick="chooseFlow('insmob')">⚠️ Combo: Insurance + Mobile not linked →</button>
     <div class="fs-note">Each scenario fails exactly one check; the rest pass. Hypothecation asks your loan status (required) and an optional bank-card upload in-flow — that’s its 4 variants.</div>
   </div>
 </div>
@@ -1569,7 +1570,8 @@ function setAllChecks(pass){
 function chooseFlow(kind){
   S.flow = kind; S.failing = null;
   if (kind === 'happy'){ setAllChecks(true); }
-  else { setAllChecks(true); S.insurance = false; }   // combo: insurance fails; e-challan decided by Vahan QC
+  else if (kind === 'insmob'){ setAllChecks(true); S.insurance = false; S.mobile = false; }   // combo: insurance + mobile
+  else { setAllChecks(true); S.insurance = false; }   // 'pending' combo: insurance + e-challan (Vahan QC)
   S.echallan = 'vahanqc';   // Vahan QC not completed yet — resolved via the Lead Stage panel
   happyDismissed = false;
   setLockCopy();
@@ -1606,10 +1608,18 @@ function setLockCopy(){
   var empty = document.getElementById('lockEmpty');
   notif.style.display = '';
   empty.style.display = 'none';
-  var key = (S.flow === 'happy') ? 'happy' : (S.flow === 'single' ? S.failing : 'pending');
-  var c = LOCK_COPY[key] || LOCK_COPY.pending;
-  document.getElementById('lockNotifTitle').textContent = c[0];
-  document.getElementById('lockNotifBody').textContent  = c[1];
+  var title, body;
+  if (S.flow === 'pending' || S.flow === 'insmob'){   // combos → combined "N steps away"
+    var n = Math.max(1, TOTAL - doneCount());
+    title = '⚠️ ' + n + ' checks pending on your car';
+    body  = 'You’re ' + n + ' step' + (n===1?'':'s') + ' away from your Instant Ownership Transfer. Tap to view and clear them.';
+  } else {
+    var key = (S.flow === 'happy') ? 'happy' : S.failing;
+    var c = LOCK_COPY[key] || LOCK_COPY.pending;
+    title = c[0]; body = c[1];
+  }
+  document.getElementById('lockNotifTitle').textContent = title;
+  document.getElementById('lockNotifBody').textContent  = body;
 }
 
 function tapNotif(){ go('price'); }
@@ -1738,7 +1748,7 @@ function renderChecklist(containerId, owner){
       : '';
     items += '<div class="do-item">'+icon+
       '<div class="do-itxt"><div class="do-iname">'+c.name+'</div><div class="do-isub">'+subtxt+'</div>'+
-        '<button class="do-howto" onclick="openHowTo(\''+c.key+'\',\''+owner+'\')">✨ How to? <span class="ht-arrow">▶</span></button>'+
+        (pass ? '' : '<button class="do-howto" onclick="openHowTo(\''+c.key+'\',\''+owner+'\')">✨ How to? <span class="ht-arrow">▶</span></button>')+
       '</div>'+
       ctaBtn+'</div>';
   }
