@@ -821,7 +821,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="scroll-area" id="priceScroll">
     <div class="scare-banner" id="scareBanner" onclick="scrollToChecklist('price')">
       <div class="scare-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2.5L2 19H20L11 2.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V13" stroke="white" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="16" r="1.1" fill="white"/></svg></div>
-      <div class="scare-body"><div class="scare-title" id="scareTitle">2 of 5 ownership checks failing</div><div class="scare-sub">Fix now to avoid RC transfer holdbacks</div></div>
+      <div class="scare-body"><div class="scare-title" id="scareTitle">2 of 5 ownership checks failing</div></div>
       <button class="scare-cta" onclick="event.stopPropagation();scrollToChecklist('price')">Proceed Now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9M9 6L6 3M9 6L6 9" stroke="#E8530A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <div class="card">
@@ -863,7 +863,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <div class="success-title">Payment Successful</div>
     <div class="rzp-check"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M9 22L18 31L35 13" stroke="#04553A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="rzp-receipt">
-      <div class="rzp-rrow"><span>Cars24</span><span>₹1,293.82</span></div>
+      <div class="rzp-rrow"><span>Cars24</span><span>₹1,000</span></div>
       <div class="rzp-rsub">08 Jun 2026, 9:39 AM</div>
       <div class="rzp-rsub">UPI: pay_SrsRFL5bsu3MBa</div>
       <div class="rzp-rhelp">ⓘ Visit razorpay.com/support for queries</div>
@@ -889,7 +889,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
         <div class="challan-detail-row"><span class="challan-detail-label">Violation</span><span class="challan-detail-value">Driver w/o seat belt</span></div>
         <div class="challan-detail-row"><span class="challan-detail-label">Section</span><span class="challan-detail-value">MV Act 194B</span></div>
         <div class="challan-divider"></div>
-        <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div><div style="font-size:10px;color:#9E9CB0;margin-top:1px;">+ convenience fee</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Continue to pay</button></div>
+        <div class="challan-amount-row"><div><div style="font-size:11px;color:#6B6980;margin-bottom:2px;">Fine amount</div><div class="challan-amount">₹1,000</div></div><button class="pay-all-btn" style="width:auto;padding:8px 18px;font-size:13px;" onclick="openSheet()">Continue to pay</button></div>
       </div>
       <div style="background:#FFF4E6;border:1px solid #FBD9A8;border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M8 1.5L1 14H15L8 1.5Z" stroke="#A85A00" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6V9" stroke="#A85A00" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="#A85A00"/></svg><div style="font-size:12px;color:#7A4100;line-height:1.5;"><strong>E-Challan clearance is mandatory</strong> for ownership transfer.</div></div>
     </div>
@@ -904,19 +904,17 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="sheet-scrim" id="scrim" onclick="closeSheet()"></div>
   <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-head"><div class="sheet-title" id="sheetTitle">Review details</div><div style="display:flex;align-items:center;gap:10px;"><span class="sheet-amt" id="sheetAmt">₹1,293.82</span><button class="sheet-close" onclick="closeSheet()">×</button></div></div>
+    <div class="sheet-head"><div class="sheet-title" id="sheetTitle">Review details</div><div style="display:flex;align-items:center;gap:10px;"><span class="sheet-amt" id="sheetAmt">₹1,000</span><button class="sheet-close" onclick="closeSheet()">×</button></div></div>
     <div class="sheet-body">
       <div class="sheet-step active" id="ss-review">
         <div class="rev-challan">
           <div class="rev-chal-top"><span class="rev-chal-name">Driver w/o seat belt</span><span class="rev-chal-amt">₹1,000</span></div>
           <div class="rev-chal-num">#HR4323260422225406</div>
-          <div class="rev-chal-note">This challan will be settled online in 1–3 days</div>
+          <div class="rev-chal-note">Parivahan clears it within 1–2 days</div>
         </div>
         <div class="rev-summary">
           <div class="rev-row"><span>Total challan amount</span><span>₹1,000</span></div>
-          <div class="rev-row"><span>Total convenience fees <span class="rev-info">ⓘ</span></span><span>₹249</span></div>
-          <div class="rev-row"><span>GST (18%)</span><span>₹44.82</span></div>
-          <div class="rev-total"><span>Total Amount</span><span>₹1,293.82</span></div>
+          <div class="rev-total"><span>Total Amount</span><span>₹1,000</span></div>
         </div>
         <div class="spotify-offer">
           <div class="sp-badge">LIMITED TIME OFFER</div>
@@ -924,13 +922,13 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
           <div class="sp-sub">on clearing your challans today</div>
         </div>
         <div class="rev-terms">By continuing, you accept Cars24's <b>terms &amp; conditions</b></div>
-        <button class="sheet-cta" onclick="reviewNext()">Pay Challan · ₹1,293.82</button>
+        <button class="sheet-cta" onclick="reviewNext()">Pay Challan · ₹1,000</button>
       </div>
       <div class="sheet-step" id="ss-method">
-        <div class="rzp-amt-big">Pay ₹1,293.82</div>
+        <div class="rzp-amt-big">Pay ₹1,000</div>
         <div class="pm-option selected"><div class="pm-icon gpay-ic">G</div><div><div class="pm-name">Google Pay</div><div class="pm-sub">UPI · Recommended</div></div><div class="pm-radio"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="white"/></svg></div></div>
         <button class="link-more">More Options</button>
-        <button class="sheet-cta" onclick="payNow()">Pay ₹1,293.82</button>
+        <button class="sheet-cta" onclick="payNow()">Pay ₹1,000</button>
         <div class="rzp-secured" style="margin-top:12px;">🔒 Secured by Razorpay</div>
       </div>
     </div>
@@ -2207,7 +2205,7 @@ function closeExplainer(){
 var HOWTO = {
   echallan: { color:'#FFB74D', cta:'Pay it now', scenes:[
     { emoji:'🚦', title:'What’s an e-challan?', text:'A traffic fine issued to your car’s number plate by the RTO / police. It stays attached to the <b>RC</b> until it’s paid.' },
-    { emoji:'💳', title:'How to clear it', text:'Two taps — fully online, no paperwork.', steps:['Tap <b>Pay</b> on the E-Challan check','Pay the amount via UPI or card','Parivahan marks it cleared ⚡ instantly'] },
+    { emoji:'💳', title:'How to clear it', text:'Two taps — fully online, no paperwork.', steps:['Tap <b>Pay</b> on the E-Challan check','Pay the amount via UPI or card','Parivahan clears it within 1–2 days ⚡'] },
     { emoji:'✅', title:'Why it matters', text:'A challan-free RC means <b>no holdbacks</b> on your payout and a smooth ownership transfer.' }
   ]},
   hypo: { color:'#7C9BFF', cta:'Resolve it now', scenes:[
@@ -2466,6 +2464,18 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 var CRM_NAME = 'Arundhati';
 var CRM_TRIGGERS = {
+  T6:{label:'T6', title:'E-Challan · 4-hour reminder (before token)',
+    push:'Challans unpaid — your payout is on hold ⚠ ₹[Amount] pending. Every day of delay pushes your Instant Ownership Transfer.',
+    wa:'Hi [Name]! ⏰ Your challan(s) of ₹[Amount] are still unpaid. If you don’t clear them, you won’t be eligible for Instant Ownership Transfer. Pay directly in the app in under 2 minutes 👇 [Pay ₹[Amount] Now →]',
+    sms:'Cars24: Rs.[Amount] challan(s) unpaid — Instant Ownership Transfer on hold.'},
+  T10:{label:'T10', title:'Mobile not linked · Day-2 escalation',
+    push:'Mobile no. update still pending ⏰ This may delay your Instant Ownership Transfer. Click here to resolve.',
+    wa:'Hi [Name] 📱 Your mobile number is still not linked to your car on Vahan. This may delay your Instant Ownership Transfer. [Get Help Now →]',
+    sms:'Cars24: Mobile still unlinked. Click to resolve: [URL]'},
+  T11:{label:'T11', title:'Pickup driver on the way',
+    push:'🚗 Our pickup driver is on the way! Please keep your car and documents ready.',
+    wa:'Hi [Name] 🚗 Our driver is on the way to pick up your car. Please keep the keys, RC and any pending documents (NOC / PUCC) ready for handover.',
+    sms:'Cars24: Our pickup driver is on the way. Keep your car and documents ready.'},
   T3:{label:'T3', title:'Initial offer unlocked · price received',
     push:'Offer received: ₹8,08,000 for your car! Complete the checklist to improve your sale price.',
     wa:'Hi [Name]! 🎉 Great progress — you have an offer! 💰 ₹8,08,000. Complete the remaining items on your ownership transfer checklist to improve your sale price potential. You’re so close! 🚀',
@@ -2494,6 +2504,10 @@ var CRM_TRIGGERS = {
     push:'⚠ [N] pending challan(s) on your car. ₹[Amount] in challans is stopping your Instant Ownership Transfer! Click here to resolve.',
     wa:'Hi [Name]! ⚠ We found pending traffic challan(s) on your car totalling ₹[Amount]. If you don’t clear them, you won’t be eligible for Instant Ownership Transfer. We’ll verify clearance with VAHAN within 24 hrs. [Pay ₹[Amount] Now →]',
     sms:'Cars24: challan(s) of Rs.[Amount] is stopping your Instant Ownership Transfer!'},
+  T7:{label:'T7', title:'E-Challan · pending challans found (after token, before SI)',
+    push:'',
+    wa:'Hi [Name]! ⚠ We found pending traffic challan(s) on your car totalling ₹[Amount]. This amount has been held back from your sale proceeds for clearance of the challan and ownership transfer. _In case you have cleared this challan yourself, please share the proof with our customer care team._ [Click here to call now →]',
+    sms:''},
   T8:{label:'T8', title:'E-Challan · payment successful',
     push:'Challan payment received ✅ Verifying with Vahan. ₹[Amount] paid — clearance update within 24 hours.',
     wa:'Hi [Name]! ✅ Your challan payment of ₹[Amount] was successful. No holdbacks — you receive your full sale price! We’re verifying clearance with VAHAN (up to 24 hours).',
@@ -2617,31 +2631,67 @@ function toggleComms(){ var c=document.getElementById('commsCol'); if(c) c.class
 function crmFireNow(id){ var t=CRM_TRIGGERS[id]; if(!t) return;
   var push=crmSub(t.push), wa=crmSub(t.wa), sms=crmSub(t.sms), ts=crmStamp();
   if(push) showPush('Cars24', push); if(wa) waAppend(wa, ts); if(sms) smsAppend(sms, ts); }
-var LEAD_MAIN = ['Inspection Done','Token','Stock In','Stock Out','RCT — RC Transfer'];
+var LEAD_MAIN = ['Inspection Done','Token Done','Stock in Done','Stock out Done'];
 var LEAD_STEPS = [
-  {m:0,label:'Inspection complete',fire:'T1'},
-  {m:0,label:'Price received',fire:'T3'},
-  {m:0,label:'New price received',fire:'T4'},
-  {m:1,label:'Token done',fire:'TOKEN'},
-  {m:1,label:'Driver pickup + Ops calling to clear pending docs',fire:'OPSCALL'},
-  {m:2,label:'Stock-In · car arrives at yard',fire:null},
-  {m:2,label:'Ops calling — OTP verification',fire:'OTP'},
-  {m:2,label:'Ops completes Deemed Ownership requirement on Vahan',fire:'T22'},
-  {m:3,label:'Stock-Out · car dispatched to dealer',fire:null},
-  {m:3,label:'Dealer finds a buyer',fire:null},
-  {m:4,label:'RC Transfer · ownership transferred — legally clear',fire:'RCT'}
+  {m:0,label:'Inspection complete',fire:'INSPECT',badge:'T1'},
+  {m:0,label:'Vahan QC complete',fire:'VAHAN',badge:'T5'},
+  {m:0,label:'4 hours since Vahan complete',fire:'CH4HR',badge:'T6'},
+  {m:0,label:'Price discovery page not opened',fire:'NOTOPEN',badge:'T2'},
+  {m:0,label:'Price received',fire:'T3',badge:'T3'},
+  {m:0,label:'Challan payment done',fire:'T8',badge:'T8'},
+  {m:0,label:'24h since mobile-link reminder',fire:'MOB24',badge:'T10'},
+  {m:0,label:'24h since PUC reminder',fire:'PUC24',badge:'T12'},
+  {m:0,label:'24h since insurance reminder',fire:'INS24',badge:'T13'},
+  {m:0,label:'Insurance renewed',fire:'T14',badge:'T14'},
+  {m:0,label:'NOC / LFC uploaded',fire:'T16',badge:'T16'},
+  {m:0,label:'RA triggers WhatsApp deeplinks',fire:'T17',badge:'T17'},
+  {m:0,label:'DO items complete',fire:'T19',badge:'T19'},
+  {m:1,label:'Challan still pending',fire:'T7',badge:'T7'},
+  {m:1,label:'Challan payment done',fire:'T8',badge:'T8'},
+  {m:1,label:'24h since mobile-link reminder',fire:'MOB24',badge:'T10'},
+  {m:1,label:'Driver on his way',fire:'T11',badge:'T11'},
+  {m:1,label:'24h since PUC reminder',fire:'PUC24',badge:'T12'},
+  {m:1,label:'24h since insurance reminder',fire:'INS24',badge:'T13'},
+  {m:1,label:'Insurance renewed',fire:'T14',badge:'T14'},
+  {m:1,label:'RA triggers WhatsApp deeplinks',fire:'T17',badge:'T17'},
+  {m:1,label:'No RC Transfer scare',fire:'T18',badge:'T18'},
+  {m:1,label:'DO items complete',fire:'T19',badge:'T19'},
+  {m:1,label:'Ops calls CX for DO completion',fire:'T20',badge:'T20'},
+  {m:1,label:'Ops missed call / RNR',fire:'T21',badge:'T21'},
+  {m:2,label:'Ops calls CX for DO completion',fire:'T20',badge:'T20'},
+  {m:2,label:'Ops missed call / RNR',fire:'T21',badge:'T21'},
+  {m:2,label:'Ops DO completion · Form 29C generated',fire:'T22',badge:'T22'},
+  {m:3,label:'Stock-Out done · ownership transferred — legally clear',fire:null,badge:''}
 ];
 var leadIdx = -1;
-function leadFire(code){ if(!code) return;
-  if(code==='TOKEN'){ if(doneCount()===TOTAL) crmFire('T19'); else crmFireNow('T18'); return; }
-  if(code==='OPSCALL'){ if(doneCount()<TOTAL) crmFireNow('T17'); return; }
-  if(code==='RCT'){ return; }
-  if(code==='T1'){ crmFire('T1'); return; }
-  crmFireNow(code); }
-function advanceLead(){ var n=leadIdx+1; if(n>=LEAD_STEPS.length) return;
-  if(LEAD_STEPS[n].fire==='OTP') return; leadIdx=n; leadFire(LEAD_STEPS[n].fire); renderLead(); }
-function otpPick(ok){ var b=leadIdx+1; if(!LEAD_STEPS[b]||LEAD_STEPS[b].fire!=='OTP') return;
-  if(ok){ crmFireNow('T20'); leadIdx=b; } else { crmFireNow('T21'); } renderLead(); }
+function leadPend(){ var k=['echallan','insurance','hypo','pucc','mobile'],n=0; for(var i=0;i<k.length;i++) if(S[k[i]]===false) n++; return n; }
+function leadPendKeys(){ var o=[]; if(S.echallan===false)o.push('echallan'); if(S.insurance===false)o.push('insurance'); if(S.pucc===false)o.push('pucc'); if(S.mobile===false)o.push('mobile'); if(S.hypo===false)o.push('hypo'); return o; }
+function leadFire(code){ var multi=leadPend()>=2;
+  switch(code){
+    case 'INSPECT': crmFire('T1');
+      if(!multi){ if(S.mobile===false)crmFire('T9'); if(S.pucc===false)crmFire('T12'); if(S.insurance===false)crmFire('T13'); if(S.hypo===false)crmFire('T15'); }
+      break;
+    case 'VAHAN': if(S.echallan===false) crmFire('T5'); break;
+    case 'CH4HR': if(S.echallan===false) crmFireNow(multi?'T5':'T6'); break;
+    case 'NOTOPEN': if(leadPend()>0) crmConsolidated(leadPendKeys()); break;
+    case 'T3': crmFireNow('T3'); break;
+    case 'T8': if(crmFired['T5']||crmFired['T7']) crmFire('T8'); break;
+    case 'MOB24': if(S.mobile===false && !multi) crmFireNow('T10'); break;
+    case 'PUC24': if(S.pucc===false && !multi) crmFire('T12'); break;
+    case 'INS24': if(S.insurance===false && !multi) crmFire('T13'); break;
+    case 'T14': crmFire('T14'); break;
+    case 'T16': crmFire('T16'); break;
+    case 'T17': crmFireNow('T17'); break;
+    case 'T7': if(S.echallan===false) crmFire('T7'); break;
+    case 'T11': crmFireNow('T11'); break;
+    case 'T18': if(leadPend()>0) crmFireNow('T18'); break;
+    case 'T19': if(leadPend()===0) crmFire('T19'); break;
+    case 'T20': crmFireNow('T20'); break;
+    case 'T21': crmFireNow('T21'); break;
+    case 'T22': crmFireNow('T22'); break;
+  }
+}
+function advanceLead(){ var n=leadIdx+1; if(n>=LEAD_STEPS.length) return; leadIdx=n; if(LEAD_STEPS[n].fire) leadFire(LEAD_STEPS[n].fire); renderLead(); }
 function leadReset(){ leadIdx=-1; renderLead(); }
 function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) return;
   var curMain = leadIdx>=0 ? LEAD_STEPS[leadIdx].m : 0;
@@ -2651,14 +2701,13 @@ function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) re
     html+='<div class="ls-stage '+cls+'"><span class="ls-num">'+(i<curMain?'✓':(i+1))+'</span><span class="ls-nm">'+LEAD_MAIN[i]+'</span></div><div class="ls-subs">';
     for(var j=0;j<LEAD_STEPS.length;j++){ if(LEAD_STEPS[j].m!==i) continue;
       var done=j<=leadIdx, isNext=(j===leadIdx+1);
-      var badge = /^T\d/.test(LEAD_STEPS[j].fire||'') ? ' <b>'+LEAD_STEPS[j].fire+'</b>' : '';
+      var badge = LEAD_STEPS[j].badge ? ' <b>'+LEAD_STEPS[j].badge+'</b>' : '';
       html+='<div class="ls-sub'+(done?' done':'')+(isNext?' next':'')+'">'+(done?'● ':'○ ')+crmEsc(LEAD_STEPS[j].label)+badge+'</div>'; }
     html+='</div>'; }
   trk.innerHTML=html;
   var act=document.getElementById('leadAction'); if(!act) return;
   var n=leadIdx+1;
-  if(n>=LEAD_STEPS.length){ act.innerHTML='<div class="ls-done">✅ Journey complete — RC transferred.</div>'; }
-  else if(LEAD_STEPS[n].fire==='OTP'){ act.innerHTML='<div class="ls-otp"><button class="ls-btn ok" onclick="otpPick(true)">Customer picks up · OTP shared → T20</button><button class="ls-btn no" onclick="otpPick(false)">Customer didn’t pick up → T21</button></div>'; }
+  if(n>=LEAD_STEPS.length){ act.innerHTML='<div class="ls-done">✅ Journey complete — Stock-Out done, RC transferred.</div>'; }
   else { act.innerHTML='<button class="ls-btn" onclick="advanceLead()">Advance: '+crmEsc(LEAD_STEPS[n].label)+' →</button>'; }
 }
 
@@ -2666,7 +2715,7 @@ function renderLead(){ var trk=document.getElementById('leadTrack'); if(!trk) re
 (function(){
   function wrap(name, after){ var orig=window[name]; if(typeof orig!=='function') return;
     window[name]=function(){ var before={mobile:S.mobile, hypo:S.hypo, pucc:S.pucc}; var r=orig.apply(this,arguments); try{ after.call(this, before, arguments); }catch(e){} return r; }; }
-  wrap('go', function(b,a){ var id=a[0]; if(id==='price') crmOnPrice(); else if(id==='ready') crmReadySeq(); else if(id==='deal') crmDeal(); });
+  wrap('go', function(b,a){ var id=a[0]; if(id==='price') crmOnPrice(); else if(id==='ready') crmReadySeq(); });
   wrap('payNow', function(){ crmFire('T8'); crmOffer(); });
   wrap('insPay', function(){ crmFire('T14'); crmOffer(); });
   wrap('pucSubmit', function(){ if(S.pucc===true){ crmFire('TP_DONE'); crmOffer(); } });
