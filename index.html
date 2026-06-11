@@ -2781,7 +2781,10 @@ function refreshChecklists(){
 function vahanResolve(clean){
   S.echallan = clean ? true : false;
   refreshChecklists();
-  if(clean){ /* Vahan QC clean → no seller comm */ }
+  if(clean){
+    /* Vahan QC clean → no seller comm. If this completes the whole checklist, show the success page. */
+    if(doneCount() === TOTAL){ go('ready'); }
+  }
   else { var k=leadPendKeys(); if(k.length>=2){ crmMulti=true; crmConsolidatedForce(k); } else { crmMulti=false; crmFireNow('T5'); } }
 }
 function leadReset(){ leadFiredSteps={}; renderLead(); }
