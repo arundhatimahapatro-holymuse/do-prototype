@@ -714,7 +714,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
 .si-field{ flex:1; border:1px solid #D1D1D6; border-radius:20px; padding:9px 15px; font-size:13px; color:#A0A0A5; }
 .si-send{ width:32px; height:32px; border-radius:50%; background:#E5E5EA; color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
 @media (max-width:1180px){ .comms-col{ flex-direction:column; } .dphone{ transform:scale(.9); transform-origin:top center; } }
-.lsp{ width:300px; height:844px; background:#0E1117; color:#E6E8EE; border-radius:30px; box-shadow:0 24px 80px rgba(10,10,10,.22),0 0 0 1px rgba(10,10,10,.06); display:flex; flex-direction:column; overflow:hidden; font-family:var(--lego-font); }
+.lsp{ width:300px; height:844px; background:#0E1117; color:#E6E8EE; border-radius:0 14px 14px 0; border:1px solid #232A36; border-left:none; box-shadow:6px 0 22px rgba(10,10,10,.10); display:flex; flex-direction:column; overflow:hidden; font-family:var(--lego-font); }
 .lsp-head{ padding:16px; background:#151A23; border-bottom:1px solid #232A36; }
 .lsp-title{ font-size:14px; font-weight:800; }
 .lsp-sub{ font-size:10.5px; color:#8A93A6; margin-top:5px; line-height:1.5; }
@@ -888,7 +888,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
     <button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="header-title-block"><div class="header-title">RJ 45 CP 6052</div><div class="header-sub">2023 Hyundai Creta · Parivahan verified</div></div>
   </div>
-  <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+  
   <div class="tabs"><div class="tab active" onclick="switchTab('pending',this)">Pending <span style="background:#FFEFE7;color:#C2410C;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;margin-left:4px;">1</span></div><div class="tab" onclick="switchTab('settlement',this)">Settlement <span style="background:#DEFFEE;color:#04553A;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;margin-left:4px;">2</span></div></div>
   <div class="scroll-area">
     <div class="tab-panel active" id="tab-pending">
@@ -1096,7 +1096,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
       <div class="header-title-block"><div class="header-title">PAN card &amp; loan status</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div>
     </div>
     <div class="hyp-stepper"><div class="hs-item active"><div class="hs-dot">1</div><div class="hs-lbl">PAN &amp; bank status</div></div><div class="hs-bar"></div><div class="hs-item"><div class="hs-dot">2</div><div class="hs-lbl">Upload NOC / LFC</div></div><div class="hs-bar"></div><div class="hs-item"><div class="hs-dot">3</div><div class="hs-lbl">Email your bank</div></div></div>
-    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    
     <div class="scroll-area">
       <div class="hyp-card">
         <div class="hyp-financier"><div class="hyp-bank-logo">🏦</div><div><div class="hyp-bank-name">HDFC Bank Ltd</div><div class="hyp-bank-sub">Loan A/C ••••4421 · Hypothecation registered</div></div></div>
@@ -1202,7 +1202,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
   <div class="sub-step active" id="puc1">
     <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">PUCC</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
-    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    
     <div class="scroll-area">
       <div class="hyp-card">
         <div class="hyp-financier"><div class="hyp-bank-logo">🌿</div><div><div class="hyp-bank-name">Pollution Certificate</div><div class="hyp-bank-sub">PUCC No. RJ45/PUC/2024/8841</div></div></div>
@@ -1258,7 +1258,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <!-- mob1 — number mismatch + possession check -->
   <div class="sub-step active" id="mob1">
     <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">Mobile linked to Vahan</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
-    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    
     <div class="scroll-area">
       <div class="num-card">
         <div class="num-row"><span class="num-lbl">Number on Vahan records</span><span class="num-val hi">+91 XXXXX X457</span></div>
@@ -1367,7 +1367,7 @@ body{ background:#E5E7EB; min-height:100vh; display:flex; flex-direction:column;
   <div class="status-bar white"><span class="status-bar-time">9:41</span><div class="sb-ic"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#0A0A0A"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#0A0A0A"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="#0A0A0A"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" stroke="#0A0A0A" stroke-opacity="0.35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#0A0A0A"/></svg></div></div>
   <div class="sub-step active" id="hsr1">
     <div class="page-header"><button class="back-btn" onclick="closeSub()"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="header-title-block"><div class="header-title">HSRP fitment</div><div class="header-sub">RJ 45 CP 6052 · Parivahan verified</div></div></div>
-    <div class="verified-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.4 9.6H22.5L16.1 14.4L18.5 22L12 17.2L5.5 22L7.9 14.4L1.5 9.6H9.6L12 2Z" fill="#04553A"/></svg><div><div class="verified-badge-text">100% RTO Verified Data</div><div class="verified-badge-sub">Sourced directly from Parivahan &amp; Vahan</div></div></div>
+    
     <div class="scroll-area">
       <div class="hyp-card">
         <div class="hyp-financier"><div class="hyp-bank-logo">🔖</div><div><div class="hyp-bank-name">HSRP not fitted</div><div class="hyp-bank-sub">High-Security Registration Plate missing</div></div></div>
